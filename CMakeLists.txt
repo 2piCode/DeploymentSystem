@@ -16,7 +16,8 @@ qt_add_qml_module(appDeldeliveryApp
     URI DeldeliveryApp
     VERSION 1.0
     QML_FILES
-        Main.qml
+        qml/Main.qml
+        qml/StationItem.qml
         QML_FILES
 )
 

@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import "../utils.js" as Utils
 
 Column {
     id: station
@@ -11,11 +12,6 @@ Column {
 
     signal changedActivity(bool isActive)
     width: parent.width
-
-    function isValidIP(ip_address) {
-        var ipPattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-        return ipPattern.test(ip_address);
-    }
 
     function changeActivity() {
         console.log(isActive);
@@ -45,7 +41,7 @@ Column {
                 visible: false
 
                 onEditingFinished: {
-                    if (isValidIP(ipFieldEditor.text)) {
+                    if (Utils.isValidIP(ipFieldEditor.text)) {
                         ip = ipFieldEditor.text;
                     }
                     ipFieldEditor.visible = false;
@@ -61,7 +57,6 @@ Column {
 
             MouseArea {
                 anchors.fill: parent
-                // focus: true
                 onClicked: {
                     ipFieldEditor.visible = false;
                     ipField.visible = true;

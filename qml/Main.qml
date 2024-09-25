@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import "."
+import "../utils.js" as Utils
 
 ApplicationWindow {
     visible: true
@@ -31,6 +32,7 @@ ApplicationWindow {
         ListView {
             id: listView
             width: parent.width
+            focus: true
 
             property int selectedIndex: -1
 
@@ -56,18 +58,14 @@ ApplicationWindow {
                             listView.selectedIndex = index;
                             listView.currentIndex = index;
                         }
-                    // if (isActive) {
-                    //     listView.selectedIndex = index;
-                    //     listView.currentIndex = index;
-                    // } else if (listView.selectedIndex === index) {
-                    //     listView.selectedIndex = -1;
-                    // }
                 }
             }
 
             Keys.onPressed: function(event) {
                 if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier) {
+                    console.log("Try Focus changed");
                     ipDialog.open();
+                    console.log("Focus changed");
                 }
             }
 
@@ -86,7 +84,7 @@ ApplicationWindow {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "Add new IP address"
             onClicked: {
-                ipDialog.open()
+                    ipDialog.open();
             }
         }
     }
@@ -97,6 +95,14 @@ ApplicationWindow {
         anchors.centerIn: parent
         modal: true
         standardButtons: Dialog.Ok | Dialog.Cancel
+
+        onOpened: {
+            newIpField.forceActiveFocus();
+        }
+
+        onClosed: {
+            listView.forceActiveFocus();
+        }
 
         Column {
             spacing: 10
@@ -114,7 +120,7 @@ ApplicationWindow {
         }
         onAccepted: {
             var newIp = newIpField.text;
-            if (isValidIP(newIp)) {
+            if (Utils.isValidIP(newIp)) {
                 listView.model.append({ ip: newIp });
             }
             newIpField.text = "";

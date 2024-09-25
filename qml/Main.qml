@@ -31,18 +31,17 @@ ApplicationWindow {
         ListView {
             id: listView
             width: parent.width
-            height: parent.height
 
             property int selectedIndex: -1
 
-            Behavior on height {
-                NumberAnimation {
-                    duration: 300
-                    easing.type: Easing.InOutQuad
-                }
-            }
+            highlight: Rectangle {  color: "lightsteelblue"
+                                    radius: 5
+                                    height: StationItem.height
 
+            }
+            highlightMoveDuration: 100
             model: ListModel {
+                id: listModel
                 ListElement { ip: "127.0.0.1" }
                 ListElement { ip: "127.0.0.1" }
                 ListElement { ip: "127.0.0.1" }
@@ -52,12 +51,17 @@ ApplicationWindow {
             delegate: StationItem {
                 ip: model.ip
                 onChangedActivity: function (isActive) {
-                    if (isActive) {
-                        listView.selectedIndex = index;
-                        listView.currentIndex = index;
-                    } else if (listView.selectedIndex === index) {
-                        listView.selectedIndex = -1;
-                    }
+
+                    if (listView.selectedIndex !== index) {
+                            listView.selectedIndex = index;
+                            listView.currentIndex = index;
+                        }
+                    // if (isActive) {
+                    //     listView.selectedIndex = index;
+                    //     listView.currentIndex = index;
+                    // } else if (listView.selectedIndex === index) {
+                    //     listView.selectedIndex = -1;
+                    // }
                 }
             }
 
@@ -66,11 +70,21 @@ ApplicationWindow {
                     ipDialog.open();
                 }
             }
+
+            height: contentHeight
+            Behavior on contentHeight {
+                NumberAnimation {
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+            }
         }
 
+
         Button {
-            // anchors.horizontalCenter: parent.horizontalCenter
-            // anchors.top: stations.bottom
+            id: addIpBtn
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Add new IP address"
             onClicked: {
                 ipDialog.open()
             }

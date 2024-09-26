@@ -1,8 +1,8 @@
+import "."
+import "../utils.js" as Utils
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import "."
-import "../utils.js" as Utils
 
 ApplicationWindow {
     visible: true
@@ -15,95 +15,226 @@ ApplicationWindow {
             title: qsTr("File")
             MenuItem {
                 text: qsTr("&Open")
-                onTriggered: console.log("Open action triggered");
+                onTriggered: console.log("Open action triggered")
             }
             MenuItem {
                 text: qsTr("Exit")
-                onTriggered: Qt.quit();
+                onTriggered: Qt.quit()
+            }
+        }
+    }
+
+    header: ToolBar {
+        id: mainToolBar
+
+        RowLayout {
+            Layout.alignment: Qt.AlignLeft
+            spacing: 10
+
+            ToolButton {
+                id: saveBtn
+
+                icon.source: "../images/save.png"
+                onClicked: {
+                    console.log("saveBtn clicked");
+                }
+            }
+
+            ToolButton {
+                id: duplicateBtn
+
+                icon.source: "../images/duplicate.png"
+                onClicked: {
+                    console.log("duplicateBtn clicked");
+                }
+            }
+
+            ToolButton {
+                id: prevBtn
+
+                icon.source: "../images/back.png"
+                onClicked: {
+                    console.log("prevBtn clicked");
+                }
+            }
+
+            ToolButton {
+                id: nextBtn
+
+                icon.source: "../images/next.png"
+                onClicked: {
+                    console.log("nextBtn clicked");
+                }
+            }
+
+            ToolButton {
+                id: loadBtn
+
+                icon.source: "../images/load.png"
+                onClicked: {
+                    console.log("loadBtn clicked");
+                }
+            }
+
+            ToolButton {
+                id: uploadBtn
+
+                icon.source: "../images/upload.png"
+                onClicked: {
+                    console.log("uploadBtn clicked");
+                }
+            }
+
+            Item {
+                width: 30  // Создание пробела как в ТЗ
+            }
+
+            ToolButton {
+                id: editBtn
+
+                icon.source: "../images/edit.png"
+                onClicked: {
+                    console.log("editBtn clicked");
+                }
+            }
+
+            ToolButton {
+                id: settingsBtn
+
+                icon.source: "../images/settings.png"
+                onClicked: {
+                    console.log("settingsBtn clicked");
+                }
+            }
+
+            ToolButton {
+                id: connectionBtn
+
+                icon.source: "../images/connection.png"
+                onClicked: {
+                    console.log("connectionBtn clicked");
+                }
+            }
+
+            ToolButton {
+                id: goBtn
+
+                icon.source: "../images/go.png"
+                onClicked: {
+                    console.log("goBtn clicked");
+                }
             }
         }
     }
 
     Column {
         id: stations
-        anchors.fill: parent
+
         spacing: 10
+
+        anchors {
+            top: header.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
 
         ListView {
             id: listView
-            width: parent.width
-            focus: true
 
             property int selectedIndex: -1
 
-            highlight: Rectangle {  color: "lightsteelblue"
-                                    radius: 5
-                                    height: StationItem.height
-
-            }
+            width: parent.width
+            focus: true
             highlightMoveDuration: 100
+            Keys.onPressed: function(event) {
+                if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier)
+                    ipDialog.open();
+            }
+
+            height: contentHeight
+
+            highlight: Rectangle {
+                color: "lightsteelblue"
+                radius: 5
+                height: StationItem.height
+            }
+
             model: ListModel {
                 id: listModel
-                ListElement { ip: "127.0.0.1" }
-                ListElement { ip: "127.0.0.1" }
-                ListElement { ip: "127.0.0.1" }
-                ListElement { ip: "127.0.0.1" }
+
+                ListElement {ip: "127.0.0.1"}
+                ListElement {ip: "127.0.0.1"}
+                ListElement {ip: "127.0.0.1"}
             }
 
             delegate: StationItem {
                 ip: model.ip
-                onChangedActivity: function (isActive) {
-
+                onChangedActivity: function(isActive) {
                     if (listView.selectedIndex !== index) {
-                            listView.selectedIndex = index;
-                            listView.currentIndex = index;
-                        }
+                        listView.selectedIndex = index;
+                        listView.currentIndex = index;
+                    }
                 }
             }
 
-            Keys.onPressed: function(event) {
-                if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier) {
-                    console.log("Try Focus changed");
-                    ipDialog.open();
-                    console.log("Focus changed");
-                }
-            }
-
-            height: contentHeight
             Behavior on contentHeight {
                 NumberAnimation {
                     duration: 300
                     easing.type: Easing.InOutQuad
                 }
-            }
-        }
 
+            }
+
+        }
 
         Button {
             id: addIpBtn
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Add new IP address"
+
+            anchors.left: parent.left
+            anchors.leftMargin: 3
+            width: 60 
+            height: 40
+            icon.source: "../images/plus.png"
+
+            background: Rectangle {
+                anchors.fill: parent
+                color: "transparent"
+                border.color: addIpBtn.pressed ? "gray" :
+                     addIpBtn.hovered ? "darkgray" : "black"
+                border.width: 2
+                radius: 8
+ 
+            }
+
             onClicked: {
-                    ipDialog.open();
+                ipDialog.open();
             }
         }
     }
 
     Dialog {
         id: ipDialog
+
         title: "Add New IP Address"
         anchors.centerIn: parent
         modal: true
         standardButtons: Dialog.Ok | Dialog.Cancel
-
         onOpened: {
             newIpField.forceActiveFocus();
         }
-
         onClosed: {
             listView.forceActiveFocus();
         }
+        onAccepted: {
+            var newIp = newIpField.text;
+            if (Utils.isValidIP(newIp))
+                listView.model.append({
+                "ip": newIp
+            });
 
+            newIpField.text = "";
+        }
         Column {
             spacing: 10
             padding: 10
@@ -114,16 +245,16 @@ ApplicationWindow {
 
             TextField {
                 id: newIpField
+
                 placeholderText: "192.168.1.4"
                 width: 200
+                
+                Keys.onPressed: function(event) {
+                    if (event.key === Qt.Key_Return)
+                        ipDialog.accept();
+                }
             }
-        }
-        onAccepted: {
-            var newIp = newIpField.text;
-            if (Utils.isValidIP(newIp)) {
-                listView.model.append({ ip: newIp });
-            }
-            newIpField.text = "";
+
         }
     }
 }

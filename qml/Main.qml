@@ -150,6 +150,9 @@ ApplicationWindow {
             Keys.onPressed: function(event) {
                 if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier)
                     ipDialog.open();
+                else if (listView.currentIndex !== -1 && event.key === Qt.Key_Space){
+                    currentItem.editIp();
+                }
             }
 
             height: contentHeight
@@ -157,7 +160,6 @@ ApplicationWindow {
             highlight: Rectangle {
                 color: "lightsteelblue"
                 radius: 5
-                height: StationItem.height
             }
 
             model: ListModel {

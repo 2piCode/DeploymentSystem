@@ -22,6 +22,11 @@ Column {
         console.log(detailArea.height);
         changedActivity(isActive);
     }
+    function editIp() {
+        ipField.visible = false;
+        ipFieldEditor.visible = true;
+        ipFieldEditor.forceActiveFocus();
+    }
 
     width: parent.width
 
@@ -82,9 +87,7 @@ Column {
                     changeActivity();
                 }
                 onDoubleClicked: {
-                    ipField.visible = false;
-                    ipFieldEditor.visible = true;
-                    ipFieldEditor.forceActiveFocus();
+                    editIp();
                 }
             }
 

@@ -70,7 +70,7 @@ Column {
             Image {
                 id: expandedMarker
 
-                source: isActive ? "../images/minus.png" : "../images/plus.png"
+                source: isActive ? "qrc:/images/images/minus.png" : "qrc:/images/images/plus.png"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: ipFieldEditor.visible ? ipFieldEditor.right : ipField.right
                 anchors.leftMargin: 16

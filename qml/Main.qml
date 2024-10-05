@@ -34,7 +34,7 @@ ApplicationWindow {
             ToolButton {
                 id: saveBtn
 
-                icon.source: "../images/save.png"
+                icon.source: "qrc:/images/images/save.png"
                 onClicked: {
                     console.log("saveBtn clicked");
                 }
@@ -43,7 +43,7 @@ ApplicationWindow {
             ToolButton {
                 id: duplicateBtn
 
-                icon.source: "../images/duplicate.png"
+                icon.source: "qrc:/images/images/duplicate.png"
                 onClicked: {
                     console.log("duplicateBtn clicked");
                 }
@@ -52,7 +52,7 @@ ApplicationWindow {
             ToolButton {
                 id: prevBtn
 
-                icon.source: "../images/back.png"
+                icon.source: "qrc:/images/images/back.png"
                 onClicked: {
                     console.log("prevBtn clicked");
                 }
@@ -61,7 +61,7 @@ ApplicationWindow {
             ToolButton {
                 id: nextBtn
 
-                icon.source: "../images/next.png"
+                icon.source: "qrc:/images/images/next.png"
                 onClicked: {
                     console.log("nextBtn clicked");
                 }
@@ -70,7 +70,7 @@ ApplicationWindow {
             ToolButton {
                 id: loadBtn
 
-                icon.source: "../images/load.png"
+                icon.source: "qrc:/images/images/load.png"
                 onClicked: {
                     console.log("loadBtn clicked");
                 }
@@ -79,7 +79,7 @@ ApplicationWindow {
             ToolButton {
                 id: uploadBtn
 
-                icon.source: "../images/upload.png"
+                icon.source: "qrc:/images/images/upload.png"
                 onClicked: {
                     console.log("uploadBtn clicked");
                 }
@@ -92,7 +92,7 @@ ApplicationWindow {
             ToolButton {
                 id: editBtn
 
-                icon.source: "../images/edit.png"
+                icon.source: "qrc:/images/images/edit.png"
                 onClicked: {
                     console.log("editBtn clicked");
                 }
@@ -101,7 +101,7 @@ ApplicationWindow {
             ToolButton {
                 id: settingsBtn
 
-                icon.source: "../images/settings.png"
+                icon.source: "qrc:/images/images/settings.png"
                 onClicked: {
                     console.log("settingsBtn clicked");
                 }
@@ -110,7 +110,7 @@ ApplicationWindow {
             ToolButton {
                 id: connectionBtn
 
-                icon.source: "../images/connection.png"
+                icon.source: "qrc:/images/images/connection.png"
                 onClicked: {
                     console.log("connectionBtn clicked");
                 }
@@ -119,7 +119,7 @@ ApplicationWindow {
             ToolButton {
                 id: goBtn
 
-                icon.source: "../images/go.png"
+                icon.source: "qrc:/images/images/go.png"
                 onClicked: {
                     console.log("goBtn clicked");
                 }
@@ -195,9 +195,9 @@ ApplicationWindow {
 
             anchors.left: parent.left
             anchors.leftMargin: 3
-            width: 60 
+            width: 60
             height: 40
-            icon.source: "../images/plus.png"
+            icon.source: "qrc:/images/images/plus.png"
 
             background: Rectangle {
                 anchors.fill: parent
@@ -206,7 +206,7 @@ ApplicationWindow {
                      addIpBtn.hovered ? "darkgray" : "black"
                 border.width: 2
                 radius: 8
- 
+
             }
 
             onClicked: {

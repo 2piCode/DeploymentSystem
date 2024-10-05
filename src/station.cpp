@@ -2,8 +2,13 @@
 
 #include <algorithm>
 
-Station::Station(ConnectionSettings settings)
-    : ssh_connection_(std::make_unique<SSHConnection>(settings)) {}
+Station::Station(const ConnectionSettings& settings)
+    : ssh_connection_(std::make_unique<SSHConnection>(settings)),
+      settings_(settings) {}
+
+Station::Station(ConnectionSettings&& settings)
+    : ssh_connection_(std::make_unique<SSHConnection>(std::move(settings))),
+      settings_(settings) {}
 
 bool Station::SetName(std::string name) {
     if (!std::all_of(name.begin(), name.end(), [](char c) {
@@ -12,7 +17,7 @@ bool Station::SetName(std::string name) {
         return false;
     }
 
-    this->name = name;
+    this->name_ = name;
     return true;
 }
 
@@ -21,25 +26,51 @@ bool Station::SetDescription(std::string description) {
         return false;
     }
 
-    this->description = description;
+    this->description_ = description;
     return true;
 }
 
-void Station::SetRole(Role role) { this->role = role; }
+void Station::SetRole(Role role) { this->role_ = role; }
 
 void Station::AddAdditionalTask(AdditionalTask task) {
-    additional_tasks.push_back(task);
+    additional_tasks_.push_back(task);
 }
 
 bool Station::CheckConnection() const {
-    return ssh_connection_->ConnectToHost();
+    if (!is_connected) {
+        is_connected = ssh_connection_->ConnectToHost();
+    }
+    return is_connected;
 }
 
-bool Station::ExecuteCommand(const std::string& command) {
-    return ssh_connection_->ExecuteCommand(command);
+void Station::StartSetupProccess() {
+    if (!CheckConnection()) {
+        return;
+    }
+
+    /*
+    TODO(coder): Add setup proccess:
+     1) Define system
+     2) Upload installation app
+     3) Start installation proccess by execute command
+     4) Proccess additional tasks
+    */
+    throw std::runtime_error("Not implemented");
 }
 
-bool Station::UploadFile(const std::filesystem::path& local_path,
-                         const std::filesystem::path& remote_path) {
-    return ssh_connection_->UploadFile(local_path, remote_path);
+MainStation::MainStation(const ConnectionSettings& settings)
+    : Station(settings) {}
+
+MainStation::MainStation(ConnectionSettings&& settings)
+    : Station(std::move(settings)) {}
+
+void MainStation::AddChildStation(Station station) {
+    child_stations_.push_back(station);
+}
+
+void MainStation::StartSetupProccessAllStation() {
+    StartSetupProccess();
+    for (auto& station : child_stations_) {
+        station.StartSetupProccess();
+    }
 }

@@ -24,21 +24,22 @@ struct ConnectionSettings {
 class SSHConnection : public QObject {
     Q_OBJECT
    public:
-    explicit SSHConnection(const ConnectionSettings& config, QObject* parent = nullptr);
+    explicit SSHConnection(const ConnectionSettings& config,
+                           QObject* parent = nullptr);
     ~SSHConnection() final;
 
-    bool connectToHost();
-    void disconnectFromHost();
+    bool ConnectToHost();
+    void DisconnectFromHost();
 
-    bool executeCommand(const std::string& command);
-    bool uploadFile(const std::filesystem::path& local_path,
-                    const std::filesystem::path& remote_path);
+    bool ExecuteCommand(const std::string& command) const;
+    bool UploadFile(const std::filesystem::path& local_path,
+                    const std::filesystem::path& remote_path) const;
 
    signals:
     void connected();
     void disconnected();
-    void commandExecuted(const std::string& output);
-    void errorOccurred(const std::string& errorMessage);
+    void commandExecuted(const std::string& output) const;
+    void errorOccurred(const std::string& errorMessage) const;
 
    private:
     const int CONNECTION_TIME = 5000;     // 5 seconds

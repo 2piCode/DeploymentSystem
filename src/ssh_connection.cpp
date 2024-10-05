@@ -27,11 +27,11 @@ SSHConnection::SSHConnection(const ConnectionSettings& config, QObject* parent)
 }
 
 SSHConnection::~SSHConnection() {
-    disconnectFromHost();
+    DisconnectFromHost();
     delete socket_;
 }
 
-bool SSHConnection::connectToHost() {
+bool SSHConnection::ConnectToHost() {
     if (!LibSSH2Manager::instance().initialize()) {
         emit errorOccurred("Failed to initialize libssh2");
         return false;
@@ -76,7 +76,7 @@ bool SSHConnection::connectToHost() {
     return true;
 }
 
-void SSHConnection::disconnectFromHost() {
+void SSHConnection::DisconnectFromHost() {
     if (sftp_session_) {
         libssh2_sftp_shutdown(sftp_session_);
         sftp_session_ = nullptr;
@@ -136,7 +136,7 @@ bool SSHConnection::initializeSFTP() {
     return true;
 }
 
-bool SSHConnection::executeCommand(const std::string& command) {
+bool SSHConnection::ExecuteCommand(const std::string& command) const {
     if (!session_) {
         emit errorOccurred("Not connected to any SSH session");
         return false;
@@ -176,8 +176,8 @@ bool SSHConnection::executeCommand(const std::string& command) {
     return true;
 }
 
-bool SSHConnection::uploadFile(const std::filesystem::path& local_path,
-                               const std::filesystem::path& remote_path) {
+bool SSHConnection::UploadFile(const std::filesystem::path& local_path,
+                               const std::filesystem::path& remote_path) const {
     if (!sftp_session_) {
         emit errorOccurred("SFTP session not initialized");
         return false;

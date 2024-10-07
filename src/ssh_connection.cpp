@@ -113,7 +113,7 @@ bool SSHConnection::authenticate() {
         int rc = libssh2_userauth_publickey_fromfile(
             session_, config_.username.c_str(),
             nullptr,  // Публичный ключ можно определить автоматически
-            config_.path_to_private_key.c_str(),
+            config_.path_to_private_key.string().c_str(),
             nullptr  // Пароль для ключа, если требуется
         );
         if (rc != 0) {
@@ -190,7 +190,7 @@ bool SSHConnection::UploadFile(const std::filesystem::path& local_path,
     }
 
     LIBSSH2_SFTP_HANDLE* sftp_handle = libssh2_sftp_open(
-        sftp_session_, remote_path.c_str(),
+        sftp_session_, remote_path.string().c_str(),
         LIBSSH2_FXF_WRITE | LIBSSH2_FXF_CREAT | LIBSSH2_FXF_TRUNC,
         LIBSSH2_SFTP_S_IRUSR | LIBSSH2_SFTP_S_IWUSR | LIBSSH2_SFTP_S_IRGRP |
             LIBSSH2_SFTP_S_IROTH);

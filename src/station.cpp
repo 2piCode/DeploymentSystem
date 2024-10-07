@@ -64,8 +64,8 @@ MainStation::MainStation(const ConnectionSettings& settings)
 MainStation::MainStation(ConnectionSettings&& settings)
     : Station(std::move(settings)) {}
 
-void MainStation::AddChildStation(Station station) {
-    child_stations_.push_back(station);
+void MainStation::AddChildStation(Station&& station) {
+    child_stations_.push_back(std::move(station));
 }
 
 void MainStation::StartSetupProccessAllStation() {

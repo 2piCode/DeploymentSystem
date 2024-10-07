@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "ssh_connection.h"
 
@@ -57,7 +58,7 @@ class MainStation : public Station {
     explicit MainStation(const ConnectionSettings& settings);
     explicit MainStation(ConnectionSettings&& settings);
 
-    void AddChildStation(Station station);
+    void AddChildStation(Station&& station);
 
     void StartSetupProccessAllStation();
 

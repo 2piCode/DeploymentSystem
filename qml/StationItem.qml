@@ -1,21 +1,18 @@
+import "../utils.js" as Utils
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 
 Column {
     id: station
+
     property bool isActive: false
     property int defaultSize: 80
     property int expandedSize: 80
+    property int expandedMarkerSize: 24
     property string ip: "127.0.0.1"
 
     signal changedActivity(bool isActive)
-    width: parent.width
-
-    function isValidIP(ip_address) {
-        var ipPattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-        return ipPattern.test(ip_address);
-    }
 
     function changeActivity() {
         console.log(isActive);
@@ -25,29 +22,38 @@ Column {
         console.log(detailArea.height);
         changedActivity(isActive);
     }
+    function editIp() {
+        ipField.visible = false;
+        ipFieldEditor.visible = true;
+        ipFieldEditor.forceActiveFocus();
+    }
+
+    width: parent.width
 
     Item {
         id: header
+
         width: parent.width
         height: station.defaultSize
-        focus: true
 
-         Rectangle {
+        Rectangle {
             id: background
+
             anchors.fill: parent
             color: "transparent"
             height: parent.height
 
             TextField {
                 id: ipFieldEditor
+
                 text: ip
                 anchors.verticalCenter: parent.verticalCenter
                 visible: false
-
+                font.pointSize: 16
                 onEditingFinished: {
-                    if (isValidIP(ipFieldEditor.text)) {
+                    if (Utils.isValidIP(ipFieldEditor.text))
                         ip = ipFieldEditor.text;
-                    }
+
                     ipFieldEditor.visible = false;
                     ipField.visible = true;
                 }
@@ -55,29 +61,43 @@ Column {
 
             Text {
                 id: ipField
+
                 text: ip
                 anchors.verticalCenter: parent.verticalCenter
+                font.pointSize: 16
+            }
+
+            Image {
+                id: expandedMarker
+
+                source: isActive ? "qrc:/images/images/minus.png" : "qrc:/images/images/plus.png"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: ipFieldEditor.visible ? ipFieldEditor.right : ipField.right
+                anchors.leftMargin: 16
+                width: expandedMarkerSize
+                height: expandedMarkerSize
+
             }
 
             MouseArea {
                 anchors.fill: parent
-                // focus: true
                 onClicked: {
                     ipFieldEditor.visible = false;
                     ipField.visible = true;
                     changeActivity();
                 }
                 onDoubleClicked: {
-                    ipField.visible = false;
-                    ipFieldEditor.visible = true;
-                    ipFieldEditor.forceActiveFocus();
+                    editIp();
                 }
             }
+
         }
+
     }
 
     Rectangle {
         id: detailArea
+
         width: parent.width
         height: isActive ? station.expandedSize : 0
         color: "lightgray"
@@ -93,6 +113,9 @@ Column {
                 duration: 300
                 easing.type: Easing.InOutQuad
             }
+
         }
+
     }
+
 }

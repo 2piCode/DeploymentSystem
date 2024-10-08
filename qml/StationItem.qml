@@ -7,7 +7,7 @@ ColumnLayout {
     id: station
 
     property bool isActive: false
-    property int defaultSize: 80
+    property int defaultSize: 50
     property int expandedSize: detailAreaLayout.implicitHeight
     property int expandedMarkerSize: 24
     property string ip: "127.0.0.1"
@@ -64,8 +64,6 @@ ColumnLayout {
             }
 
             Image {
-                id: expandedMarker
-
                 source: isActive ? "qrc:/images/images/minus.png" : "qrc:/images/images/plus.png"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: ipFieldEditor.visible ? ipFieldEditor.right : ipField.right
@@ -86,65 +84,6 @@ ColumnLayout {
                 }
             }
         }
-
-        states: [
-            State {
-                name: "collapsed"
-                when: !isActive
-                PropertyChanges {
-                    target: detailArea
-                    Layout.preferredHeight: 0
-                }
-            },
-            State {
-                name: "expanded"
-                when: isActive
-                PropertyChanges {
-                    target: detailArea
-                    Layout.preferredHeight: station.expandedSize
-                }
-            }
-        ]
-
-        transitions: [
-            Transition {
-                from: "collapsed"
-                to: "expanded"
-                SequentialAnimation {
-                    NumberAnimation {
-                        target: detailArea
-                        property: "Layout.preferredHeight"
-                        duration: 300
-                        easing.type: Easing.InOutQuad
-                    }
-                    NumberAnimation {
-                        target: detailArea
-                        property: "opacity"
-                        to: 1
-                        duration: 0
-                    }
-                }
-            },
-            Transition {
-                from: "expanded"
-                to: "collapsed"
-                SequentialAnimation {
-                    NumberAnimation {
-                        target: detailArea
-                        property: "opacity"
-                        to: 0
-                        duration: 0
-                    }
-                    NumberAnimation {
-                        target: detailArea
-                        property: "Layout.preferredHeight"
-                        to: 0
-                        duration: 300
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
-        ]
     }
 
     Rectangle {
@@ -157,9 +96,12 @@ ColumnLayout {
         ColumnLayout {
             id: detailAreaLayout
 
-            Text {
-                text: "Selected IP: " + ip
+            ConnectionSettingsUI {
+                isActive: station.isActive
+                // You can bind other properties or handle signals as needed
             }
+            
+
             Text {
                 text: "Selected IP: " + ip
             }
@@ -171,4 +113,62 @@ ColumnLayout {
             }
         }
     }
+    states: [
+        State {
+            name: "collapsed"
+            when: !isActive
+            PropertyChanges {
+                target: detailArea
+                Layout.preferredHeight: 0
+            }
+        },
+        State {
+            name: "expanded"
+            when: isActive
+            PropertyChanges {
+                target: detailArea
+                Layout.preferredHeight: station.expandedSize
+            }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "collapsed"
+            to: "expanded"
+            SequentialAnimation {
+                NumberAnimation {
+                    target: detailArea
+                    property: "Layout.preferredHeight"
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                    target: detailArea
+                    property: "opacity"
+                    to: 1
+                    duration: 0
+                }
+            }
+        },
+        Transition {
+            from: "expanded"
+            to: "collapsed"
+            SequentialAnimation {
+                NumberAnimation {
+                    target: detailArea
+                    property: "opacity"
+                    to: 0
+                    duration: 0
+                }
+                NumberAnimation {
+                    target: detailArea
+                    property: "Layout.preferredHeight"
+                    to: 0
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
+    ]
 }

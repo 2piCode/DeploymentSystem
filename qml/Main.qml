@@ -24,64 +24,57 @@ ApplicationWindow {
         }
     }
 
-    header: ToolBar {
+   header: ToolBar {
         id: mainToolBar
-
         RowLayout {
             Layout.alignment: Qt.AlignLeft
             spacing: 10
 
-            ToolButton {
+            CustomToolBarButton {
                 id: saveBtn
-
-                icon.source: "qrc:/images/images/save.png"
-                onClicked: {
-                    console.log("saveBtn clicked");
+                iconSource: "qrc:/images/images/save.png"
+                onButtonClicked: {
+                    console.log("Save button clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: duplicateBtn
-
-                icon.source: "qrc:/images/images/duplicate.png"
-                onClicked: {
-                    console.log("duplicateBtn clicked");
+                iconSource: "qrc:/images/images/duplicate.png"
+                onButtonClicked: {
+                    console.log("Duplicate button clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: prevBtn
-
-                icon.source: "qrc:/images/images/back.png"
-                onClicked: {
-                    console.log("prevBtn clicked");
+                iconSource: "qrc:/images/images/back.png"
+                onButtonClicked: {
+                    console.log("Prev button clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: nextBtn
-
-                icon.source: "qrc:/images/images/next.png"
-                onClicked: {
-                    console.log("nextBtn clicked");
+                iconSource: "qrc:/images/images/next.png"
+                onButtonClicked: {
+                    console.log("Next button clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: loadBtn
-
-                icon.source: "qrc:/images/images/load.png"
-                onClicked: {
-                    console.log("loadBtn clicked");
+                iconSource: "qrc:/images/images/load.png"
+                onButtonClicked: {
+                    console.log("Load button clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: uploadBtn
-
-                icon.source: "qrc:/images/images/upload.png"
-                onClicked: {
-                    console.log("uploadBtn clicked");
+                iconSource: "qrc:/images/images/upload.png"
+                onButtonClicked: {
+                    console.log("Upload button clicked");
                 }
             }
 
@@ -89,39 +82,35 @@ ApplicationWindow {
                 width: 30  // Создание пробела как в ТЗ
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: editBtn
-
-                icon.source: "qrc:/images/images/edit.png"
-                onClicked: {
-                    console.log("editBtn clicked");
+                iconSource: "qrc:/images/images/edit.png"
+                onButtonClicked: {
+                    console.log("Edit button clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: settingsBtn
-
-                icon.source: "qrc:/images/images/settings.png"
-                onClicked: {
-                    console.log("settingsBtn clicked");
+                iconSource: "qrc:/images/images/settings.png"
+                onButtonClicked: {
+                    console.log("Settings button clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: connectionBtn
-
-                icon.source: "qrc:/images/images/connection.png"
-                onClicked: {
-                    console.log("connectionBtn clicked");
+                iconSource: "qrc:/images/images/connection.png"
+                onButtonClicked: {
+                    console.log("Connection button clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: goBtn
-
-                icon.source: "qrc:/images/images/go.png"
-                onClicked: {
-                    console.log("goBtn clicked");
+                iconSource: "qrc:/images/images/go.png"
+                onButtonClicked: {
+                    console.log("Go button clicked");
                 }
             }
         }
@@ -176,6 +165,7 @@ ApplicationWindow {
                     if (listView.selectedIndex !== index) {
                         listView.selectedIndex = index;
                         listView.currentIndex = index;
+                        currentItem.forceActiveFocus;
                     }
                 }
             }

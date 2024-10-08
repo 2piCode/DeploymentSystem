@@ -5,6 +5,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 
 ApplicationWindow {
+    id: mainWindow
     visible: true
     title: qsTr("Конфигуратор станций")
     width: 800
@@ -24,7 +25,7 @@ ApplicationWindow {
         }
     }
 
-   header: ToolBar {
+    header: ToolBar {
         id: mainToolBar
         RowLayout {
             Layout.alignment: Qt.AlignLeft
@@ -116,26 +117,23 @@ ApplicationWindow {
         }
     }
 
-    Column {
+    ColumnLayout {
         id: stations
-
         spacing: 10
-
-        anchors {
-            top: header.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
+        width: parent.width
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
         ListView {
             id: listView
-
             property int selectedIndex: -1
-
-            width: parent.width
+            Layout.fillWidth: true
+            // Layout.fillHeight: true
+            Layout.preferredHeight: contentHeight
             focus: true
             highlightMoveDuration: 100
+            highlightResizeVelocity: Infinity
+
             Keys.onPressed: function(event) {
                 if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier)
                     ipDialog.open();
@@ -144,28 +142,28 @@ ApplicationWindow {
                 }
             }
 
-            height: contentHeight
-
             highlight: Rectangle {
                 color: "lightsteelblue"
                 radius: 5
+                Layout.fillWidth: true
             }
 
             model: ListModel {
                 id: listModel
-
-                ListElement {ip: "127.0.0.1"}
-                ListElement {ip: "127.0.0.1"}
-                ListElement {ip: "127.0.0.1"}
+                ListElement { ip: "127.0.0.1" }
+                ListElement { ip: "127.0.0.1" }
+                ListElement { ip: "127.0.0.1" }
             }
 
             delegate: StationItem {
                 ip: model.ip
+                Layout.fillWidth: true
+
                 onChangedActivity: function(isActive) {
                     if (listView.selectedIndex !== index) {
                         listView.selectedIndex = index;
                         listView.currentIndex = index;
-                        currentItem.forceActiveFocus;
+                        currentItem.forceActiveFocus();
                     }
                 }
             }
@@ -175,28 +173,28 @@ ApplicationWindow {
                     duration: 300
                     easing.type: Easing.InOutQuad
                 }
-
             }
 
+            Component.onCompleted: {
+                console.log("test msg");
+            }
         }
 
         Button {
             id: addIpBtn
+            hoverEnabled: false
 
-            anchors.left: parent.left
-            anchors.leftMargin: 3
-            width: 60
-            height: 40
+            Layout.alignment: Qt.AlignLeft
+            Layout.preferredWidth: parent.width * 0.1
+            Layout.preferredHeight: mainWindow.height * 0.05
             icon.source: "qrc:/images/images/plus.png"
 
             background: Rectangle {
                 anchors.fill: parent
                 color: "transparent"
-                border.color: addIpBtn.pressed ? "gray" :
-                     addIpBtn.hovered ? "darkgray" : "black"
-                border.width: 2
-                radius: 8
-
+                border.color: addIpBtn.pressed ? "gray" : "black"
+                border.width: 1
+                radius: 10    
             }
 
             onClicked: {
@@ -212,6 +210,7 @@ ApplicationWindow {
         anchors.centerIn: parent
         modal: true
         standardButtons: Dialog.Ok | Dialog.Cancel
+
         onOpened: {
             newIpField.forceActiveFocus();
         }
@@ -220,10 +219,11 @@ ApplicationWindow {
         }
         onAccepted: {
             var newIp = newIpField.text;
-            if (Utils.isValidIP(newIp))
+            if (Utils.isValidIP(newIp)) {
                 listView.model.append({
                 "ip": newIp
-            });
+                });
+            }
 
             newIpField.text = "";
         }

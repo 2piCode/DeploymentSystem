@@ -6,7 +6,7 @@ import QtQuick.Layouts 1.3
 ToolButton {
     id: customToolButton
 
-    property int buttonSize: parent.buttonSize ? parent.buttonSize : 48
+    property int buttonSize: parent.buttonSize ? parent.buttonSize : Screen.width * 0.025
     property string iconSource: ""
     signal buttonClicked()
 

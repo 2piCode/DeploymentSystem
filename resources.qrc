@@ -12,5 +12,6 @@
         <file>images/save.png</file>
         <file>images/settings.png</file>
         <file>images/upload.png</file>
+        <file>images/openDir.png</file>
     </qresource>
 </RCC>

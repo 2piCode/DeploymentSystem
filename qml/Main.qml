@@ -128,10 +128,10 @@ ApplicationWindow {
             id: listView
             property int selectedIndex: -1
             Layout.fillWidth: true
-            // Layout.fillHeight: true
             Layout.preferredHeight: contentHeight
             focus: true
-            highlightMoveDuration: 100
+            clip: true
+            highlightFollowsCurrentItem: true
             highlightResizeVelocity: Infinity
 
             Keys.onPressed: function(event) {
@@ -142,11 +142,15 @@ ApplicationWindow {
                 }
             }
 
-            highlight: Rectangle {
-                color: "lightsteelblue"
-                radius: 5
-                Layout.fillWidth: true
+            highlight: Item {
+                Rectangle {
+                    color: "lightsteelblue"
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 50
+                }
             }
+                
 
             model: ListModel {
                 id: listModel
@@ -185,8 +189,8 @@ ApplicationWindow {
             hoverEnabled: false
 
             Layout.alignment: Qt.AlignLeft
-            Layout.preferredWidth: parent.width * 0.1
-            Layout.preferredHeight: mainWindow.height * 0.05
+            Layout.preferredWidth: Screen.width * 0.035
+            Layout.preferredHeight: Screen.height * 0.035
             icon.source: "qrc:/images/images/plus.png"
 
             background: Rectangle {

@@ -24,7 +24,7 @@ ColumnLayout {
         ipFieldEditor.visible = true;
         ipFieldEditor.forceActiveFocus();
     }
-
+    spacing: 0
     width: parent.width
 
     Item {
@@ -91,27 +91,75 @@ ColumnLayout {
         opacity: 0
 
         Layout.fillWidth: true
-        color: "lightgray"
+        Layout.leftMargin: Screen.width * 0.025
+        Layout.topMargin: 1
 
+        color: "transparent"
         ColumnLayout {
             id: detailAreaLayout
+            spacing: 5
+            anchors.margins: 10
+            width: station.width
+
 
             ConnectionSettingsUI {
-                isActive: station.isActive
-                // You can bind other properties or handle signals as needed
+                isActive: false
             }
-            
 
-            Text {
-                text: "Selected IP: " + ip
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 45
+                color: "transparent"
+                border.color: "lightgray"
+                border.width: 1
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 10
+
+                    Label {
+                        text: "Роль:"
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    ComboBox {
+                        Layout.minimumWidth: 200
+                        model: ["АРМ инженера", "АРМ оператора", "Сервер", "Экспертный режим"]
+                        anchors.margins: 10
+                    }
+                }
             }
-            Text {
-                text: "Selected IP: " + ip
-            }
-            Text {
-                text: "Selected IP: " + ip
+
+            GroupBox {
+                title: "Дополнительные задачи"
+                Layout.fillWidth: true
+                padding: 0
+
+                ColumnLayout {
+                    spacing: 15
+                    Layout.fillWidth: true
+
+                    CheckBox {
+                        text: "Первая опция"
+                        checked: true
+                        Layout.fillWidth: true
+                        anchors.margins: 10
+                    }
+                    CheckBox {
+                        text: "Вторая опция"
+                        checked: true
+                        Layout.fillWidth: true
+                        anchors.margins: 10
+                    }
+                    CheckBox {
+                        text: "Третья опция"
+                        checked: true
+                        Layout.fillWidth: true
+                        anchors.margins: 10
+                    }
+                }
             }
         }
+
     }
     states: [
         State {

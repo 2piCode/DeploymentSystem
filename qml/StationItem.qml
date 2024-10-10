@@ -9,7 +9,8 @@ ColumnLayout {
     property bool isActive: false
     property int defaultSize: 50
     property int expandedSize: detailAreaLayout.implicitHeight
-    property int expandedMarkerSize: 24
+    property int expandedMarkerSize: 16
+    property int fontSize: 12
     property string ip: "127.0.0.1"
 
     signal changedActivity(bool isActive)
@@ -45,7 +46,7 @@ ColumnLayout {
                 text: ip
                 anchors.verticalCenter: parent.verticalCenter
                 visible: false
-                font.pointSize: 16
+                font.pointSize: fontSize + 2
                 onEditingFinished: {
                     if (Utils.isValidIP(ipFieldEditor.text))
                         ip = ipFieldEditor.text;
@@ -60,14 +61,14 @@ ColumnLayout {
 
                 text: ip
                 anchors.verticalCenter: parent.verticalCenter
-                font.pointSize: 16
+                font.pointSize: fontSize + 2
             }
 
             Image {
-                source: isActive ? "qrc:/images/images/minus.png" : "qrc:/images/images/plus.png"
+                source: isActive ? "qrc:/images/images/collapse.png" : "qrc:/images/images/expand.png"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: ipFieldEditor.visible ? ipFieldEditor.right : ipField.right
-                anchors.leftMargin: 16
+                anchors.leftMargin: 10
                 width: expandedMarkerSize
                 height: expandedMarkerSize
             }
@@ -97,7 +98,7 @@ ColumnLayout {
         color: "transparent"
         ColumnLayout {
             id: detailAreaLayout
-            spacing: 5
+            spacing: 15
             anchors.margins: 10
             width: station.width
 
@@ -108,53 +109,65 @@ ColumnLayout {
 
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 45
+                Layout.preferredHeight: roleSelectionLayout.implicitHeight
                 color: "transparent"
-                border.color: "lightgray"
-                border.width: 1
 
                 ColumnLayout {
+                    id: roleSelectionLayout
                     Layout.fillWidth: true
                     spacing: 10
 
                     Label {
                         text: "Роль:"
-                        Layout.alignment: Qt.AlignVCenter
+                        font.pointSize: fontSize + 2
                     }
                     ComboBox {
-                        Layout.minimumWidth: 200
+                        Layout.minimumWidth: Screen.width * 0.2
+                        font.pointSize: fontSize
                         model: ["АРМ инженера", "АРМ оператора", "Сервер", "Экспертный режим"]
-                        anchors.margins: 10
+                        delegate: ItemDelegate {
+                            text: modelData
+                            font.pointSize: fontSize
+                            Layout.fillWidth: true
+
+                            padding: 5
+                        }
                     }
                 }
             }
 
-            GroupBox {
-                title: "Дополнительные задачи"
+            Rectangle {
                 Layout.fillWidth: true
-                padding: 0
+                Layout.preferredHeight: additionalOptionsLayout.implicitHeight
+                color: "transparent"
 
                 ColumnLayout {
-                    spacing: 15
+                    id: additionalOptionsLayout
+                    spacing: fontSize
                     Layout.fillWidth: true
+
+                    Label {
+                        text: "Дополнительные опции"
+                        font.pointSize: fontSize + 2
+                    }
 
                     CheckBox {
                         text: "Первая опция"
+                        font.pointSize: fontSize
                         checked: true
                         Layout.fillWidth: true
-                        anchors.margins: 10
                     }
                     CheckBox {
                         text: "Вторая опция"
+                        font.pointSize: fontSize
                         checked: true
                         Layout.fillWidth: true
-                        anchors.margins: 10
                     }
                     CheckBox {
                         text: "Третья опция"
+                        font.pointSize: fontSize
                         checked: true
                         Layout.fillWidth: true
-                        anchors.margins: 10
                     }
                 }
             }

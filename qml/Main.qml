@@ -28,8 +28,8 @@ ApplicationWindow {
     header: ToolBar {
         id: mainToolBar
         RowLayout {
-            Layout.alignment: Qt.AlignLeft
             spacing: 10
+            width: parent.width
 
             CustomToolBarButton {
                 id: saveBtn
@@ -80,7 +80,7 @@ ApplicationWindow {
             }
 
             Item {
-                width: 30  // Создание пробела как в ТЗ
+                Layout.preferredWidth: Screen.width * 0.02
             }
 
             CustomToolBarButton {
@@ -112,6 +112,26 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/go.png"
                 onButtonClicked: {
                     console.log("Go button clicked");
+                }
+            }
+            
+            Item {
+                Layout.fillWidth: true
+            }
+
+            CustomToolBarButton {
+                id: addBtn
+                iconSource: "qrc:/images/images/plus.png"
+                onButtonClicked: {
+                    ipDialog.open();
+                }
+            }
+
+            CustomToolBarButton {
+                id: deleteBtn
+                iconSource: "qrc:/images/images/delete.png"
+                onButtonClicked: {
+                    console.log("Delete button clicked");
                 }
             }
         }
@@ -181,28 +201,6 @@ ApplicationWindow {
 
             Component.onCompleted: {
                 console.log("test msg");
-            }
-        }
-
-        Button {
-            id: addIpBtn
-            hoverEnabled: false
-
-            Layout.alignment: Qt.AlignLeft
-            Layout.preferredWidth: Screen.width * 0.035
-            Layout.preferredHeight: Screen.height * 0.035
-            icon.source: "qrc:/images/images/plus.png"
-
-            background: Rectangle {
-                anchors.fill: parent
-                color: "transparent"
-                border.color: addIpBtn.pressed ? "gray" : "black"
-                border.width: 1
-                radius: 10    
-            }
-
-            onClicked: {
-                ipDialog.open();
             }
         }
     }

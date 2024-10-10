@@ -6,12 +6,14 @@
         <file>images/edit.png</file>
         <file>images/go.png</file>
         <file>images/load.png</file>
-        <file>images/minus.png</file>
         <file>images/next.png</file>
         <file>images/plus.png</file>
         <file>images/save.png</file>
         <file>images/settings.png</file>
         <file>images/upload.png</file>
+        <file>images/delete.png</file>
+        <file>images/collapse.png</file>
+        <file>images/expand.png</file>
         <file>images/openDir.png</file>
     </qresource>
 </RCC>

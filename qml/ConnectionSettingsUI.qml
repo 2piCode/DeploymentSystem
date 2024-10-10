@@ -10,7 +10,7 @@ ColumnLayout {
     property bool isActive: false
     property int defaultSize: 50
     property int expandedSize: detailAreaLayout.implicitHeight
-    property int expandedMarkerSize: 24
+    property int expandedMarkerSize: 16
     readonly property int maxLabelWidth: Screen.width * 0.05
     readonly property int inputFieldWidth: Screen.width * 0.1
     property int fontSize: 12
@@ -60,10 +60,10 @@ ColumnLayout {
             }
 
             Image {
-                source: isActive ? "qrc:/images/images/minus.png" : "qrc:/images/images/plus.png"
+                source: isActive ? "qrc:/images/images/collapse.png" : "qrc:/images/images/expand.png"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: settingsTitle.right
-                anchors.leftMargin: 16
+                anchors.leftMargin: 12
                 width: expandedMarkerSize
                 height: expandedMarkerSize
             }
@@ -71,8 +71,6 @@ ColumnLayout {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    ipFieldEditor.visible = false;
-                    ipField.visible = true;
                     changeActivity();
                 }
             }
@@ -99,8 +97,6 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.preferredHeight: loginField.height
                 color: "transparent"
-                border.color: "lightgray"
-                border.width: 1
 
                 RowLayout {
                     Layout.fillWidth: true
@@ -122,8 +118,6 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.preferredHeight: passwordField.height
                 color: "transparent"
-                border.color: "lightgray"
-                border.width: 1
 
                 RowLayout {
                     Layout.fillWidth: true
@@ -160,7 +154,7 @@ ColumnLayout {
                     RowLayout {
                         visible: loadFromFile.checked
                         Layout.fillWidth: true
-                        spacing: 10
+                        spacing: 2
                         TextField {
                             id: filepathField
                             Layout.preferredWidth: inputFieldWidth * 2
@@ -169,6 +163,8 @@ ColumnLayout {
                         }
                         Button {
                             icon.source: "qrc:/images/images/openDir.png"
+                            flat: true
+                            Layout.preferredHeight: filepathField.height
                             onClicked: {
                                 fileDialog.open()
                             }

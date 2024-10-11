@@ -36,7 +36,9 @@ set (SOURCES src/main.cpp
 set (SOURCE_QML qml/Main.qml
                 qml/StationItem.qml
                 qml/ConnectionSettingsUI.qml
-                qml/CustomToolBarButton.qml)
+                qml/CustomToolBarButton.qml
+                qml/FileSelection.qml
+                qml/SettingsDialog.qml)
 
 set (IMAGES images/back.png 
             images/connection.png

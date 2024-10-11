@@ -1,8 +1,6 @@
-import "../utils.js" as Utils
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtQuick.Dialogs
 
 ColumnLayout {
     id: station
@@ -12,7 +10,7 @@ ColumnLayout {
     property int expandedSize: detailAreaLayout.implicitHeight
     property int expandedMarkerSize: 16
     readonly property int maxLabelWidth: Screen.width * 0.05
-    readonly property int inputFieldWidth: Screen.width * 0.1
+    readonly property int loginWidth: Screen.width * 0.1
     property int fontSize: 12
 
     signal changedActivity(bool isActive)
@@ -26,18 +24,6 @@ ColumnLayout {
     spacing: 0
     width: parent.width
 
-    FileDialog {
-        id: fileDialog
-        title: "Select a Configuration File"
-        nameFilters: ["Config files (*.pub)", "All files (*)"]
-
-        onAccepted: {
-            filepathField.text = fileDialog.currentFile
-        }
-        onRejected: {
-            console.log("File selection was canceled")
-        }
-    }
 
     Item {
         id: header
@@ -108,7 +94,7 @@ ColumnLayout {
                     }
                     TextField {
                         id: loginField
-                        Layout.preferredWidth: inputFieldWidth
+                        Layout.preferredWidth: loginWidth
                         font.pointSize: fontSize
                         placeholderText: "login"
                     }
@@ -132,7 +118,7 @@ ColumnLayout {
 
                     TextField {
                         id: passwordField
-                        Layout.preferredWidth: inputFieldWidth
+                        Layout.preferredWidth: loginWidth
                         font.pointSize: fontSize
                         placeholderText: "password"
                         echoMode: TextInput.Password
@@ -151,24 +137,11 @@ ColumnLayout {
                         Layout.fillWidth: true
                         anchors.margins: 10
                     }
-                    RowLayout {
+                    FileSelection {
                         visible: loadFromFile.checked
-                        Layout.fillWidth: true
-                        spacing: 2
-                        TextField {
-                            id: filepathField
-                            Layout.preferredWidth: inputFieldWidth * 2
-                            font.pointSize: fontSize
-                            placeholderText: "path_to_your_config_file"
-                        }
-                        Button {
-                            icon.source: "qrc:/images/images/openDir.png"
-                            flat: true
-                            Layout.preferredHeight: filepathField.height
-                            onClicked: {
-                                fileDialog.open()
-                            }
-                        }
+                        inputFieldWidth: loginWidth * 2
+                        additionalNameFilters: "файл конфигурации (*.pub)"
+                        fileSelectionTitle: "Путь до файла конфигурации"
                     }
             }
         }

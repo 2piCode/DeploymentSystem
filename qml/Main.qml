@@ -19,9 +19,13 @@ ApplicationWindow {
 
     }
 
+    SettingsDialog {
+        id: settingsDialog
+    }
+
     menuBar: MenuBar {
         Menu {
-            title: qsTr("File")
+            title: qsTr("Файл")
             MenuItem {
                 text: qsTr("&Open")
                 onTriggered: console.log("Open action triggered")
@@ -29,6 +33,21 @@ ApplicationWindow {
             MenuItem {
                 text: qsTr("Exit")
                 onTriggered: Qt.quit()
+            }
+        }
+        Menu {
+            title: qsTr("Проект")
+            MenuItem {
+                text: qsTr("Импорт")
+                onTriggered: console.log("Open action triggered")
+            }
+            MenuItem {
+                text: qsTr("Экспорт")
+                onTriggered: Qt.quit()
+            }
+            MenuItem {
+                text: qsTr("Настройки")
+                onTriggered: settingsDialog.open();
             }
         }
     }
@@ -71,22 +90,6 @@ ApplicationWindow {
                 }
             }
 
-            CustomToolBarButton {
-                id: loadBtn
-                iconSource: "qrc:/images/images/load.png"
-                onButtonClicked: {
-                    console.log("Load button clicked");
-                }
-            }
-
-            CustomToolBarButton {
-                id: uploadBtn
-                iconSource: "qrc:/images/images/upload.png"
-                onButtonClicked: {
-                    console.log("Upload button clicked");
-                }
-            }
-
             Item {
                 Layout.preferredWidth: Screen.width * 0.02
             }
@@ -96,14 +99,6 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/edit.png"
                 onButtonClicked: {
                     console.log("Edit button clicked");
-                }
-            }
-
-            CustomToolBarButton {
-                id: settingsBtn
-                iconSource: "qrc:/images/images/settings.png"
-                onButtonClicked: {
-                    console.log("Settings button clicked");
                 }
             }
 

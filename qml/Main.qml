@@ -11,6 +11,14 @@ ApplicationWindow {
     width: 800
     height: 800
 
+    function deleteStation() {
+
+        listModel.remove(listView.currentItem);
+        listView.selectedIndex = -1;
+        listView.currentIndex = -1;
+
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("File")
@@ -131,7 +139,7 @@ ApplicationWindow {
                 id: deleteBtn
                 iconSource: "qrc:/images/images/delete.png"
                 onButtonClicked: {
-                    console.log("Delete button clicked");
+                    deleteStation();    
                 }
             }
         }
@@ -166,6 +174,9 @@ ApplicationWindow {
                 else if (listView.currentIndex !== -1 && event.key === Qt.Key_Space){
                     currentItem.editIp();
                 }
+                else if (listView.currentIndex !== -1 && event.key === Qt.Key_Delete){
+                    deleteStation();
+                }
             }
 
             highlight: Item {
@@ -193,7 +204,7 @@ ApplicationWindow {
                     if (listView.selectedIndex !== index) {
                         listView.selectedIndex = index;
                         listView.currentIndex = index;
-                        currentItem.forceActiveFocus();
+                        listView.currentItem.forceActiveFocus();
                     }
                 }
             }
@@ -203,10 +214,6 @@ ApplicationWindow {
                     duration: 300
                     easing.type: Easing.InOutQuad
                 }
-            }
-
-            Component.onCompleted: {
-                console.log("test msg");
             }
         }
     }

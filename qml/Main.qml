@@ -141,6 +141,7 @@ ApplicationWindow {
         id: stations
         spacing: 10
         width: parent.width
+        height: parent.height
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -148,11 +149,16 @@ ApplicationWindow {
             id: listView
             property int selectedIndex: -1
             Layout.fillWidth: true
-            Layout.preferredHeight: contentHeight
+            Layout.fillHeight: true
             focus: true
             clip: true
             highlightFollowsCurrentItem: true
             highlightResizeVelocity: Infinity
+            highlightMoveDuration: 300
+
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AsNeeded
+            }
 
             Keys.onPressed: function(event) {
                 if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier)

@@ -53,6 +53,7 @@ ColumnLayout {
 
                     ipFieldEditor.visible = false;
                     ipField.visible = true;
+                    listView.currentItem.forceActiveFocus()
                 }
             }
 

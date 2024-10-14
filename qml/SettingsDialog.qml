@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.3
 Dialog {
     
     anchors.centerIn: parent
-    title: "Settings"
+    title: qsTr("Настройки")
     font.pointSize: 12
     modal: true
     width: parent.width * 0.5
@@ -16,25 +16,25 @@ Dialog {
         spacing: 15
 
         FileSelection{
-            fileSelectionTitle: "Путь до устанощика Windows"
+            fileSelectionTitle: qsTr("Путь до устанощика Windows")
             additionalNameFilters: ".exe files (*.exe)"
         }
         FileSelection{
-            fileSelectionTitle: "Путь до устанощика AstraLinux"
+            fileSelectionTitle: qsTr("Путь до устанощика AstraLinux")
             additionalNameFilters: ".AppImage files (*.AppImage)"
         }
         FileSelection{
-            fileSelectionTitle: "Путь до устанощика RedOS 7"
+            fileSelectionTitle: qsTr("Путь до устанощика RedOS 7")
             additionalNameFilters: ".AppImage files (*.AppImage)"
 
         }
         FileSelection{
-            fileSelectionTitle: "Путь до устанощика RedOS 8"
+            fileSelectionTitle: qsTr("Путь до устанощика RedOS 8")
             additionalNameFilters: ".AppImage files (*.AppImage)"
         }
 
         Text {
-            text: "Язык"
+            text: qsTr("Язык")
             font.pointSize: 12
             font.bold: true
         }
@@ -42,8 +42,11 @@ Dialog {
         ComboBox {
             id: languageComboBox
             model: ["Русский", "English"]
-            Layout.preferredWidth: parent.width * 0.5
+            // Layout.preferredWidth: parent.width * 0.5
             currentIndex: 0
+            onCurrentIndexChanged: {
+                languageController.switchLanguage();
+            }
         }
     }
 

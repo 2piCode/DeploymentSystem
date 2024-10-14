@@ -34,7 +34,7 @@ ColumnLayout{
             id: filepathField
             Layout.preferredWidth: inputFieldWidth
             font.pointSize: fontSize
-            placeholderText: "Path to file"
+            placeholderText: qsTr("Path to file")
         }
         Button {
             icon.source: "qrc:/images/images/openDir.png"

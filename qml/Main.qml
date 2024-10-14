@@ -63,6 +63,8 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/save.png"
                 onButtonClicked: {
                     console.log("Save button clicked");
+                    console.log(mainWindow.width, mainWindow.height);
+                    console.log(Screen.width, Screen.height);
                 }
             }
 
@@ -99,6 +101,7 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/edit.png"
                 onButtonClicked: {
                     console.log("Edit button clicked");
+                    languageController.switchLanguage()
                 }
             }
 
@@ -216,7 +219,7 @@ ApplicationWindow {
     Dialog {
         id: ipDialog
 
-        title: "Add New IP Address"
+        title: qsTr("Add New IP Address")
         anchors.centerIn: parent
         modal: true
         standardButtons: Dialog.Ok | Dialog.Cancel
@@ -242,7 +245,7 @@ ApplicationWindow {
             padding: 10
 
             Text {
-                text: "Enter new IP Address:"
+                text: qsTr("Enter new IP Address:")
             }
 
             TextField {

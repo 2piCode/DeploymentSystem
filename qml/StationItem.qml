@@ -119,7 +119,7 @@ ColumnLayout {
                     spacing: 10
 
                     Label {
-                        text: "Роль:"
+                        text: qsTr("Роль:")
                         font.pointSize: fontSize + 2
                     }
                     ComboBox {
@@ -148,7 +148,7 @@ ColumnLayout {
                     Layout.fillWidth: true
 
                     Label {
-                        text: "Дополнительные опции"
+                        text: qsTr("Дополнительные опции")
                         font.pointSize: fontSize + 2
                     }
 

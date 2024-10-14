@@ -40,7 +40,7 @@ ColumnLayout {
             Text {
                 id: settingsTitle
 
-                text: "Настройки подключения"
+                text: qsTr("Настройки подключения")
                 anchors.verticalCenter: parent.verticalCenter
                 font.pointSize: fontSize + 2
             }
@@ -88,15 +88,16 @@ ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 10
                     Label {
-                        Layout.preferredWidth: maxLabelWidth
+                        id: loginLabel
+                        Layout.preferredWidth: Math.max(loginLabel.implicitWidth, passwordLabel.implicitWidth)
                         font.pointSize: fontSize
-                        text: "Логин:"
+                        text: qsTr("Имя пользователя:")
                     }
                     TextField {
                         id: loginField
                         Layout.preferredWidth: loginWidth
                         font.pointSize: fontSize
-                        placeholderText: "login"
+                        placeholderText: qsTr("имя пользователя")
                     }
                 }
             }
@@ -111,16 +112,17 @@ ColumnLayout {
 
                     
                     Label {
-                        Layout.preferredWidth: maxLabelWidth
+                        id: passwordLabel
+                        Layout.preferredWidth: Math.max(loginLabel.implicitWidth, passwordLabel.implicitWidth)
                         font.pointSize: fontSize
-                        text: "Пароль:"
+                        text: qsTr("Пароль:")
                     }
 
                     TextField {
                         id: passwordField
                         Layout.preferredWidth: loginWidth
                         font.pointSize: fontSize
-                        placeholderText: "password"
+                        placeholderText: qsTr("пароль")
                         echoMode: TextInput.Password
                     }
                 }
@@ -132,7 +134,7 @@ ColumnLayout {
                     CheckBox {
                         id: loadFromFile
                         font.pointSize: fontSize
-                        text: "Конфигурация из файла"
+                        text: qsTr("Конфигурация из файла")
                         checked: false
                         Layout.fillWidth: true
                         anchors.margins: 10
@@ -141,7 +143,7 @@ ColumnLayout {
                         visible: loadFromFile.checked
                         inputFieldWidth: loginWidth * 2
                         additionalNameFilters: "файл конфигурации (*.pub)"
-                        fileSelectionTitle: "Путь до файла конфигурации"
+                        fileSelectionTitle: qsTr("Путь до файла конфигурации")
                     }
             }
         }

@@ -4,6 +4,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 
+
 ApplicationWindow {
     id: mainWindow
     visible: true
@@ -73,6 +74,7 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/duplicate.png"
                 onButtonClicked: {
                     console.log("Duplicate button clicked");
+                    console.log(Constants.fontSize);
                 }
             }
 
@@ -118,6 +120,7 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/go.png"
                 onButtonClicked: {
                     console.log("Go button clicked");
+                    console.log(Const.stationItemHeigth);
                 }
             }
             
@@ -182,7 +185,7 @@ ApplicationWindow {
                     color: "lightsteelblue"
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: 50
+                    height: Const.stationItemHeigth
                 }
             }
                 

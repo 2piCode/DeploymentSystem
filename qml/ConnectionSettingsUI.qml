@@ -3,15 +3,15 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 
 ColumnLayout {
-    id: station
+    id: connectionSettingsLayout
 
     property bool isActive: false
-    property int defaultSize: 50
+    property int defaultSize: Const.stationItemHeigth
     property int expandedSize: detailAreaLayout.implicitHeight
     property int expandedMarkerSize: 16
     readonly property int maxLabelWidth: Screen.width * 0.05
     readonly property int loginWidth: Screen.width * 0.1
-    property int fontSize: 12
+    property int fontSize: Const.fontSize
 
     signal changedActivity(bool isActive)
 
@@ -29,7 +29,7 @@ ColumnLayout {
         id: header
 
         Layout.fillWidth: true
-        Layout.preferredHeight: station.defaultSize
+        Layout.preferredHeight: connectionSettingsLayout.defaultSize
 
         Rectangle {
             id: background
@@ -70,14 +70,14 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.leftMargin: Screen.width * 0.025
         Layout.topMargin: 0
-        
+
 
         color: "transparent"
         ColumnLayout {
             id: detailAreaLayout
             spacing: 5
             anchors.margins: 10
-            width: station.width
+            width: connectionSettingsLayout.width
 
             Rectangle {
                 Layout.fillWidth: true
@@ -110,7 +110,7 @@ ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 10
 
-                    
+
                     Label {
                         id: passwordLabel
                         Layout.preferredWidth: Math.max(loginLabel.implicitWidth, passwordLabel.implicitWidth)
@@ -128,23 +128,81 @@ ColumnLayout {
                 }
             }
             ColumnLayout {
-                    spacing: 15
-                    Layout.fillWidth: true
+                spacing: 15
+                Layout.fillWidth: true
 
-                    CheckBox {
-                        id: loadFromFile
-                        font.pointSize: fontSize
-                        text: qsTr("Конфигурация из файла")
-                        checked: false
-                        Layout.fillWidth: true
-                        anchors.margins: 10
-                    }
-                    FileSelection {
-                        visible: loadFromFile.checked
-                        inputFieldWidth: loginWidth * 2
-                        additionalNameFilters: "файл конфигурации (*.pub)"
-                        fileSelectionTitle: qsTr("Путь до файла конфигурации")
-                    }
+                CheckBox {
+                    id: loadFromFile
+                    font.pointSize: fontSize
+                    text: qsTr("Конфигурация из файла")
+                    checked: false
+                    Layout.fillWidth: true
+                }
+                FileSelection {
+                    id: fileSelection
+                    inputFieldWidth: loginWidth * 2
+                    additionalNameFilters: "файл конфигурации (*.pub)"
+                    fileSelectionTitle: qsTr("Путь до файла конфигурации")
+                    
+                    opacity: 0
+                    Layout.preferredHeight: 0
+
+                    states: [
+                        State {
+                            name: "visible"
+                            when: loadFromFile.checked
+                            PropertyChanges {
+                                target: fileSelection
+                                opacity: 1
+                                Layout.preferredHeight: implicitHeight
+                            }
+                        },
+                        State {
+                            name: "hidden"
+                            when: !loadFromFile.checked
+                            PropertyChanges {
+                                target: fileSelection
+                                opacity: 0
+                                Layout.preferredHeight: 0
+                            }
+                        }
+                    ]
+
+                    transitions: [
+                        Transition {
+                            from: "hidden"
+                            to: "visible"
+                            SequentialAnimation {
+                                NumberAnimation {
+                                    property: "Layout.preferredHeight"
+                                    duration: 300
+                                    easing.type: Easing.InOutQuad
+                                }
+                                NumberAnimation {
+                                    property: "opacity"
+                                    duration: 0
+                                    easing.type: Easing.InOutQuad
+                                }
+                            }
+                        },
+                        Transition {
+                            from: "visible"
+                            to: "hidden"
+                            SequentialAnimation {
+                                NumberAnimation {
+                                    property: "opacity"
+                                    duration: 0
+                                    easing.type: Easing.InOutQuad
+                                }
+                                NumberAnimation {
+                                    property: "Layout.preferredHeight"
+                                    duration: 300
+                                    easing.type: Easing.InOutQuad
+                                }
+                            }
+                        }
+                    ]
+                }
             }
         }
 
@@ -156,6 +214,7 @@ ColumnLayout {
             PropertyChanges {
                 target: detailArea
                 Layout.preferredHeight: 0
+                opacity: 0
             }
         },
         State {
@@ -163,7 +222,8 @@ ColumnLayout {
             when: isActive
             PropertyChanges {
                 target: detailArea
-                Layout.preferredHeight: station.expandedSize
+                Layout.preferredHeight: connectionSettingsLayout.expandedSize
+                opacity: 1
             }
         }
     ]

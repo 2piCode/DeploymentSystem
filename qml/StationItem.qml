@@ -7,10 +7,10 @@ ColumnLayout {
     id: station
 
     property bool isActive: false
-    property int defaultSize: 50
+    property int fontSize: Const.fontSize
+    property int defaultSize: Const.stationItemHeigth
     property int expandedSize: detailAreaLayout.implicitHeight
     property int expandedMarkerSize: 16
-    property int fontSize: 12
     property string ip: "127.0.0.1"
 
     signal changedActivity(bool isActive)

@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QtQml>
 #include <iostream>
+#include "const.h"
 
 class LanguageController : public QObject {
     Q_OBJECT
@@ -58,6 +59,9 @@ int main(int argc, char* argv[]) {
     LanguageController langController(app, engine);
     engine.rootContext()->setContextProperty("languageController",
                                              &langController);
+
+    Constants constants;
+    engine.rootContext()->setContextProperty("Const", &constants);
 
     const QUrl url(QStringLiteral("qrc:/DeldeliveryApp/qml/Main.qml"));
     QObject::connect(

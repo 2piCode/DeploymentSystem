@@ -28,7 +28,8 @@ find_package(Qt6 6.7.2 REQUIRED COMPONENTS Quick LinguistTools)
 
 set(HEADERS include/libssh2_manager.h
             include/ssh_connection.h
-            include/station.h)
+            include/station.h
+            include/const.h)
 
 set (SOURCES src/main.cpp
              src/ssh_connection.cpp

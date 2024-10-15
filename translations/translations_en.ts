@@ -11,7 +11,7 @@
     <message>
         <location filename="../qml/ConnectionSettingsUI.qml" line="94"/>
         <source>Имя пользователя:</source>
-        <translation type="unfinished">Login</translation>
+        <translation type="unfinished">Login:</translation>
     </message>
     <message>
         <location filename="../qml/ConnectionSettingsUI.qml" line="100"/>
@@ -34,7 +34,7 @@
         <translation type="unfinished">Load from file</translation>
     </message>
     <message>
-        <location filename="../qml/ConnectionSettingsUI.qml" line="146"/>
+        <location filename="../qml/ConnectionSettingsUI.qml" line="145"/>
         <source>Путь до файла конфигурации</source>
         <translation type="unfinished">Path to config file</translation>
     </message>
@@ -50,52 +50,52 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../qml/Main.qml" line="10"/>
+        <location filename="../qml/Main.qml" line="11"/>
         <source>Конфигуратор станций</source>
         <translation>Station Configurator</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="28"/>
+        <location filename="../qml/Main.qml" line="29"/>
         <source>Файл</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="30"/>
+        <location filename="../qml/Main.qml" line="31"/>
         <source>&amp;Open</source>
         <translation>&amp;Open</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="34"/>
+        <location filename="../qml/Main.qml" line="35"/>
         <source>Exit</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="39"/>
+        <location filename="../qml/Main.qml" line="40"/>
         <source>Проект</source>
         <translation>Project</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="41"/>
+        <location filename="../qml/Main.qml" line="42"/>
         <source>Импорт</source>
         <translation>Import</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="45"/>
+        <location filename="../qml/Main.qml" line="46"/>
         <source>Экспорт</source>
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="49"/>
+        <location filename="../qml/Main.qml" line="50"/>
         <source>Настройки</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="222"/>
+        <location filename="../qml/Main.qml" line="225"/>
         <source>Add New IP Address</source>
         <translation type="unfinished">Add New IP Address</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="248"/>
+        <location filename="../qml/Main.qml" line="251"/>
         <source>Enter new IP Address:</source>
         <translation type="unfinished">Enter new IP Address:</translation>
     </message>

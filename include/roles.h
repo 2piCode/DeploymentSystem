@@ -5,6 +5,10 @@
 #include <stdexcept>
 #include <string>
 
+enum class AppLanguage { ru = 0, en = 1 };
+
+static AppLanguage Language = AppLanguage::ru;
+
 enum class Role {
     arm_engineer = 0,
     arm_operator = 1,
@@ -16,30 +20,32 @@ enum class Role {
 
 struct RoleMapping {
     Role role;
-    const char* name;
+    const char* name_ru;
+    const char* name_en;
 };
 
 constexpr std::array<RoleMapping, 6> role_mapping = {
-    {{Role::arm_engineer, "АРМ инженер"},
-     {Role::arm_operator, "АРМ оператор"},
-     {Role::arm_kip, "АРМ КИП инженер"},
-     {Role::input_output_server, "Сервер ввода вывода"},
-     {Role::history_server, "Сервер истории"},
-     {Role::integration_server, "Сервер интеграции"}}};
+    {{Role::arm_engineer, "АРМ инженера", "Engineer workstation"},
+     {Role::arm_operator, "АРМ оператора", "Operator workstation"},
+     {Role::arm_kip, "АРМ КИП инженера", "C&I Engineer Workstation"},
+     {Role::input_output_server, "Сервер ввода/вывода", "Input/Output server"},
+     {Role::history_server, "Сервер истории", "History server"},
+     {Role::integration_server, "Сервер интеграции", "Integration server"}}};
 
 namespace role_converter {
 inline std::string toString(Role role) {
     for (const auto& mapping : role_mapping) {
         if (mapping.role == role) {
-            return mapping.name;
+            return Language == AppLanguage::ru ? mapping.name_ru
+                                               : mapping.name_en;
         }
     }
     throw std::runtime_error("Unknown role");
 }
 
-inline Role fromString(const std::string& roleStr) {
+inline Role fromString(const std::string& role_str) {
     for (const auto& mapping : role_mapping) {
-        if (roleStr == mapping.name) {
+        if (role_str == mapping.name_en || role_str == mapping.name_ru) {
             return mapping.role;
         }
     }

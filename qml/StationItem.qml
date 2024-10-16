@@ -26,7 +26,7 @@ ColumnLayout {
         ipFieldEditor.forceActiveFocus();
     }
     spacing: 0
-    width: parent.width
+    width: parent ? parent.width : 0
 
     Item {
         id: header

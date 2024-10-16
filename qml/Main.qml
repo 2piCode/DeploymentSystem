@@ -14,7 +14,7 @@ ApplicationWindow {
 
     function deleteStation() {
 
-        listModel.remove(listView.currentItem);
+        listModel.remove(listView.currentIndex);
         listView.selectedIndex = -1;
         listView.currentIndex = -1;
 
@@ -193,8 +193,8 @@ ApplicationWindow {
             model: ListModel {
                 id: listModel
                 ListElement { ip: "127.0.0.1" }
-                ListElement { ip: "127.0.0.1" }
-                ListElement { ip: "127.0.0.1" }
+                ListElement { ip: "127.0.0.2" }
+                ListElement { ip: "127.0.0.3" }
             }
 
             delegate: StationItem {

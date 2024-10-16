@@ -8,7 +8,6 @@ Dialog {
     title: qsTr("Настройки")
     font.pointSize: 12
     modal: true
-    width: parent.width * 0.5
     
     standardButtons: Dialog.Ok | Dialog.Cancel
 

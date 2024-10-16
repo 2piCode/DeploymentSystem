@@ -121,27 +121,27 @@
         <translation type="unfinished">Настройки</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsDialog.qml" line="19"/>
+        <location filename="../qml/SettingsDialog.qml" line="18"/>
         <source>Путь до устанощика Windows</source>
         <translation type="unfinished">Путь до устанощика Windows</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsDialog.qml" line="23"/>
+        <location filename="../qml/SettingsDialog.qml" line="22"/>
         <source>Путь до устанощика AstraLinux</source>
         <translation type="unfinished">Путь до устанощика AstraLinux</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsDialog.qml" line="27"/>
+        <location filename="../qml/SettingsDialog.qml" line="26"/>
         <source>Путь до устанощика RedOS 7</source>
         <translation type="unfinished">Путь до устанощика RedOS 7</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsDialog.qml" line="32"/>
+        <location filename="../qml/SettingsDialog.qml" line="31"/>
         <source>Путь до устанощика RedOS 8</source>
         <translation type="unfinished">Путь до устанощика RedOS 8</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsDialog.qml" line="37"/>
+        <location filename="../qml/SettingsDialog.qml" line="36"/>
         <source>Язык</source>
         <translation type="unfinished">Язык</translation>
     </message>
@@ -155,6 +155,47 @@
     <message>
         <source>Дополнительные опции</source>
         <translation type="obsolete">Дополнительные опции</translation>
+    </message>
+</context>
+<context>
+    <name>StationSettingsUI</name>
+    <message>
+        <location filename="../qml/StationSettingsUI.qml" line="26"/>
+        <source>Имя станции</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/StationSettingsUI.qml" line="32"/>
+        <source>имя станции</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/StationSettingsUI.qml" line="50"/>
+        <source>IP адресс станции:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/StationSettingsUI.qml" line="57"/>
+        <source>ip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/StationSettingsUI.qml" line="66"/>
+        <source>Описание:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/StationSettingsUI.qml" line="75"/>
+        <source>описание станции</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Пароль:</source>
+        <translation type="obsolete">Пароль:</translation>
+    </message>
+    <message>
+        <source>пароль</source>
+        <translation type="obsolete">пароль</translation>
     </message>
 </context>
 </TS>

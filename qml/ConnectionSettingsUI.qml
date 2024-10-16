@@ -10,7 +10,7 @@ ColumnLayout {
     property int expandedSize: detailAreaLayout.implicitHeight
     property int expandedMarkerSize: 16
     readonly property int maxLabelWidth: Screen.width * 0.05
-    readonly property int loginWidth: Screen.width * 0.1
+    property int inputFieldsWidth
     property int fontSize: Const.fontSize
 
     signal changedActivity(bool isActive)
@@ -95,7 +95,7 @@ ColumnLayout {
                     }
                     TextField {
                         id: loginField
-                        Layout.preferredWidth: loginWidth
+                        Layout.preferredWidth: inputFieldsWidth
                         font.pointSize: fontSize
                         placeholderText: qsTr("имя пользователя")
                     }
@@ -120,7 +120,7 @@ ColumnLayout {
 
                     TextField {
                         id: passwordField
-                        Layout.preferredWidth: loginWidth
+                        Layout.preferredWidth: inputFieldsWidth
                         font.pointSize: fontSize
                         placeholderText: qsTr("пароль")
                         echoMode: TextInput.Password
@@ -140,7 +140,7 @@ ColumnLayout {
                 }
                 FileSelection {
                     id: fileSelection
-                    inputFieldWidth: loginWidth * 2
+                    inputFieldWidth: inputFieldsWidth * 2
                     additionalNameFilters: "файл конфигурации (*.pub)"
                     fileSelectionTitle: qsTr("Путь до файла конфигурации")
                     

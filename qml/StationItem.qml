@@ -11,6 +11,7 @@ ColumnLayout {
     property int defaultSize: Const.stationItemHeigth
     property int expandedSize: detailAreaLayout.implicitHeight
     property int expandedMarkerSize: 16
+    property int inputFieldsWidth: Screen.width * 0.1
     property string ip: "127.0.0.1"
 
     signal changedActivity(bool isActive)
@@ -103,9 +104,13 @@ ColumnLayout {
             anchors.margins: 10
             width: station.width
 
+            StationSettingsUI{
+                inputFieldsWidth: station.inputFieldsWidth
+            }
 
             ConnectionSettingsUI {
                 isActive: false
+                inputFieldsWidth: station.inputFieldsWidth
             }
 
             InstallationSettingsUI{}

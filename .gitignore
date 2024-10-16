@@ -56,3 +56,8 @@ compile_commands.json
 build/*
 
 .vscode/*
+.libssh2/*
+
+# Libs
+libs/*
+tmp/*

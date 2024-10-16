@@ -9,14 +9,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-set(CMAKE_PREFIX_PATH C:/msys64/mingw64/qt6-static)
+find_package(Qt6 6.4.2 REQUIRED COMPONENTS Quick LinguistTools)
 
-# set(CMAKE_CXX_FLAGS_INIT-DQT_QML_DEBUG)
-set(CMAKE_CXX_FLAGS_INIT "-DQT_QML_DEBUG")
 
 set(LIBSSH2DIR CACHE STRING "LIBSSH2 static library directory")
-
-set(LIBSSH2DIR C:/Projects/QML/DeploymentSystes/libssh2)
 
 if(NOT LIBSSH2DIR)
     message(FATAL_ERROR "Please, specify LIBSSH2 directory via -DLIBSSH2DIR=<dir>")
@@ -24,20 +20,41 @@ endif()
 
 message(STATUS "LIBSSH2 dir is ${LIBSSH2DIR}, change via -DLIBSSH2DIR=<dir>")
 
-find_package(Qt6 6.7.2 REQUIRED COMPONENTS Quick LinguistTools)
+
+set(LIBPUGIXML CACHE STRING "LIBPUGIXML static library directory")
+
+
+if(NOT LIBPUGIXML)
+    message(FATAL_ERROR "Please, specify LIBPUGIXML directory via -DLIBPUGIXML=<dir>")
+endif()
+
+message(STATUS "LIBPUGIXML dir is ${LIBPUGIXML}, change via -DLIBPUGIXML=<dir>")
 
 set(HEADERS include/libssh2_manager.h
             include/ssh_connection.h
             include/station.h
-            include/const.h)
+            include/const.h
+            include/config.h
+            include/user_settings.h
+            include/roles.h
+            include/systems.h
+            include/config_writer.h
+            include/xml_config_writer.h
+)
 
 set (SOURCES src/main.cpp
              src/ssh_connection.cpp
-             src/station.cpp)
+             src/station.cpp
+             src/config.cpp
+             src/user_settings.cpp
+             src/xml_config_writer.cpp
+)
 
 set (SOURCE_QML qml/Main.qml
                 qml/StationItem.qml
                 qml/ConnectionSettingsUI.qml
+                qml/InstallationSettingsUI.qml
+                qml/StationSettingsUI.qml
                 qml/CustomToolBarButton.qml
                 qml/FileSelection.qml
                 qml/SettingsDialog.qml)
@@ -99,12 +116,19 @@ endforeach()
 add_custom_target(translations ALL DEPENDS ${QM_FILES})
 add_dependencies(translations update_ts)
 
+
+set (PUGIXML_SOURCES
+    ${LIBPUGIXML}/pugixml.hpp
+    ${LIBPUGIXML}/pugiconfig.hpp
+    ${LIBPUGIXML}/pugixml.cpp)
+
 qt_standard_project_setup()
 
 qt_add_executable(deldeliveryApp
     ${SOURCES}
     ${HEADERS}
     ${RESOURCES}
+    ${PUGIXML_SOURCES}
 )
 
 qt_add_qml_module(deldeliveryApp
@@ -114,7 +138,6 @@ qt_add_qml_module(deldeliveryApp
         ${SOURCE_QML}
         utils.js
 )
-
 
 target_link_directories(deldeliveryApp PUBLIC
     "${LIBSSH2DIR}/lib/$<IF:$<CONFIG:Debug>,Debug,Release>"
@@ -127,9 +150,11 @@ target_link_libraries(deldeliveryApp
 
 target_include_directories(deldeliveryApp
     PUBLIC
-    "${LIBSSH2DIR}/include"
-    "{CMAKE_CURRENT_BINARY_DIR}"/images
-    "${CMAKE_SOURCE_DIR}/include"
+    ${LIBSSH2DIR}/include
+    ${LIBPUGIXML}
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/libs
+    ${CMAKE_CURRENT_BINARY_DIR}/images
 
 )
 

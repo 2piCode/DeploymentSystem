@@ -48,6 +48,19 @@
     </message>
 </context>
 <context>
+    <name>InstallationSettingsUI</name>
+    <message>
+        <location filename="../qml/InstallationSettingsUI.qml" line="20"/>
+        <source>Роль:</source>
+        <translation type="unfinished">Setup as:</translation>
+    </message>
+    <message>
+        <location filename="../qml/InstallationSettingsUI.qml" line="48"/>
+        <source>Дополнительные опции</source>
+        <translation type="unfinished">Additional options</translation>
+    </message>
+</context>
+<context>
     <name>Main</name>
     <message>
         <location filename="../qml/Main.qml" line="11"/>
@@ -136,14 +149,12 @@
 <context>
     <name>StationItem</name>
     <message>
-        <location filename="../qml/StationItem.qml" line="122"/>
         <source>Роль:</source>
-        <translation type="unfinished">Setup as:</translation>
+        <translation type="obsolete">Setup as:</translation>
     </message>
     <message>
-        <location filename="../qml/StationItem.qml" line="151"/>
         <source>Дополнительные опции</source>
-        <translation type="unfinished">Additional options</translation>
+        <translation type="obsolete">Additional options</translation>
     </message>
 </context>
 </TS>

@@ -1,64 +1,75 @@
 #ifndef STAITON_H
 #define STAITON_H
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <memory>
 
+#include "roles.h"
 #include "ssh_connection.h"
-
-enum class Role {
-    arm_engineer = 0,
-    arm_operator = 1,
-    arm_kip = 2,
-    input_output_server = 3,
-    history_server = 4,
-    integration_server = 5
-};
 
 struct AdditionalTask {};
 
 class Station {
    public:
-    explicit Station(const ConnectionSettings& settings);
-    explicit Station(ConnectionSettings&& settings);
+    explicit Station(std::string host_name, std::string name);
+    explicit Station(const std::string host_name, const std::string name,
+                     ConnectionSettings&& settings);
 
+    virtual ~Station() = default;
+
+    Station(const Station&) = delete;
+    Station& operator=(const Station&) = delete;
+
+    Station(Station&&) = default;
+    Station& operator=(Station&&) = default;
+
+    bool SetHostName(std::string host_name);
     bool SetName(std::string name);
     bool SetDescription(std::string description);
+    void SetUsername(std::string username);
+    void SetPassword(std::string password);
+    void SetConnectionPort(quint16 port);
+    void SetPath(std::filesystem::path path_to_private_key);
     void SetRole(Role role);
     void AddAdditionalTask(AdditionalTask task);
 
     const std::string& GetName() const { return name_; }
     const std::string& GetDescription() const { return description_; }
-    const ConnectionSettings& GetSettings() const { return settings_; }
+    const std::string& GetHostName() const {
+        return ssh_connection_->GetHostName();
+    }
+    const ConnectionSettings& GetSettings() const {
+        return ssh_connection_->GetSettings();
+    }
     Role GetRole() const { return role_; }
     const std::vector<AdditionalTask>& GetAdditionalTasks() const {
         return additional_tasks_;
     }
 
     bool CheckConnection() const;
-
     void StartSetupProccess();
 
    private:
-    const int MAX_DESCRIPTION_SYMBOLS_COUNT = 100;
+    const int MAX_NAME_SYMBOLS_COUNT = 100;
+    const int MAX_DESCRIPTION_SYMBOLS_COUNT = 256;
 
     std::unique_ptr<SSHConnection> ssh_connection_;
     mutable bool is_connected = false;
 
     std::string name_;
     std::string description_;
-    ConnectionSettings settings_;
     Role role_;
     std::vector<AdditionalTask> additional_tasks_;
 };
 
 class MainStation : public Station {
    public:
-    explicit MainStation(const ConnectionSettings& settings);
-    explicit MainStation(ConnectionSettings&& settings);
+    using Station::Station;
 
-    // void AddChildStation(Station station);
+    std::vector<Station>& GetChildStations() { return child_stations_; }
+    void AddChildStation(Station&& station);
 
     // void StartSetupProccessAllStation();
 

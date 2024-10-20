@@ -1,19 +1,24 @@
 #include "station.h"
 
 #include <algorithm>
+Station::Station(std::string host_name, std::string name)
+    : ssh_connection_(std::make_unique<SSHConnection>(host_name)),
+      name_(name) {}
 
-Station::Station(const ConnectionSettings& settings)
-    : ssh_connection_(std::make_unique<SSHConnection>(settings)),
-      settings_(settings) {}
+Station::Station(std::string host_name, std::string name,
+                 ConnectionSettings&& settings)
+    : ssh_connection_(
+          std::make_unique<SSHConnection>(host_name, std::move(settings))),
+      name_(name) {}
 
-Station::Station(ConnectionSettings&& settings)
-    : ssh_connection_(std::make_unique<SSHConnection>(std::move(settings))),
-      settings_(settings) {}
+bool Station::SetHostName(std::string host_name) {
+    ssh_connection_->SetHostName(host_name);
+    is_connected = false;
+    return true;
+}
 
 bool Station::SetName(std::string name) {
-    if (!std::all_of(name.begin(), name.end(), [](char c) {
-            return std::isdigit(c) || std::isalpha(c);
-        })) {
+    if (name.length() > MAX_NAME_SYMBOLS_COUNT) {
         return false;
     }
 
@@ -28,6 +33,25 @@ bool Station::SetDescription(std::string description) {
 
     this->description_ = description;
     return true;
+}
+
+void Station::SetUsername(std::string username) {
+    ssh_connection_->GetSettings().username = username;
+    is_connected = false;
+}
+
+void Station::SetPassword(std::string password) {
+    ssh_connection_->GetSettings().password = password;
+    is_connected = false;
+}
+
+void Station::SetConnectionPort(quint16 port) {
+    ssh_connection_->GetSettings().port = port;
+    is_connected = false;
+}
+
+void Station::SetPath(std::filesystem::path path_to_private_key) {
+    ssh_connection_->GetSettings().path_to_private_key = path_to_private_key;
 }
 
 void Station::SetRole(Role role) { this->role_ = role; }
@@ -57,12 +81,6 @@ void Station::StartSetupProccess() {
     */
     throw std::runtime_error("Not implemented");
 }
-
-MainStation::MainStation(const ConnectionSettings& settings)
-    : Station(settings) {}
-
-MainStation::MainStation(ConnectionSettings&& settings)
-    : Station(std::move(settings)) {}
 
 void MainStation::AddChildStation(Station&& station) {
     child_stations_.push_back(std::move(station));

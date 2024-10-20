@@ -8,6 +8,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+find_package(Qt6 6.4.2 REQUIRED COMPONENTS Quick)
+
 set(LIBSSH2DIR CACHE STRING "LIBSSH2 static library directory")
 
 if(NOT LIBSSH2DIR)
@@ -16,15 +18,32 @@ endif()
 
 message(STATUS "LIBSSH2 dir is ${LIBSSH2DIR}, change via -DLIBSSH2DIR=<dir>")
 
-find_package(Qt6 6.7.2 REQUIRED COMPONENTS Quick)
+set(LIBPUGIXML CACHE STRING "LIBPUGIXML static library directory")
+
+if(NOT LIBPUGIXML)
+    message(FATAL_ERROR "Please, specify LIBPUGIXML directory via -DLIBPUGIXML=<dir>")
+endif()
+
+message(STATUS "LIBPUGIXML dir is ${LIBPUGIXML}, change via -DLIBPUGIXML=<dir>")
 
 set(HEADERS include/libssh2_manager.h
             include/ssh_connection.h
-            include/station.h)
+            include/station.h
+            include/config.h
+            include/user_settings.h
+            include/roles.h
+            include/systems.h
+            include/config_writer.h
+            include/xml_config_writer.h
+)
 
 set (SOURCES src/main.cpp
              src/ssh_connection.cpp
-             src/station.cpp)
+             src/station.cpp
+             src/config.cpp
+             src/user_settings.cpp
+             src/xml_config_writer.cpp
+)
 
 set (SOURCE_QML qml/Main.qml
                 qml/StationItem.qml)
@@ -46,12 +65,18 @@ set(RESOURCES
     resources.qrc
 )
 
+set (PUGIXML_SOURCES
+    ${LIBPUGIXML}/pugixml.hpp
+    ${LIBPUGIXML}/pugiconfig.hpp
+    ${LIBPUGIXML}/pugixml.cpp)
+
 qt_standard_project_setup()
 
 qt_add_executable(deldeliveryApp
     ${SOURCES}
     ${HEADERS}
     ${RESOURCES}
+    ${PUGIXML_SOURCES}
 )
 
 qt_add_qml_module(deldeliveryApp
@@ -61,17 +86,6 @@ qt_add_qml_module(deldeliveryApp
         ${SOURCE_QML}
         utils.js
         QML_FILES
-)
-
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-set_target_properties(deldeliveryApp PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appDeldeliveryApp
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
 )
 
 target_link_directories(deldeliveryApp PUBLIC
@@ -85,9 +99,10 @@ target_link_libraries(deldeliveryApp
 
 target_include_directories(deldeliveryApp
     PUBLIC
-    "${LIBSSH2DIR}/include"
-    "{CMAKE_CURRENT_BINARY_DIR}"/images
+    ${LIBSSH2DIR}/include
+    ${LIBPUGIXML}
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/libs
 
 )
 

@@ -48,9 +48,9 @@ void Station::SetConnectionPort(quint16 port) {
     is_connected = false;
 }
 
-void Station::SetPath(QUrl path) {
+void Station::SetPath(QString path) {
     ssh_connection_->GetSettings().path_to_private_key =
-        std::filesystem::path(path.toLocalFile().toStdString());
+        std::filesystem::path(path.toStdString());
 }
 
 void Station::SetRole(Roles::Role role) { this->role_ = role; }

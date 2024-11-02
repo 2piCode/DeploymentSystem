@@ -1,3 +1,6 @@
+#ifndef STATION_BUILDER_H
+#define STATION_BUILDER_H
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <memory>
@@ -8,24 +11,18 @@
 class StationBuilder : public QObject {
     Q_OBJECT
    public:
-    explicit StationBuilder(QObject* parent = nullptr) : QObject(parent) {}
+    explicit StationBuilder(std::shared_ptr<MainStation> main_station,
+                            QObject* parent = nullptr)
+        : QObject(parent), main_station_(main_station) {}
 
-    const std::unique_ptr<MainStation>& GetMainStation() const {
+    const std::shared_ptr<MainStation>& GetMainStation() const {
         return main_station_;
     }
-    std::unique_ptr<MainStation>& GetMainStation() { return main_station_; }
-
-    MainStation* ReleaseMainStation() { return main_station_.release(); }
+    std::shared_ptr<MainStation>& GetMainStation() { return main_station_; }
 
     Q_INVOKABLE Station* CreateStation(const QString& hostName,
                                        const QString& name,
                                        ConnectionSettings settings = {}) {
-        if (main_station_ == nullptr) {
-            main_station_ =
-                std::make_unique<MainStation>(hostName, name, settings);
-            return main_station_.get();
-        }
-
         main_station_->AddChildStation(
             std::make_unique<Station>(hostName, name, settings));
 
@@ -53,11 +50,6 @@ class StationBuilder : public QObject {
             return;
         }
 
-        if (index == 0) {
-            main_station_.reset();
-            return;
-        }
-
         if (index > main_station_->GetChildStations().size()) {
             return;
         }
@@ -66,5 +58,7 @@ class StationBuilder : public QObject {
     }
 
    private:
-    std::unique_ptr<MainStation> main_station_;
+    std::shared_ptr<MainStation> main_station_;
 };
+
+#endif

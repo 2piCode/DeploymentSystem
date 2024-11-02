@@ -20,9 +20,9 @@ void XMLConfigWriter::WriteInFile(const std::unique_ptr<Config>& config,
     doc.save_file(path.c_str());
 }
 
-template <typename T>
+template <typename TPtr>
 void XMLConfigWriter::WriteStation(pugi::xml_node& station_node,
-                                   const std::unique_ptr<T>& station,
+                                   const TPtr& station,
                                    bool is_save_password) const {
     station_node.append_child(HOSTNAME_KEY)
         .text()
@@ -59,15 +59,15 @@ void XMLConfigWriter::WriteStation(pugi::xml_node& station_node,
 void XMLConfigWriter::WriteInstallersPath(
     const std::unique_ptr<Config>& config,
     pugi::xml_node& installers_node) const {
-    WriteInstallerPath(config, installers_node, System::Windows);
-    WriteInstallerPath(config, installers_node, System::AstraLinux);
-    WriteInstallerPath(config, installers_node, System::Redos7);
-    WriteInstallerPath(config, installers_node, System::Redos8);
+    WriteInstallerPath(config, installers_node, Systems::System::Windows);
+    WriteInstallerPath(config, installers_node, Systems::System::AstraLinux);
+    WriteInstallerPath(config, installers_node, Systems::System::Redos7);
+    WriteInstallerPath(config, installers_node, Systems::System::Redos8);
 }
 
 void XMLConfigWriter::WriteInstallerPath(const std::unique_ptr<Config>& config,
                                          pugi::xml_node& installers_node,
-                                         System system) const {
+                                         Systems::System system) const {
     installers_node.append_child(system_converter::toString(system).c_str())
         .text()
         .set(config->GetInstallerPath(system).string().c_str());
@@ -79,8 +79,7 @@ std::unique_ptr<Config> XMLConfigWriter::ReadFromFile(
     doc.load_file(path.c_str());
     pugi::xml_node root = doc.child(CONFIG_KEY);
     pugi::xml_node main_station_node = root.child(MAIN_STATION_KEY);
-    std::unique_ptr<MainStation> main_station =
-        ReadStation<MainStation>(main_station_node);
+    std::shared_ptr main_station = ReadStation<MainStation>(main_station_node);
 
     pugi::xml_node stations_node = root.child(STATIONS_KEY);
 
@@ -89,8 +88,7 @@ std::unique_ptr<Config> XMLConfigWriter::ReadFromFile(
         main_station->AddChildStation(ReadStation<Station>(station_node));
     }
 
-    std::unique_ptr<Config> config =
-        std::make_unique<Config>(std::move(main_station));
+    std::unique_ptr<Config> config = std::make_unique<Config>(main_station);
     pugi::xml_node installers_node = root.child(INSTALLERS_KEY);
     ReadInstallersPath(config, installers_node);
     return std::move(config);
@@ -110,6 +108,7 @@ std::unique_ptr<T> XMLConfigWriter::ReadStation(
 
     std::string path_to_private_key =
         settings_node.child(PATH_KEY).text().as_string();
+    auto a = settings_node.child(PASSWORD_KEY).text().as_string();
     ConnectionSettings settings{
         .port =
             static_cast<quint16>(settings_node.child(PORT_KEY).text().as_int()),
@@ -134,15 +133,15 @@ template std::unique_ptr<MainStation> XMLConfigWriter::ReadStation<MainStation>(
 
 void XMLConfigWriter::ReadInstallersPath(
     std::unique_ptr<Config>& config, const pugi::xml_node& installers_node) {
-    ReadInstallerPath(config, installers_node, System::Windows);
-    ReadInstallerPath(config, installers_node, System::AstraLinux);
-    ReadInstallerPath(config, installers_node, System::Redos7);
-    ReadInstallerPath(config, installers_node, System::Redos8);
+    ReadInstallerPath(config, installers_node, Systems::System::Windows);
+    ReadInstallerPath(config, installers_node, Systems::System::AstraLinux);
+    ReadInstallerPath(config, installers_node, Systems::System::Redos7);
+    ReadInstallerPath(config, installers_node, Systems::System::Redos8);
 }
 
 void XMLConfigWriter::ReadInstallerPath(std::unique_ptr<Config>& config,
                                         const pugi::xml_node& installers_node,
-                                        System system) {
+                                        Systems::System system) {
     config->SetInstallerPath(
         system,
         installers_node.child(system_converter::toString(system).c_str())

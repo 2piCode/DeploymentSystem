@@ -25,7 +25,7 @@ class Station : public QObject {
     Q_PROPERTY(QString username READ GetUsername WRITE SetUsername)
     Q_PROPERTY(QString password READ GetPassword WRITE SetPassword)
     Q_PROPERTY(quint16 port READ GetConnectionPort WRITE SetConnectionPort)
-    Q_PROPERTY(QUrl filePath READ GetUrlPath WRITE SetPath)
+    Q_PROPERTY(QString filePath READ GetUrlPath WRITE SetPath)
 
    public:
     explicit Station(const QString host_name, const QString name,
@@ -44,7 +44,7 @@ class Station : public QObject {
     Q_INVOKABLE void SetUsername(QString username);
     Q_INVOKABLE void SetPassword(QString password);
     Q_INVOKABLE void SetConnectionPort(quint16 port);
-    Q_INVOKABLE void SetPath(QUrl path);
+    Q_INVOKABLE void SetPath(QString path);
     Q_INVOKABLE void SetRole(Roles::Role role);
     Q_INVOKABLE void AddAdditionalTask(AdditionalTask task);
 
@@ -60,12 +60,12 @@ class Station : public QObject {
     quint16 GetConnectionPort() const {
         return ssh_connection_->GetSettings().port;
     }
-    QUrl GetUrlPath() const {
+    QString GetUrlPath() const {
         if (ssh_connection_->GetSettings().path_to_private_key.has_value()) {
-            return QUrl::fromLocalFile(QString::fromStdString(
-                ssh_connection_->GetSettings().path_to_private_key.value()));
+            return QString::fromStdString(
+                ssh_connection_->GetSettings().path_to_private_key.value());
         }
-        return {};
+        return "";
     }
     std::optional<std::filesystem::path> GetPath() const {
         return ssh_connection_->GetSettings().path_to_private_key;

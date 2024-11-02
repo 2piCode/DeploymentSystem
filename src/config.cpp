@@ -14,3 +14,10 @@ std::filesystem::path Config::GetInstallerPath(System system) const {
 
     return "";
 }
+
+std::unique_ptr<Config> CreateConfigPtr(StationBuilder& manager) {
+    assert(manager.GetMainStation());
+
+    return std::make_unique<Config>(
+        std::unique_ptr<MainStation>(manager.ReleaseMainStation()));
+}

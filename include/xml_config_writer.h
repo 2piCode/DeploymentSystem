@@ -30,8 +30,10 @@ class XMLConfigWriter : public ConfigWriter {
     const char* PORT_KEY = "port";
     const char* PATH_KEY = "path_to_private_key";
 
+    template <typename T>
     void WriteStation(pugi::xml_node& station_node,
-                      const Station& station, bool is_save_password) const;
+                      const std::unique_ptr<T>& station,
+                      bool is_save_password) const;
     void WriteInstallersPath(const std::unique_ptr<Config>& config,
                              pugi::xml_node& installers_node) const;
     void WriteInstallerPath(const std::unique_ptr<Config>&,
@@ -41,7 +43,7 @@ class XMLConfigWriter : public ConfigWriter {
     std::unique_ptr<MainStation> ReadStations(
         const pugi::xml_node& stations_node);
     template <typename T>
-    T ReadStation(const pugi::xml_node& station_node);
+    std::unique_ptr<T> ReadStation(const pugi::xml_node& station_node);
     void ReadInstallersPath(std::unique_ptr<Config>& config,
                             const pugi::xml_node& installers_node);
     void ReadInstallerPath(std::unique_ptr<Config>& config,

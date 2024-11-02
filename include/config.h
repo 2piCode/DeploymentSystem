@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include "station.h"
+#include "station_builder.h"
 #include "systems.h"
 
 class Config {
@@ -23,5 +24,7 @@ class Config {
     std::unique_ptr<MainStation> root_;
     std::unordered_map<System, std::filesystem::path> systems_installer_paths_;
 };
+
+std::unique_ptr<Config> CreateConfigPtr(StationBuilder& manager);
 
 #endif

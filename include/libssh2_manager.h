@@ -5,7 +5,7 @@
 
 #include <QObject>
 
-class LibSSH2Manager : public QObject {
+class LibSSH2Manager final : public QObject {
     Q_OBJECT
    public:
     static LibSSH2Manager& instance() {

@@ -8,8 +8,6 @@
 
 class UserSettings {
    public:
-    UserSettings(std::unique_ptr<ConfigWriter> config_writer);
-
     UserSettings(std::unique_ptr<Config> config,
                  std::unique_ptr<ConfigWriter> config_writer);
 

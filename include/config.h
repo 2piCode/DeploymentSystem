@@ -7,21 +7,26 @@
 #include <unordered_map>
 
 #include "station.h"
+#include "station_builder.h"
 #include "systems.h"
 
-class Config {
+class Config : public QObject {
+    Q_OBJECT
    public:
-    explicit Config(std::unique_ptr<MainStation> root);
+    explicit Config(std::shared_ptr<MainStation> root);
 
-    void SetInstallerPath(System system, const std::filesystem::path& path);
-    std::filesystem::path GetInstallerPath(System system) const;
+    Q_INVOKABLE void SetInstallerPath(Systems::System system, QString path);
+    Q_INVOKABLE QString GetInstallerPathString(Systems::System system) const;
 
-    const std::unique_ptr<MainStation>& GetRoot() const { return root_; }
-    std::unique_ptr<MainStation>& GetRoot() { return root_; }
+    std::filesystem::path GetInstallerPath(Systems::System system) const;
+
+    const std::shared_ptr<MainStation> GetRoot() const { return root_; }
+    std::shared_ptr<MainStation> GetRoot() { return root_; }
 
    private:
-    std::unique_ptr<MainStation> root_;
-    std::unordered_map<System, std::filesystem::path> systems_installer_paths_;
+    std::shared_ptr<MainStation> root_;
+    std::unordered_map<Systems::System, std::filesystem::path>
+        systems_installer_paths_;
 };
 
 #endif

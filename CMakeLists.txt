@@ -35,6 +35,7 @@ set(HEADERS include/libssh2_manager.h
             include/systems.h
             include/config_writer.h
             include/xml_config_writer.h
+            include/station_builder.h
 )
 
 set (SOURCES src/main.cpp
@@ -43,6 +44,7 @@ set (SOURCES src/main.cpp
              src/config.cpp
              src/user_settings.cpp
              src/xml_config_writer.cpp
+             src/roles.cpp
 )
 
 set (SOURCE_QML qml/Main.qml

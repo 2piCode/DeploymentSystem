@@ -3,10 +3,10 @@
 #include <QDebug>
 #include <QFile>
 
-SSHConnection::SSHConnection(std::string hostname, QObject* parent)
+SSHConnection::SSHConnection(QString hostname, QObject* parent)
     : SSHConnection(hostname, ConnectionSettings{}, parent) {}
 
-SSHConnection::SSHConnection(std::string host_name,
+SSHConnection::SSHConnection(QString host_name,
                              ConnectionSettings&& connection_settings,
                              QObject* parent)
     : QObject(parent),
@@ -43,13 +43,12 @@ bool SSHConnection::ConnectToHost() {
         return false;
     }
 
-    if (host_name_.empty()) {
+    if (host_name_.isEmpty()) {
         emit errorOccurred("Hostname is empty");
         return false;
     }
 
-    socket_->connectToHost(QString::fromStdString(host_name_),
-                           connection_settings_.port);
+    socket_->connectToHost(host_name_, connection_settings_.port);
     if (!socket_->waitForConnected(CONNECTION_TIME)) {
         emit errorOccurred("Failed to connect to host: " +
                            socket_->errorString().toStdString());
@@ -69,7 +68,7 @@ bool SSHConnection::ConnectToHost() {
     }
 
     if (int rc = libssh2_session_handshake(session_, sock)) {
-        emit errorOccurred("Failure establishing SSH session: " + rc);
+        emit errorOccurred(&"Failure establishing SSH session: "[rc]);
         return false;
     }
 
@@ -111,10 +110,10 @@ void SSHConnection::DisconnectFromHost() {
 }
 
 bool SSHConnection::authenticate() {
-    if (!connection_settings_.password.empty()) {
-        if (libssh2_userauth_password(session_,
-                                      connection_settings_.username.c_str(),
-                                      connection_settings_.password.c_str())) {
+    if (!connection_settings_.password.isEmpty()) {
+        if (libssh2_userauth_password(
+                session_, connection_settings_.username.toUtf8().data(),
+                connection_settings_.password.toUtf8().data())) {
             emit errorOccurred("Authentication by password failed");
             return false;
         }
@@ -124,7 +123,7 @@ bool SSHConnection::authenticate() {
     if (connection_settings_.path_to_private_key.has_value() ||
         !connection_settings_.path_to_private_key.value().empty()) {
         int rc = libssh2_userauth_publickey_fromfile(
-            session_, connection_settings_.username.c_str(),
+            session_, connection_settings_.username.toUtf8().data(),
             nullptr,  // Публичный ключ можно определить автоматически
             connection_settings_.path_to_private_key.value().string().c_str(),
             nullptr  // Пароль для ключа, если требуется
@@ -234,6 +233,4 @@ bool SSHConnection::UploadFile(const std::filesystem::path& local_path,
     return success;
 }
 
-void SSHConnection::SetHostName(std::string host_name) {
-    host_name_ = host_name;
-}
+void SSHConnection::SetHostName(QString host_name) { host_name_ = host_name; }

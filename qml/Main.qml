@@ -140,7 +140,7 @@ ApplicationWindow {
                 id: deleteBtn
                 iconSource: "qrc:/images/images/delete.png"
                 onButtonClicked: {
-                    deleteStation();    
+                    deleteConfirmationDialog.open();
                 }
             }
         }
@@ -173,10 +173,11 @@ ApplicationWindow {
                 if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier)
                     ipDialog.open();
                 else if (listView.currentIndex !== -1 && event.key === Qt.Key_Space){
-                    currentItem.editIp();
+                    currentItem.changeActivity();
                 }
                 else if (listView.currentIndex !== -1 && event.key === Qt.Key_Delete){
-                    deleteStation();
+                    // deleteStation();
+                    deleteConfirmationDialog.open();
                 }
             }
 
@@ -263,6 +264,21 @@ ApplicationWindow {
                 }
             }
 
+        }
+    }
+    Dialog {
+        id: deleteConfirmationDialog
+
+        title: qsTr("Add New IP Address")
+        anchors.centerIn: parent
+        modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+
+        Text{
+            text: qsTr("Удалить выбранную станцию?")
+        }
+        onAccepted: {
+            deleteStation();
         }
     }
 }

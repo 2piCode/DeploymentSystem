@@ -15,5 +15,6 @@
         <file>images/collapse.png</file>
         <file>images/expand.png</file>
         <file>images/openDir.png</file>
+        <file>images/arm_engineer.png</file>
     </qresource>
 </RCC>

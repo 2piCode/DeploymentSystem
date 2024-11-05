@@ -6,37 +6,37 @@
     <message>
         <location filename="../qml/ConnectionSettingsUI.qml" line="43"/>
         <source>Настройки подключения</source>
-        <translation type="unfinished">Connections Settings</translation>
+        <translation>Connections Settings</translation>
     </message>
     <message>
         <location filename="../qml/ConnectionSettingsUI.qml" line="94"/>
         <source>Имя пользователя:</source>
-        <translation type="unfinished">Login:</translation>
+        <translation>Login:</translation>
     </message>
     <message>
         <location filename="../qml/ConnectionSettingsUI.qml" line="100"/>
         <source>имя пользователя</source>
-        <translation type="unfinished">login</translation>
+        <translation>login</translation>
     </message>
     <message>
         <location filename="../qml/ConnectionSettingsUI.qml" line="118"/>
         <source>Пароль:</source>
-        <translation type="unfinished">Password:</translation>
+        <translation>Password:</translation>
     </message>
     <message>
         <location filename="../qml/ConnectionSettingsUI.qml" line="125"/>
         <source>пароль</source>
-        <translation type="unfinished">password</translation>
+        <translation>password</translation>
     </message>
     <message>
         <location filename="../qml/ConnectionSettingsUI.qml" line="137"/>
         <source>Конфигурация из файла</source>
-        <translation type="unfinished">Load from file</translation>
+        <translation>Load from file</translation>
     </message>
     <message>
         <location filename="../qml/ConnectionSettingsUI.qml" line="145"/>
         <source>Путь до файла конфигурации</source>
-        <translation type="unfinished">Path to config file</translation>
+        <translation>Path to config file</translation>
     </message>
 </context>
 <context>
@@ -44,7 +44,7 @@
     <message>
         <location filename="../qml/FileSelection.qml" line="37"/>
         <source>Path to file</source>
-        <translation type="unfinished">Path to file</translation>
+        <translation>Path to file</translation>
     </message>
 </context>
 <context>
@@ -52,12 +52,12 @@
     <message>
         <location filename="../qml/InstallationSettingsUI.qml" line="20"/>
         <source>Роль:</source>
-        <translation type="unfinished">Setup as:</translation>
+        <translation>Setup as:</translation>
     </message>
     <message>
         <location filename="../qml/InstallationSettingsUI.qml" line="48"/>
         <source>Дополнительные опции</source>
-        <translation type="unfinished">Additional options</translation>
+        <translation>Additional options</translation>
     </message>
 </context>
 <context>
@@ -103,14 +103,20 @@
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="225"/>
+        <location filename="../qml/Main.qml" line="226"/>
+        <location filename="../qml/Main.qml" line="272"/>
         <source>Add New IP Address</source>
-        <translation type="unfinished">Add New IP Address</translation>
+        <translation>Add New IP Address</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="251"/>
+        <location filename="../qml/Main.qml" line="252"/>
         <source>Enter new IP Address:</source>
-        <translation type="unfinished">Enter new IP Address:</translation>
+        <translation>Enter new IP Address:</translation>
+    </message>
+    <message>
+        <location filename="../qml/Main.qml" line="278"/>
+        <source>Удалить выбранную станцию?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -118,32 +124,37 @@
     <message>
         <location filename="../qml/SettingsDialog.qml" line="8"/>
         <source>Настройки</source>
-        <translation type="unfinished">Settings</translation>
+        <translation>Settings</translation>
     </message>
     <message>
         <location filename="../qml/SettingsDialog.qml" line="18"/>
         <source>Путь до устанощика Windows</source>
-        <translation type="unfinished">Path to Windows installer</translation>
+        <translation>Path to Windows installer</translation>
     </message>
     <message>
         <location filename="../qml/SettingsDialog.qml" line="22"/>
         <source>Путь до устанощика AstraLinux</source>
-        <translation type="unfinished">Path to AstraLinux installer</translation>
+        <translation>Path to AstraLinux installer</translation>
     </message>
     <message>
         <location filename="../qml/SettingsDialog.qml" line="26"/>
         <source>Путь до устанощика RedOS 7</source>
-        <translation type="unfinished">Path to RedOS 7 installer</translation>
+        <translation>Path to RedOS 7 installer</translation>
     </message>
     <message>
         <location filename="../qml/SettingsDialog.qml" line="31"/>
         <source>Путь до устанощика RedOS 8</source>
-        <translation type="unfinished">Path to RedOS 8 installer</translation>
+        <translation>Path to RedOS 8 installer</translation>
     </message>
     <message>
-        <location filename="../qml/SettingsDialog.qml" line="36"/>
+        <location filename="../qml/SettingsDialog.qml" line="39"/>
+        <source>Перечисление станции по IP адресу</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/SettingsDialog.qml" line="43"/>
         <source>Язык</source>
-        <translation type="unfinished">Language</translation>
+        <translation>Language</translation>
     </message>
 </context>
 <context>
@@ -160,42 +171,34 @@
 <context>
     <name>StationSettingsUI</name>
     <message>
-        <location filename="../qml/StationSettingsUI.qml" line="26"/>
+        <location filename="../qml/StationSettingsUI.qml" line="29"/>
         <source>Имя станции</source>
-        <translation type="unfinished"></translation>
+        <translation>Station name</translation>
     </message>
     <message>
-        <location filename="../qml/StationSettingsUI.qml" line="32"/>
+        <location filename="../qml/StationSettingsUI.qml" line="39"/>
         <source>имя станции</source>
-        <translation type="unfinished"></translation>
+        <translation>station name</translation>
     </message>
     <message>
-        <location filename="../qml/StationSettingsUI.qml" line="50"/>
+        <location filename="../qml/StationSettingsUI.qml" line="61"/>
         <source>IP адресс станции:</source>
-        <translation type="unfinished"></translation>
+        <translation>Station IP adress</translation>
     </message>
     <message>
-        <location filename="../qml/StationSettingsUI.qml" line="57"/>
+        <location filename="../qml/StationSettingsUI.qml" line="68"/>
         <source>ip</source>
-        <translation type="unfinished"></translation>
+        <translation>ip</translation>
     </message>
     <message>
-        <location filename="../qml/StationSettingsUI.qml" line="66"/>
+        <location filename="../qml/StationSettingsUI.qml" line="92"/>
         <source>Описание:</source>
-        <translation type="unfinished"></translation>
+        <translation>Description:</translation>
     </message>
     <message>
-        <location filename="../qml/StationSettingsUI.qml" line="75"/>
+        <location filename="../qml/StationSettingsUI.qml" line="101"/>
         <source>описание станции</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Пароль:</source>
-        <translation type="obsolete">Password:</translation>
-    </message>
-    <message>
-        <source>пароль</source>
-        <translation type="obsolete">password</translation>
+        <translation>station description</translation>
     </message>
 </context>
 </TS>

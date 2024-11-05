@@ -6,8 +6,8 @@ Dialog {
     
     anchors.centerIn: parent
     title: qsTr("Настройки")
-    font.pointSize: 12
-    modal: true
+    property bool switchState: ipOverNameSwitch.checked
+    font.pointSize: Const.fontSize
     
     standardButtons: Dialog.Ok | Dialog.Cancel
 
@@ -32,16 +32,22 @@ Dialog {
             additionalNameFilters: ".AppImage files (*.AppImage)"
         }
 
+
+        Switch{
+            id: ipOverNameSwitch
+            checked: true
+            text: qsTr("Перечисление станции по IP адресу") 
+        }
+
         Text {
             text: qsTr("Язык")
-            font.pointSize: 12
+            font.pointSize: Const.fontSize
             font.bold: true
         }
 
         ComboBox {
             id: languageComboBox
             model: ["Русский", "English"]
-            // Layout.preferredWidth: parent.width * 0.5
             currentIndex: 0
             onCurrentIndexChanged: {
                 languageController.switchLanguage();

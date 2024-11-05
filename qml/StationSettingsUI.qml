@@ -1,11 +1,14 @@
+import "../utils.js" as Utils
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+
 
 ColumnLayout {
     id: stationSettingsLayout
     property int fontSize: Const.fontSize
     property int inputFieldsWidth
+    property var station
 
     Layout.preferredHeight: stationSettingsLayout.implicitHeight
     Layout.fillWidth: true
@@ -29,7 +32,15 @@ ColumnLayout {
                 id: stationNameField
                 Layout.preferredWidth: inputFieldsWidth
                 font.pointSize: fontSize
+                background: Rectangle {
+                    radius: 4
+                    color: "white"
+                }
                 placeholderText: qsTr("имя станции")
+
+                onEditingFinished: {
+                    station.name = text;
+                }
             }
         }
     }
@@ -55,6 +66,21 @@ ColumnLayout {
                 Layout.preferredWidth: inputFieldsWidth
                 font.pointSize: fontSize
                 placeholderText: qsTr("ip")
+                background: Rectangle {
+                    border.color: "red"
+                    border.width: 0
+                    radius: 4
+                    color: "white"
+                }
+                onTextChanged: {
+                    background.border.width = Utils.isValidIP(text) ? 0 : 2  
+                }
+                onEditingFinished: {
+                    if (Utils.isValidIP(text)){
+                        station.ip = text;
+                    }
+                }
+
             }
         }
     }
@@ -75,7 +101,6 @@ ColumnLayout {
         placeholderText: qsTr("описание станции")
 
         onTextChanged: function() {
-            console.log(lineCount, text.length)
             if (lineCount > maxLines || text.length > 256) {
                 text = text.substring(0,text.length - 1)
                 cursorPosition = text.length

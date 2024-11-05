@@ -1,4 +1,3 @@
-import "../utils.js" as Utils
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
@@ -10,9 +9,10 @@ ColumnLayout {
     property int fontSize: Const.fontSize
     property int defaultSize: Const.stationItemHeigth
     property int expandedSize: detailAreaLayout.implicitHeight
-    property int expandedMarkerSize: 16
+    property int expandedMarkerSize: 20
     property int inputFieldsWidth: Screen.width * 0.1
     property string ip: "127.0.0.1"
+    property string name: "Station Name"
 
     signal changedActivity(bool isActive)
 
@@ -21,11 +21,6 @@ ColumnLayout {
         changedActivity(isActive);
     }
 
-    function editIp() {
-        ipField.visible = false;
-        ipFieldEditor.visible = true;
-        ipFieldEditor.forceActiveFocus();
-    }
     spacing: 0
     width: parent ? parent.width : 0
 
@@ -34,59 +29,62 @@ ColumnLayout {
 
         Layout.fillWidth: true
         Layout.preferredHeight: station.defaultSize
+        
 
+        
         Rectangle {
             id: background
-
             anchors.fill: parent
+            anchors{
+                leftMargin: 10
+                rightMargin: 20
+            }
             color: "transparent"
+            
 
-            TextField {
-                id: ipFieldEditor
+            RowLayout {
 
-                text: ip
-                anchors.verticalCenter: parent.verticalCenter
-                visible: false
-                font.pointSize: fontSize + 2
-                onEditingFinished: {
-                    if (Utils.isValidIP(ipFieldEditor.text))
-                        ip = ipFieldEditor.text;
+                spacing: 10
+                width: parent.width
+                height: parent.height
 
-                    ipFieldEditor.visible = false;
-                    ipField.visible = true;
-                    listView.currentItem.forceActiveFocus()
+                Text {
+                    id: ipField
+                    text: settingsDialog.switchState ? ip : name
+                    font.pointSize: fontSize + 2
+
+                    visible: true
                 }
-            }
 
-            Text {
-                id: ipField
 
-                text: ip
-                anchors.verticalCenter: parent.verticalCenter
-                font.pointSize: fontSize + 2
-            }
+                Image {
+                    source: isActive ? "qrc:/images/images/collapse.png" : "qrc:/images/images/expand.png"
+                    // Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: expandedMarkerSize
+                    Layout.preferredHeight: expandedMarkerSize
+                    fillMode: Image.PreserveAspectFit
+                }
 
-            Image {
-                source: isActive ? "qrc:/images/images/collapse.png" : "qrc:/images/images/expand.png"
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: ipFieldEditor.visible ? ipFieldEditor.right : ipField.right
-                anchors.leftMargin: 10
-                width: expandedMarkerSize
-                height: expandedMarkerSize
+                Item {
+                    Layout.fillWidth: true
+                }
+
+                Image {
+                    source: "qrc:/images/images/arm_engineer.png"
+                    Layout.preferredHeight: defaultSize * 0.75
+                    fillMode: Image.PreserveAspectFit
+
+                }
             }
 
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    ipFieldEditor.visible = false;
-                    ipField.visible = true;
                     changeActivity();
-                }
-                onDoubleClicked: {
-                    editIp();
                 }
             }
         }
+
     }
 
     Rectangle {
@@ -106,6 +104,7 @@ ColumnLayout {
 
             StationSettingsUI{
                 inputFieldsWidth: station.inputFieldsWidth
+                station: station
             }
 
             ConnectionSettingsUI {

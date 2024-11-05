@@ -8,102 +8,122 @@
 #include "user_settings.h"
 #include "xml_config_writer.h"
 
-void TestExportAndImport() {
-    std::unique_ptr<MainStation> root = std::make_unique<MainStation>(
-        "127.0.0.1", "root_name",
-        ConnectionSettings{.username = "root",
-                           .password = "root_password",
-                           .path_to_private_key = "/home/alex/.ssh/id_rsa"});
+// void TestExportAndImport(std::unique_ptr<UserSettings>& user_settings) {
+//     std::unique_ptr<StationBuilder>& builder = user_settings->GetBuilder();
+//     auto root = builder->GetStation();
+//     root->SetHostName("127.0.0.1");
+//     root->SetName("root_name");
+//     root->SetUsername("root");
+//     root->SetPassword("root_password");
+//     root->SetPath("/home/alex/.ssh/id_rsa");
 
-    root->SetDescription("This is a root station");
-    root->SetRole(Role::arm_kip);
+//     root->SetDescription("This is a root station");
+//     root->SetRole(Roles::Role::arm_kip);
 
-    Station child_station("244.178.44.111", "child_station");
-    child_station.SetDescription("This is a child station");
-    child_station.SetRole(Role::arm_engineer);
-    child_station.SetConnectionPort(16);
-    child_station.SetUsername("child_station_username");
-    child_station.SetPassword("child_station_password");
+//     assert(root == builder->GetStation());
+//     assert(root == user_settings->GetConfig()->GetRoot().get());
 
-    root->AddChildStation(std::move(child_station));
+//     auto child_station =
+//         builder->CreateStation("244.178.44.111", "child_station");
+//     child_station->SetDescription("This is a child station");
+//     child_station->SetRole(Roles::Role::arm_engineer);
+//     child_station->SetConnectionPort(16);
+//     child_station->SetUsername("child_station_username");
+//     child_station->SetPassword("child_station_password");
 
-    auto config = std::make_unique<Config>(std::move(root));
-    config->SetInstallerPath(System::Windows, "C:\\Users\\alex\\Downloads\\");
-    config->SetInstallerPath(System::AstraLinux, "/home/alex/astra-linux/");
-    config->SetInstallerPath(System::Redos7, "/home/alex/redos7/");
-    config->SetInstallerPath(System::Redos8, "/home/alex/redos8/");
+//     assert(child_station == builder->GetStation(1));
 
-    UserSettings settings(std::move(config),
-                          std::make_unique<XMLConfigWriter>());
+//     auto& config = user_settings->GetConfig();
+//     config->SetInstallerPath(Systems::System::Windows,
+//                              "C:\\Users\\alex\\Downloads\\");
+//     config->SetInstallerPath(Systems::System::AstraLinux,
+//                              "/home/alex/astra-linux/");
+//     config->SetInstallerPath(Systems::System::Redos7, "/home/alex/redos7/");
+//     config->SetInstallerPath(Systems::System::Redos8, "/home/alex/redos8/");
 
-    settings.ExportConfig("config.xml");
+//     user_settings->ExportConfig("config.xml");
 
-    settings.ImportConfig("config.xml");
+//     user_settings->ImportConfig("config.xml");
 
-    // MainStation test
-    auto& main_station_imported = settings.GetConfig()->GetRoot();
-    assert(main_station_imported->GetHostName() == "127.0.0.1");
-    assert(main_station_imported->GetName() == "root_name");
-    assert(main_station_imported->GetDescription() == "This is a root station");
-    assert(main_station_imported->GetRole() == Role::arm_kip);
-    assert(main_station_imported->GetSettings().username == "root");
-    assert(main_station_imported->GetSettings().path_to_private_key ==
-           "/home/alex/.ssh/id_rsa");
+//     // MainStation test
+//     auto& imported_config = user_settings->GetConfig();
+//     auto main_station_imported = imported_config->GetRoot();
 
-    // ChildStation test
-    assert(settings.GetConfig()->GetRoot()->GetChildStations().size() == 1);
-    auto& child_station_imported =
-        settings.GetConfig()->GetRoot()->GetChildStations()[0];
-    assert(child_station_imported.GetHostName() == "244.178.44.111");
-    assert(child_station_imported.GetName() == "child_station");
-    assert(child_station_imported.GetDescription() ==
-           "This is a child station");
-    assert(child_station_imported.GetRole() == Role::arm_engineer);
-    assert(child_station_imported.GetSettings().port == 16);
-    assert(child_station_imported.GetSettings().username ==
-           "child_station_username");
-    if (child_station_imported.GetSettings().path_to_private_key.has_value()) {
-        std::cout
-            << "pizec: "
-            << child_station_imported.GetSettings().path_to_private_key.value()
-            << std::endl;
-    }
-    assert(
-        !child_station_imported.GetSettings().path_to_private_key.has_value());
+//     assert(main_station_imported->GetHostName() == "127.0.0.1");
+//     assert(main_station_imported->GetName() == "root_name");
+//     assert(main_station_imported->GetDescription() == "This is a root station");
+//     assert(main_station_imported->GetRole() == Roles::Role::arm_kip);
+//     assert(main_station_imported->GetUsername() == "root");
+//     assert(main_station_imported->GetPath() == "/home/alex/.ssh/id_rsa");
 
-    // InstallerPath test
-    assert(settings.GetConfig()->GetInstallerPath(System::Windows) ==
-           "C:\\Users\\alex\\Downloads\\");
-    assert(settings.GetConfig()->GetInstallerPath(System::AstraLinux) ==
-           "/home/alex/astra-linux/");
-    assert(settings.GetConfig()->GetInstallerPath(System::Redos7) ==
-           "/home/alex/redos7/");
-    assert(settings.GetConfig()->GetInstallerPath(System::Redos8) ==
-           "/home/alex/redos8/");
+//     // ChildStation test
+//     assert(main_station_imported->GetChildStations().size() == 1);
+//     auto& child_station_imported =
+//         main_station_imported->GetChildStations().front();
+//     assert(child_station_imported->GetHostName() == "244.178.44.111");
+//     assert(child_station_imported->GetName() == "child_station");
+//     assert(child_station_imported->GetDescription() ==
+//            "This is a child station");
+//     assert(child_station_imported->GetRole() == Roles::Role::arm_engineer);
+//     assert(child_station_imported->GetConnectionPort() == 16);
+//     assert(child_station_imported->GetUsername() == "child_station_username");
+//     assert(!child_station_imported->GetPath().has_value());
 
-    // Because we don't have a password saving in the config file
-    assert(main_station_imported->GetSettings().password.empty());
-    assert(child_station_imported.GetSettings().password.empty());
+//     // InstallerPath test
+//     assert(imported_config->GetInstallerPath(Systems::System::Windows) ==
+//            "C:\\Users\\alex\\Downloads\\");
+//     assert(imported_config->GetInstallerPath(Systems::System::AstraLinux) ==
+//            "/home/alex/astra-linux/");
+//     assert(imported_config->GetInstallerPath(Systems::System::Redos7) ==
+//            "/home/alex/redos7/");
+//     assert(imported_config->GetInstallerPath(Systems::System::Redos8) ==
+//            "/home/alex/redos8/");
+
+//     // Because we don't have a password saving in the config file
+//     assert(main_station_imported->GetPassword().isEmpty());
+//     assert(child_station_imported->GetPassword().isEmpty());
+
+//     // Clear settings
+//     user_settings->ClearSettings();
+// }
+
+// void TestPasswordSaving() {
+//     std::unique_ptr<MainStation> root = std::make_unique<MainStation>(
+//         "127.0.0.1", "root_name",
+//         ConnectionSettings{.username = "",
+//                            .password = "root_password",
+//                            .path_to_private_key = ""});
+
+//     auto config = std::make_unique<Config>(std::move(root));
+//     UserSettings settings(std::move(config),
+//                           std::make_unique<XMLConfigWriter>());
+//     settings.SetSavePasswordInConfig(true);
+
+//     user_settings->ExportConfig("config_with_password.xml");
+
+//     user_settings->ImportConfig("config_with_password.xml");
+
+//     auto main_station_imported = user_settings->GetConfig()->GetRoot();
+//     assert(main_station_imported->GetPassword() == "root_password");
+
+//     // Clean settings
+//     user_settings->ClearSettings();
+// }
+
+static QObject* rolesSingletonProvider(QQmlEngine* engine,
+                                       QJSEngine* scriptEngine) {
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return Roles::instance();
 }
 
-void TestPasswordSaving() {
-    std::unique_ptr<MainStation> root = std::make_unique<MainStation>(
-        "127.0.0.1", "root_name",
-        ConnectionSettings{.username = "",
-                           .password = "root_password",
-                           .path_to_private_key = ""});
+static QObject* systemsSingletonProvider(QQmlEngine* engine,
+                                         QJSEngine* scriptEngine) {
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
 
-    auto config = std::make_unique<Config>(std::move(root));
-    UserSettings settings(std::move(config),
-                          std::make_unique<XMLConfigWriter>());
-    settings.SetSavePasswordInConfig(true);
-
-    settings.ExportConfig("config_with_password.xml");
-
-    settings.ImportConfig("config_with_password.xml");
-
-    auto& main_station_imported = settings.GetConfig()->GetRoot();
-    assert(main_station_imported->GetSettings().password == "root_password");
+    return Systems::instance();
 }
 
 class LanguageController : public QObject {
@@ -171,8 +191,24 @@ int main(int argc, char* argv[]) {
         []() { QCoreApplication::exit(-1); }, Qt::QueuedConnection);
     engine.load(url);
 
-    // TestExportAndImport();
-    // TestPasswordSaving();
+    std::unique_ptr<UserSettings> user_settings =
+        std::make_unique<UserSettings>(std::make_unique<XMLConfigWriter>(),
+                                       app.instance());
+
+    // TestExportAndImport(user_settings);
+    // TestPasswordSaving(user_settings);
+
+    engine.rootContext()->setContextProperty("userSettings",
+                                             user_settings.get());
+    engine.rootContext()->setContextProperty("stationBuilder",
+                                             user_settings->GetBuilder().get());
+    engine.rootContext()->setContextProperty("config",
+                                             user_settings->GetConfig().get());
+    qmlRegisterSingletonType<Roles>("com.roles", 1, 0, "Roles",
+                                    rolesSingletonProvider);
+    qmlRegisterSingletonType<Roles>("com.systems", 1, 0, "Systems",
+                                    systemsSingletonProvider);
+    qmlRegisterType<Station>("com.stations", 1, 0, "Station");
 
     return app.exec();
 }

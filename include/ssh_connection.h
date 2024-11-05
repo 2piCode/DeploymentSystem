@@ -16,16 +16,16 @@
 
 struct ConnectionSettings {
     quint16 port = 22;
-    std::string username;
-    std::string password;
+    QString username;
+    QString password;
     std::optional<std::filesystem::path> path_to_private_key;
 };
 
-class SSHConnection : public QObject {
+class SSHConnection final : public QObject {
     Q_OBJECT
    public:
-    explicit SSHConnection(std::string hostname, QObject* parent = nullptr);
-    explicit SSHConnection(std::string hostname, ConnectionSettings&& settings,
+    explicit SSHConnection(QString hostname, QObject* parent = nullptr);
+    explicit SSHConnection(QString hostname, ConnectionSettings&& settings,
                            QObject* parent = nullptr);
 
     ~SSHConnection() final;
@@ -37,10 +37,12 @@ class SSHConnection : public QObject {
     bool UploadFile(const std::filesystem::path& local_path,
                     const std::filesystem::path& remote_path) const;
 
-    void SetHostName(std::string host_name);
+    void SetHostName(QString host_name);
 
-    const std::string& GetHostName() const { return host_name_; }
-    const ConnectionSettings& GetSettings() const { return connection_settings_; }
+    const QString& GetHostName() const { return host_name_; }
+    const ConnectionSettings& GetSettings() const {
+        return connection_settings_;
+    }
     ConnectionSettings& GetSettings() { return connection_settings_; }
 
    signals:
@@ -53,7 +55,7 @@ class SSHConnection : public QObject {
     const int CONNECTION_TIME = 5000;     // 5 seconds
     const int DISCONNECTION_TIME = 3000;  // 3 seconds
 
-    std::string host_name_;
+    QString host_name_;
     ConnectionSettings connection_settings_;
 
     LIBSSH2_SESSION* session_;

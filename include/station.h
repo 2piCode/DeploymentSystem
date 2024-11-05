@@ -1,9 +1,11 @@
 #ifndef STAITON_H
 #define STAITON_H
 
-#include <memory>
-#include <string>
-#include <vector>
+#include <qglobal.h>
+
+#include <QList>
+#include <QUrl>
+#include <QVector>
 #include <memory>
 
 #include "roles.h"
@@ -11,45 +13,70 @@
 
 struct AdditionalTask {};
 
-class Station {
+class Station : public QObject {
+    Q_OBJECT
+
+    Q_PROPERTY(QString hostName READ GetHostName WRITE SetHostName)
+    Q_PROPERTY(QString name READ GetName WRITE SetName)
+    Q_PROPERTY(QString description READ GetDescription WRITE SetDescription)
+    Q_PROPERTY(Roles::Role role READ GetRole WRITE SetRole)
+    Q_PROPERTY(QVector<AdditionalTask> additionalTasks READ GetAdditionalTasks)
+
+    Q_PROPERTY(QString username READ GetUsername WRITE SetUsername)
+    Q_PROPERTY(QString password READ GetPassword WRITE SetPassword)
+    Q_PROPERTY(quint16 port READ GetConnectionPort WRITE SetConnectionPort)
+    Q_PROPERTY(QString filePath READ GetUrlPath WRITE SetPath)
+
    public:
-    explicit Station(std::string host_name, std::string name);
-    explicit Station(const std::string host_name, const std::string name,
-                     ConnectionSettings&& settings);
+    explicit Station(const QString host_name, const QString name,
+                     ConnectionSettings settings, QObject* parent = nullptr);
 
     virtual ~Station() = default;
 
     Station(const Station&) = delete;
     Station& operator=(const Station&) = delete;
+    Station(Station&&) = delete;
+    Station& operator=(Station&&) = delete;
 
-    Station(Station&&) = default;
-    Station& operator=(Station&&) = default;
+    Q_INVOKABLE bool SetHostName(QString host_name);
+    Q_INVOKABLE bool SetName(QString name);
+    Q_INVOKABLE bool SetDescription(QString description);
+    Q_INVOKABLE void SetUsername(QString username);
+    Q_INVOKABLE void SetPassword(QString password);
+    Q_INVOKABLE void SetConnectionPort(quint16 port);
+    Q_INVOKABLE void SetPath(QString path);
+    Q_INVOKABLE void SetRole(Roles::Role role);
+    Q_INVOKABLE void AddAdditionalTask(AdditionalTask task);
 
-    bool SetHostName(std::string host_name);
-    bool SetName(std::string name);
-    bool SetDescription(std::string description);
-    void SetUsername(std::string username);
-    void SetPassword(std::string password);
-    void SetConnectionPort(quint16 port);
-    void SetPath(std::filesystem::path path_to_private_key);
-    void SetRole(Role role);
-    void AddAdditionalTask(AdditionalTask task);
-
-    const std::string& GetName() const { return name_; }
-    const std::string& GetDescription() const { return description_; }
-    const std::string& GetHostName() const {
-        return ssh_connection_->GetHostName();
+    QString GetName() const { return name_; }
+    QString GetDescription() const { return description_; }
+    QString GetHostName() const { return ssh_connection_->GetHostName(); }
+    QString GetUsername() const {
+        return ssh_connection_->GetSettings().username;
     }
-    const ConnectionSettings& GetSettings() const {
-        return ssh_connection_->GetSettings();
+    QString GetPassword() const {
+        return ssh_connection_->GetSettings().password;
     }
-    Role GetRole() const { return role_; }
-    const std::vector<AdditionalTask>& GetAdditionalTasks() const {
+    quint16 GetConnectionPort() const {
+        return ssh_connection_->GetSettings().port;
+    }
+    QString GetUrlPath() const {
+        if (ssh_connection_->GetSettings().path_to_private_key.has_value()) {
+            return QString::fromStdString(
+                ssh_connection_->GetSettings().path_to_private_key.value().string());
+        }
+        return "";
+    }
+    std::optional<std::filesystem::path> GetPath() const {
+        return ssh_connection_->GetSettings().path_to_private_key;
+    }
+    Roles::Role GetRole() const { return role_; }
+    QList<AdditionalTask> GetAdditionalTasks() const {
         return additional_tasks_;
     }
 
-    bool CheckConnection() const;
-    void StartSetupProccess();
+    Q_INVOKABLE bool CheckConnection() const;
+    Q_INVOKABLE void StartSetupProccess();
 
    private:
     const int MAX_NAME_SYMBOLS_COUNT = 100;
@@ -58,23 +85,26 @@ class Station {
     std::unique_ptr<SSHConnection> ssh_connection_;
     mutable bool is_connected = false;
 
-    std::string name_;
-    std::string description_;
-    Role role_;
-    std::vector<AdditionalTask> additional_tasks_;
+    QString name_;
+    QString description_;
+    Roles::Role role_;
+    QList<AdditionalTask> additional_tasks_;
 };
 
 class MainStation : public Station {
    public:
     using Station::Station;
 
-    std::vector<Station>& GetChildStations() { return child_stations_; }
-    void AddChildStation(Station&& station);
+    std::vector<std::unique_ptr<Station>>& GetChildStations() {
+        return child_stations_;
+    }
+    void AddChildStation(std::unique_ptr<Station> station);
+    void RemoveChildStation(int index);
 
-    // void StartSetupProccessAllStation();
+    void StartSetupProccessAllStation();
 
    private:
-    std::vector<Station> child_stations_;
+    std::vector<std::unique_ptr<Station>> child_stations_;
 };
 
 #endif

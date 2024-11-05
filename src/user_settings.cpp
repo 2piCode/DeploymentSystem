@@ -1,24 +1,34 @@
 #include "user_settings.h"
 
-// TODO(coder): Add DI container to store default values
-const std::string default_ip = "127.0.0.1";
-const std::string default_name = "Main station";
+#include "xml_config_writer.h"
 
-UserSettings::UserSettings(std::unique_ptr<ConfigWriter> config_writer)
-    : config_(std::make_unique<Config>(
-          std::make_unique<MainStation>(default_ip, default_name))),
-      writer_(std::move(config_writer)) {}
+const QString default_ip = "127.0.0.1";
+const QString default_name = "Main station";
 
-UserSettings::UserSettings(std::unique_ptr<Config> config,
-                           std::unique_ptr<ConfigWriter> config_writer)
-    : config_(std::move(config)), writer_(std::move(config_writer)) {}
-
-void UserSettings::ExportConfig(const std::filesystem::path& path) const {
-    writer_->WriteInFile(config_, path, is_save_password_in_config_);
+UserSettings::UserSettings(std::unique_ptr<ConfigWriter> config_writer,
+                           QObject* parent)
+    : writer_(std::move(config_writer)) {
+    ClearSettings();
 }
 
-void UserSettings::ImportConfig(const std::filesystem::path& path) {
-    config_ = std::move(writer_->ReadFromFile(path));
+void UserSettings::ExportConfig(QString path) const {
+    writer_->WriteInFile(config_, std::filesystem::path(path.toStdString()),
+                         is_save_password_in_config_);
+}
+
+void UserSettings::ImportConfig(QString path) {
+    config_ = writer_->ReadFromFile(std::filesystem::path(path.toStdString()));
+
+    main_station_ = std::move(config_->GetRoot());
+    builder_.reset(new StationBuilder(main_station_));
+}
+
+void UserSettings::ClearSettings() {
+    main_station_.reset(
+        new MainStation(default_ip, default_name, ConnectionSettings{}));
+    builder_.reset(new StationBuilder(main_station_));
+    config_.reset(new Config(main_station_));
+    SetSavePasswordInConfig(false);
 }
 
 void UserSettings::SetSavePasswordInConfig(bool is_save) {

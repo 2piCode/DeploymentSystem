@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.16)
 
 project(DeldeliveryApp VERSION 0.1 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
@@ -20,9 +19,7 @@ endif()
 
 message(STATUS "LIBSSH2 dir is ${LIBSSH2DIR}, change via -DLIBSSH2DIR=<dir>")
 
-
 set(LIBPUGIXML CACHE STRING "LIBPUGIXML static library directory")
-
 
 if(NOT LIBPUGIXML)
     message(FATAL_ERROR "Please, specify LIBPUGIXML directory via -DLIBPUGIXML=<dir>")
@@ -33,21 +30,24 @@ message(STATUS "LIBPUGIXML dir is ${LIBPUGIXML}, change via -DLIBPUGIXML=<dir>")
 set(HEADERS include/libssh2_manager.h
             include/ssh_connection.h
             include/station.h
-            include/const.h
             include/config.h
+            include/const.h
             include/user_settings.h
             include/roles.h
             include/systems.h
             include/config_writer.h
             include/xml_config_writer.h
+            include/station_builder.h
 )
 
 set (SOURCES src/main.cpp
              src/ssh_connection.cpp
              src/station.cpp
+             src/systems.cpp
              src/config.cpp
              src/user_settings.cpp
              src/xml_config_writer.cpp
+             src/roles.cpp
 )
 
 set (SOURCE_QML qml/Main.qml
@@ -59,17 +59,17 @@ set (SOURCE_QML qml/Main.qml
                 qml/FileSelection.qml
                 qml/SettingsDialog.qml)
 
-# Add translation files
+                # Add translation files
 set(TS_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/translations/translations_en.ts"
-    "${CMAKE_CURRENT_SOURCE_DIR}/translations/translations_ru.ts"
+"${CMAKE_CURRENT_SOURCE_DIR}/translations/translations_en.ts"
+"${CMAKE_CURRENT_SOURCE_DIR}/translations/translations_ru.ts"
 )
 
 # Set output directory for .qm files
 set(QM_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/translations")
 file(MAKE_DIRECTORY ${QM_OUTPUT_DIR})
 
-set (IMAGES images/back.png 
+set (IMAGES images/back.png
             images/connection.png
             images/duplicate.png
             images/edit.png
@@ -154,7 +154,6 @@ target_include_directories(deldeliveryApp
     ${LIBPUGIXML}
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/libs
-    ${CMAKE_CURRENT_BINARY_DIR}/images
 
 )
 
@@ -165,5 +164,4 @@ install(TARGETS deldeliveryApp
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-# Ensure the executable depends on the translations
 add_dependencies(deldeliveryApp translations)

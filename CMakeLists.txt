@@ -38,6 +38,7 @@ set(HEADERS include/libssh2_manager.h
             include/config_writer.h
             include/xml_config_writer.h
             include/station_builder.h
+            include/language_controller.h
 )
 
 set (SOURCES src/main.cpp
@@ -48,6 +49,7 @@ set (SOURCES src/main.cpp
              src/user_settings.cpp
              src/xml_config_writer.cpp
              src/roles.cpp
+             src/language_controller.cpp
 )
 
 set (SOURCE_QML qml/Main.qml
@@ -68,7 +70,6 @@ set(TS_FILES
 # Set output directory for .qm files
 set(QM_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/translations")
 file(MAKE_DIRECTORY ${QM_OUTPUT_DIR})
-
 set (IMAGES images/back.png
             images/connection.png
             images/duplicate.png

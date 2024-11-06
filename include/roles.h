@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QVariantMap>
 
 enum class AppLanguage { ru = 0, en = 1 };
 
@@ -27,6 +28,7 @@ class Roles : public QObject {
 
     Q_INVOKABLE QString toString(Role);
     Q_INVOKABLE Role fromString(const QString& role_str);
+    Q_INVOKABLE QVariantList getAllRoles() const;
 
    private:
     explicit Roles(QObject* parent = nullptr);

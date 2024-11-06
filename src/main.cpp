@@ -7,6 +7,7 @@
 #include "const.h"
 #include "user_settings.h"
 #include "xml_config_writer.h"
+#include "language_controller.h"
 
 // void TestExportAndImport(std::unique_ptr<UserSettings>& user_settings) {
 //     std::unique_ptr<StationBuilder>& builder = user_settings->GetBuilder();
@@ -126,53 +127,6 @@ static QObject* systemsSingletonProvider(QQmlEngine* engine,
     return Systems::instance();
 }
 
-class LanguageController : public QObject {
-    Q_OBJECT
-   public:
-    explicit LanguageController(QGuiApplication& app,
-                                QQmlApplicationEngine& engine,
-                                QObject* parent = nullptr)
-        : QObject(parent),
-          m_app(app),
-          m_engine(engine),
-          m_currentLanguage("ru") {
-        loadTranslator();
-    }
-
-    Q_INVOKABLE void switchLanguage() {
-        m_currentLanguage = (m_currentLanguage == "en") ? "ru" : "en";
-        loadTranslator();
-    }
-
-   signals:
-    void languageChanged();
-
-   private:
-    void loadTranslator() {
-        m_app.removeTranslator(&m_translator);
-
-        QString qmPath =
-            QCoreApplication::applicationDirPath() + "/translations";
-        QString qmFile = QString("translations_%1.qm").arg(m_currentLanguage);
-
-        QString fullQmPath = qmPath + "/" + qmFile;
-
-        if (m_translator.load(fullQmPath)) {
-            m_app.installTranslator(&m_translator);
-            qDebug() << "Loaded translation:" << fullQmPath;
-        } else {
-            qWarning() << "Failed to load translation file:" << fullQmPath;
-        }
-
-        m_engine.retranslate();
-        emit languageChanged();
-    }
-
-    QGuiApplication& m_app;
-    QQmlApplicationEngine& m_engine;
-    QTranslator m_translator;
-    QString m_currentLanguage;
-};
 
 int main(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
@@ -189,7 +143,7 @@ int main(int argc, char* argv[]) {
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app,
         []() { QCoreApplication::exit(-1); }, Qt::QueuedConnection);
-    engine.load(url);
+    
 
     std::unique_ptr<UserSettings> user_settings =
         std::make_unique<UserSettings>(std::make_unique<XMLConfigWriter>(),
@@ -210,7 +164,8 @@ int main(int argc, char* argv[]) {
                                     systemsSingletonProvider);
     qmlRegisterType<Station>("com.stations", 1, 0, "Station");
 
+    engine.load(url);
+
     return app.exec();
 }
 
-#include "main.moc"

@@ -3,7 +3,7 @@ import "../utils.js" as Utils
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-
+import com.roles 1.0
 
 ApplicationWindow {
     id: mainWindow
@@ -74,7 +74,15 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/duplicate.png"
                 onButtonClicked: {
                     console.log("Duplicate button clicked");
-                    console.log(Constants.fontSize);
+                    var roles = Roles.getAllRoles();
+        
+                    // Iterate through each role and log its names in both languages
+                    for (var i = 0; i < roles.length; i++) {
+                        var role = roles[i];
+                        console.log("Role Value:", role.value);
+                        console.log("Role name:", role.name);
+                        console.log("-----");
+                    }
                 }
             }
 

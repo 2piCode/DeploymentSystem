@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import com.roles 1.0
 
 ColumnLayout{
     property int fontSize: Const.fontSize
@@ -21,15 +22,25 @@ ColumnLayout{
                 font.pointSize: fontSize + 2
             }
             ComboBox {
+                id: roleSelection
                 Layout.minimumWidth: Screen.width * 0.2
                 font.pointSize: fontSize
-                model: ["АРМ инженера", "АРМ оператора", "Сервер", "Экспертный режим"]
+                model: Roles.getAllRoles()
+                textRole: "name"
                 delegate: ItemDelegate {
-                    text: modelData
+                    text: modelData.name
                     font.pointSize: fontSize
                     Layout.fillWidth: true
 
                     padding: 5
+                }
+                Connections {
+                    target: languageController
+                    function onLanguageChanged() {
+                        var currentValue = roleSelection.currentIndex
+                        roleSelection.model = Roles.getAllRoles()
+                        roleSelection.currentIndex = currentValue
+                    }
                 }
             }
         }

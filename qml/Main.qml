@@ -1,9 +1,9 @@
-import "."
-import "../utils.js" as Utils
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import com.roles 1.0
+import com.stations 1.0
+import "../utils.js" as Utils
 
 ApplicationWindow {
     id: mainWindow
@@ -11,13 +11,23 @@ ApplicationWindow {
     title: qsTr("Конфигуратор станций")
     width: 800
     height: 800
+    property int screenBaseWidth: 1920
+    property int screenBaseHeight: 1080
+    //Пересчитываем размеры UI если экран не 1920х1080
+    property real scalingFactor: Math.min(Screen.width / screenBaseWidth, Screen.height / screenBaseHeight)
+
+    property int mainFontSize: 12
+    property real stationDefaultHeight: 40
+
+
+
 
     function deleteStation() {
-
-        listModel.remove(listView.currentIndex);
-        listView.selectedIndex = -1;
-        listView.currentIndex = -1;
-
+        if (listView.currentIndex !== -1) {
+            stationModel.removeStation(listView.currentIndex);
+            listView.selectedIndex = -1;
+            listView.currentIndex = -1;
+        }
     }
 
     SettingsDialog {
@@ -40,11 +50,11 @@ ApplicationWindow {
             title: qsTr("Проект")
             MenuItem {
                 text: qsTr("Импорт")
-                onTriggered: console.log("Open action triggered")
+                onTriggered: console.log("Import action triggered")
             }
             MenuItem {
                 text: qsTr("Экспорт")
-                onTriggered: Qt.quit()
+                onTriggered: console.log("Export action triggered")
             }
             MenuItem {
                 text: qsTr("Настройки")
@@ -74,15 +84,6 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/duplicate.png"
                 onButtonClicked: {
                     console.log("Duplicate button clicked");
-                    var roles = Roles.getAllRoles();
-        
-                    // Iterate through each role and log its names in both languages
-                    for (var i = 0; i < roles.length; i++) {
-                        var role = roles[i];
-                        console.log("Role Value:", role.value);
-                        console.log("Role name:", role.name);
-                        console.log("-----");
-                    }
                 }
             }
 
@@ -128,7 +129,6 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/go.png"
                 onButtonClicked: {
                     console.log("Go button clicked");
-                    console.log(Const.stationItemHeigth);
                 }
             }
             
@@ -184,7 +184,6 @@ ApplicationWindow {
                     currentItem.changeActivity();
                 }
                 else if (listView.currentIndex !== -1 && event.key === Qt.Key_Delete){
-                    // deleteStation();
                     deleteConfirmationDialog.open();
                 }
             }
@@ -194,20 +193,15 @@ ApplicationWindow {
                     color: "lightsteelblue"
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: Const.stationItemHeigth
+                    height: stationDefaultHeight * scalingFactor
                 }
             }
-                
-
-            model: ListModel {
-                id: listModel
-                ListElement { ip: "127.0.0.1" }
-                ListElement { ip: "127.0.0.2" }
-                ListElement { ip: "127.0.0.3" }
-            }
+            
+            model: stationModel
 
             delegate: StationItem {
-                ip: model.ip
+                station: model.station
+
                 Layout.fillWidth: true
 
                 onChangedActivity: function(isActive) {
@@ -245,11 +239,8 @@ ApplicationWindow {
         onAccepted: {
             var newIp = newIpField.text;
             if (Utils.isValidIP(newIp)) {
-                listView.model.append({
-                "ip": newIp
-                });
+                stationModel.addStation(newIp, "АРМ", "", Roles.arm_engineer);
             }
-
             newIpField.text = "";
         }
         Column {
@@ -257,7 +248,7 @@ ApplicationWindow {
             padding: 10
 
             Text {
-                text: qsTr("Enter new IP Address:")
+                text: qsTr("Адрес настравиваемой машины")
             }
 
             TextField {
@@ -271,13 +262,12 @@ ApplicationWindow {
                         ipDialog.accept();
                 }
             }
-
         }
     }
     Dialog {
         id: deleteConfirmationDialog
 
-        title: qsTr("Add New IP Address")
+        title: qsTr("Delete Station")
         anchors.centerIn: parent
         modal: true
         standardButtons: Dialog.Ok | Dialog.Cancel

@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.3
 import com.roles 1.0
 
 ColumnLayout{
-    property int fontSize: Const.fontSize
+    property int fontSize: mainFontSize
 
     Rectangle {
         
@@ -34,6 +34,12 @@ ColumnLayout{
 
                     padding: 5
                 }
+                currentIndex: station.role
+                onCurrentIndexChanged: {
+                    station.SetRole(currentIndex)
+
+                }
+
                 Connections {
                     target: languageController
                     function onLanguageChanged() {

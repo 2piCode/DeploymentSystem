@@ -6,7 +6,7 @@ import QtQuick.Layouts 1.3
 
 ColumnLayout {
     id: stationSettingsLayout
-    property int fontSize: Const.fontSize
+    property int fontSize: mainFontSize
     property int inputFieldsWidth
     property var station
 
@@ -37,9 +37,10 @@ ColumnLayout {
                     color: "white"
                 }
                 placeholderText: qsTr("имя станции")
+                text: station.name
 
                 onEditingFinished: {
-                    station.name = text;
+                    station.SetName(text)
                 }
             }
         }
@@ -62,7 +63,7 @@ ColumnLayout {
             }
 
             TextField {
-                id: passwordField
+                id: hostNameField
                 Layout.preferredWidth: inputFieldsWidth
                 font.pointSize: fontSize
                 placeholderText: qsTr("ip")
@@ -75,9 +76,10 @@ ColumnLayout {
                 onTextChanged: {
                     background.border.width = Utils.isValidIP(text) ? 0 : 2  
                 }
+                text: station.hostName
                 onEditingFinished: {
                     if (Utils.isValidIP(text)){
-                        station.ip = text;
+                        station.SetHostName(text)
                     }
                 }
 
@@ -98,6 +100,7 @@ ColumnLayout {
         Layout.preferredWidth: inputFieldsWidth * 3
         wrapMode: Text.Wrap        
         font.pointSize: fontSize
+        text: station.description
         placeholderText: qsTr("описание станции")
 
         onTextChanged: function() {

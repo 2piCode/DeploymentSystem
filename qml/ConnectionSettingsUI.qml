@@ -6,12 +6,12 @@ ColumnLayout {
     id: connectionSettingsLayout
 
     property bool isActive: false
-    property int defaultSize: Const.stationItemHeigth
+    property int defaultSize: stationDefaultHeight * scalingFactor
     property int expandedSize: detailAreaLayout.implicitHeight
     property int expandedMarkerSize: 16
     readonly property int maxLabelWidth: Screen.width * 0.05
     property int inputFieldsWidth
-    property int fontSize: Const.fontSize
+    property int fontSize: mainFontSize
 
     signal changedActivity(bool isActive)
 

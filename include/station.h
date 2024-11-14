@@ -16,10 +16,10 @@ struct AdditionalTask {};
 class Station : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QString hostName READ GetHostName WRITE SetHostName)
-    Q_PROPERTY(QString name READ GetName WRITE SetName)
-    Q_PROPERTY(QString description READ GetDescription WRITE SetDescription)
-    Q_PROPERTY(Roles::Role role READ GetRole WRITE SetRole)
+    Q_PROPERTY(QString hostName READ GetHostName WRITE SetHostName NOTIFY hostNameChanged)
+    Q_PROPERTY(QString name READ GetName WRITE SetName NOTIFY nameChanged)
+    Q_PROPERTY(QString description READ GetDescription WRITE SetDescription NOTIFY descriptionChanged)
+    Q_PROPERTY(Roles::Role role READ GetRole WRITE SetRole NOTIFY roleChanged)
     Q_PROPERTY(QVector<AdditionalTask> additionalTasks READ GetAdditionalTasks)
 
     Q_PROPERTY(QString username READ GetUsername WRITE SetUsername)
@@ -77,6 +77,12 @@ class Station : public QObject {
 
     Q_INVOKABLE bool CheckConnection() const;
     Q_INVOKABLE void StartSetupProccess();
+
+    signals:
+        void hostNameChanged();
+        void nameChanged();
+        void descriptionChanged();
+        void roleChanged();
 
    private:
     const int MAX_NAME_SYMBOLS_COUNT = 100;

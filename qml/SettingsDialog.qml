@@ -7,7 +7,7 @@ Dialog {
     anchors.centerIn: parent
     title: qsTr("Настройки")
     property bool switchState: ipOverNameSwitch.checked
-    font.pointSize: Const.fontSize
+    font.pointSize: mainFontSize
     
     standardButtons: Dialog.Ok | Dialog.Cancel
 
@@ -41,7 +41,7 @@ Dialog {
 
         Text {
             text: qsTr("Язык")
-            font.pointSize: Const.fontSize
+            font.pointSize: mainFontSize
             font.bold: true
         }
 

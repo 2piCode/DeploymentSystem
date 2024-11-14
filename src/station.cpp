@@ -12,6 +12,7 @@ Station::Station(QString host_name, QString name, ConnectionSettings settings,
 bool Station::SetHostName(QString host_name) {
     ssh_connection_->SetHostName(host_name);
     is_connected = false;
+    emit hostNameChanged();
     return true;
 }
 
@@ -21,6 +22,7 @@ bool Station::SetName(QString name) {
     }
 
     this->name_ = name;
+    emit nameChanged();
     return true;
 }
 
@@ -53,7 +55,10 @@ void Station::SetPath(QString path) {
         std::filesystem::path(path.toStdString());
 }
 
-void Station::SetRole(Roles::Role role) { this->role_ = role; }
+void Station::SetRole(Roles::Role role) { 
+    this->role_ = role;
+    emit roleChanged();
+    }
 
 void Station::AddAdditionalTask(AdditionalTask task) {
     additional_tasks_.push_back(task);

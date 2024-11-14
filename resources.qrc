@@ -16,5 +16,7 @@
         <file>images/expand.png</file>
         <file>images/openDir.png</file>
         <file>images/arm_engineer.png</file>
+        <file>images/arm_operator.png</file>
+        <file>images/arm_kip.png</file>
     </qresource>
 </RCC>

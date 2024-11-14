@@ -2,17 +2,19 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 
-ColumnLayout {
-    id: station
+import com.stations 1.0
+import com.roles 1.0
 
+ColumnLayout {
+    id: stationItem 
+
+    property Station station
     property bool isActive: false
-    property int fontSize: Const.fontSize
-    property int defaultSize: Const.stationItemHeigth
+    property int fontSize: mainFontSize
+    property int defaultSize: stationDefaultHeight * scalingFactor
     property int expandedSize: detailAreaLayout.implicitHeight
-    property int expandedMarkerSize: 20
-    property int inputFieldsWidth: Screen.width * 0.1
-    property string ip: "127.0.0.1"
-    property string name: "Station Name"
+    property int expandedMarkerSize: (stationDefaultHeight / 2) * scalingFactor
+    property int inputFieldsWidth: 150 * scalingFactor
 
     signal changedActivity(bool isActive)
 
@@ -28,7 +30,7 @@ ColumnLayout {
         id: header
 
         Layout.fillWidth: true
-        Layout.preferredHeight: station.defaultSize
+        Layout.preferredHeight: stationItem.defaultSize
         
 
         
@@ -50,7 +52,7 @@ ColumnLayout {
 
                 Text {
                     id: ipField
-                    text: settingsDialog.switchState ? ip : name
+                    text: settingsDialog.switchState ? station.hostName : station.name
                     font.pointSize: fontSize + 2
 
                     visible: true
@@ -70,8 +72,24 @@ ColumnLayout {
                 }
 
                 Image {
-                    source: "qrc:/images/images/arm_engineer.png"
-                    Layout.preferredHeight: defaultSize * 0.75
+                    source: {
+                        switch (station.role){
+                            case Roles.Role.arm_engineer:
+                                return "qrc:/images/images/arm_engineer.png";
+                            case Roles.Role.arm_operator:
+                                return "qrc:/images/images/arm_operator.png";
+                            case Roles.Role.arm_kip:
+                                return "qrc:/images/images/arm_kip.png";
+                            case Roles.Role.input_output_server:
+                                return "qrc:/images/images/input_output_server.png";
+                            case Roles.Role.history_server:
+                                return "qrc:/images/images/history_server.png";
+                            case Roles.Role.integration_server:
+                                return "qrc:/images/images/integration_server.png";
+                        }
+                    }
+
+                    Layout.preferredHeight: stationDefaultHeight * scalingFactor
                     fillMode: Image.PreserveAspectFit
 
                 }
@@ -80,6 +98,9 @@ ColumnLayout {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
+                    console.log( station.hostName)
+                    console.log( station.name)
+                    console.log( station.role)
                     changeActivity();
                 }
             }
@@ -100,16 +121,16 @@ ColumnLayout {
             id: detailAreaLayout
             spacing: 15
             anchors.margins: 10
-            width: station.width
+            width: stationItem.width
 
             StationSettingsUI{
-                inputFieldsWidth: station.inputFieldsWidth
-                station: station
+                inputFieldsWidth: stationItem.inputFieldsWidth
+                station: stationItem.station
             }
 
             ConnectionSettingsUI {
                 isActive: false
-                inputFieldsWidth: station.inputFieldsWidth
+                inputFieldsWidth: stationItem.inputFieldsWidth
             }
 
             InstallationSettingsUI{}
@@ -130,7 +151,7 @@ ColumnLayout {
             when: isActive
             PropertyChanges {
                 target: detailArea
-                Layout.preferredHeight: station.expandedSize
+                Layout.preferredHeight: stationItem.expandedSize
             }
         }
     ]

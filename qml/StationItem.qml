@@ -14,7 +14,7 @@ ColumnLayout {
     property int defaultSize: stationDefaultHeight * scalingFactor
     property int expandedSize: detailAreaLayout.implicitHeight
     property int expandedMarkerSize: (stationDefaultHeight / 2) * scalingFactor
-    property int inputFieldsWidth: 150 * scalingFactor
+    property int inputFieldsWidth: 200 * scalingFactor
 
     signal changedActivity(bool isActive)
 
@@ -81,7 +81,7 @@ ColumnLayout {
                             case Roles.Role.arm_kip:
                                 return "qrc:/images/images/arm_kip.png";
                             case Roles.Role.input_output_server:
-                                return "qrc:/images/images/input_output_server.png";
+                                return "qrc:/images/images/io_server.png";
                             case Roles.Role.history_server:
                                 return "qrc:/images/images/history_server.png";
                             case Roles.Role.integration_server:
@@ -129,6 +129,7 @@ ColumnLayout {
             }
 
             ConnectionSettingsUI {
+                station: stationItem.station
                 isActive: false
                 inputFieldsWidth: stationItem.inputFieldsWidth
             }

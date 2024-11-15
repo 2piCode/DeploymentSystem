@@ -1,6 +1,6 @@
 import "../utils.js" as Utils
 import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick.Controls.Basic 2.12
 import QtQuick.Layouts 1.3
 
 
@@ -12,7 +12,7 @@ ColumnLayout {
 
     Layout.preferredHeight: stationSettingsLayout.implicitHeight
     Layout.fillWidth: true
-    spacing: 10
+    spacing: 20
 
     Rectangle {
         Layout.fillWidth: true
@@ -96,12 +96,18 @@ ColumnLayout {
 
     TextArea {
         id: descriptionField
-        property int maxLines: 3
+        property int maxLines: 4
         Layout.preferredWidth: inputFieldsWidth * 3
         wrapMode: Text.Wrap        
         font.pointSize: fontSize
         text: station.description
         placeholderText: qsTr("описание станции")
+
+        background: Rectangle {
+            color: "white"
+            radius: 5
+            border.width: 0 
+        }
 
         onTextChanged: function() {
             if (lineCount > maxLines || text.length > 256) {

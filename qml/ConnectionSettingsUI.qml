@@ -1,9 +1,13 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick.Controls.Basic 2.12
 import QtQuick.Layouts 1.3
+
+import com.stations 1.0
 
 ColumnLayout {
     id: connectionSettingsLayout
+
+    property Station station
 
     property bool isActive: false
     property int defaultSize: stationDefaultHeight * scalingFactor
@@ -98,6 +102,12 @@ ColumnLayout {
                         Layout.preferredWidth: inputFieldsWidth
                         font.pointSize: fontSize
                         placeholderText: qsTr("имя пользователя")
+                        background: Rectangle {
+                            color: "white"
+                            radius: 5
+                            border.width: 0 
+                        }
+                        text: station.username
                     }
                 }
             }
@@ -124,6 +134,11 @@ ColumnLayout {
                         font.pointSize: fontSize
                         placeholderText: qsTr("пароль")
                         echoMode: TextInput.Password
+                        background: Rectangle {
+                            color: "white"
+                            radius: 5
+                            border.width: 0 
+                        }
                     }
                 }
             }
@@ -136,7 +151,7 @@ ColumnLayout {
                     font.pointSize: fontSize
                     text: qsTr("Конфигурация из файла")
                     checked: false
-                    Layout.fillWidth: true
+
                 }
                 FileSelection {
                     id: fileSelection

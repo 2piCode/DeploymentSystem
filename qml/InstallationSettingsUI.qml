@@ -34,7 +34,7 @@ ColumnLayout{
 
                     padding: 5
                 }
-                currentIndex: station.role
+                
                 onCurrentIndexChanged: {
                     station.SetRole(currentIndex)
 
@@ -48,6 +48,11 @@ ColumnLayout{
                         roleSelection.currentIndex = currentValue
                     }
                 }
+                onModelChanged: {
+                    roleSelection.currentIndex = station.role
+
+                }
+
             }
         }
     }

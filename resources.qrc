@@ -18,5 +18,8 @@
         <file>images/arm_engineer.png</file>
         <file>images/arm_operator.png</file>
         <file>images/arm_kip.png</file>
+        <file>images/history_server.png</file>
+        <file>images/io_server.png</file>
+        <file>images/integration_server.png</file>
     </qresource>
 </RCC>

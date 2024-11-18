@@ -20,8 +20,6 @@ ApplicationWindow {
     property real stationDefaultHeight: 40
 
 
-
-
     function deleteStation() {
         if (listView.currentIndex !== -1) {
             stationModel.removeStation(listView.currentIndex);
@@ -121,6 +119,7 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/connection.png"
                 onButtonClicked: {
                     console.log("Connection button clicked");
+                    console.log(stationModel.checkConnection(listView.currentIndex));
                 }
             }
 
@@ -129,6 +128,7 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/go.png"
                 onButtonClicked: {
                     console.log("Go button clicked");
+                    stationModel.StartSetupProccess(listView.currentIndex)
                 }
             }
             

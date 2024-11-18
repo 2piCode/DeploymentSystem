@@ -1,5 +1,5 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick.Controls.Basic 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs
 
@@ -7,7 +7,7 @@ ColumnLayout{
     property string fileSelectionTitle: "Путь до файла"
     property string additionalNameFilters;
     property int inputFieldWidth: Screen.width * 0.15
-    property int fontSize: 12
+    property int fontSize: mainFontSize
 
 
     FileDialog {
@@ -45,6 +45,7 @@ ColumnLayout{
             icon.source: "qrc:/images/images/openDir.png"
             flat: true
             Layout.preferredHeight: filepathField.height
+            Layout.preferredWidth: 50
             onClicked: {
                 fileDialog.open()
             }

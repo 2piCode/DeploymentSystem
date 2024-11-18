@@ -1,4 +1,5 @@
 #include "station_model.h"
+#include <iostream>
 
 StationModel::StationModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -43,6 +44,25 @@ void StationModel::removeStation(int index)
     station->deleteLater();
     endRemoveRows();
 }
+
+bool StationModel::checkConnection(int index){
+    if (index < 0 || index >= m_stations.count()){
+        return false;
+    }
+    
+    Station *station = m_stations[index];
+    return station->CheckConnection();
+}
+
+void StationModel::StartSetupProccess(int index){
+    if (index < 0 || index >= m_stations.count()){
+        return;
+    }
+    Station *station = m_stations[index];
+    station->StartSetupProccess();
+    return;
+}
+
 
 int StationModel::rowCount(const QModelIndex &parent) const
 {

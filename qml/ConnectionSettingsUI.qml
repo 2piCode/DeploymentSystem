@@ -85,7 +85,7 @@ ColumnLayout {
 
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: loginField.height
+                Layout.preferredHeight: usernameField.height
                 color: "transparent"
 
                 RowLayout {
@@ -98,7 +98,7 @@ ColumnLayout {
                         text: qsTr("Имя пользователя:")
                     }
                     TextField {
-                        id: loginField
+                        id: usernameField
                         Layout.preferredWidth: inputFieldsWidth
                         font.pointSize: fontSize
                         placeholderText: qsTr("имя пользователя")
@@ -108,6 +108,9 @@ ColumnLayout {
                             border.width: 0 
                         }
                         text: station.username
+                        onEditingFinished: {
+                            station.SetUsername(text);
+                        }
                     }
                 }
             }
@@ -139,6 +142,10 @@ ColumnLayout {
                             radius: 5
                             border.width: 0 
                         }
+                        onEditingFinished: {    
+                            station.SetPassword(text);
+                        }
+
                     }
                 }
             }

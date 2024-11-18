@@ -34,6 +34,8 @@ public:
                             const QString &filePath = QString());
 
     Q_INVOKABLE void removeStation(int index);
+    Q_INVOKABLE bool checkConnection(int index);
+    Q_INVOKABLE void StartSetupProccess(int index);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

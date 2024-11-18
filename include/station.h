@@ -22,7 +22,7 @@ class Station : public QObject {
     Q_PROPERTY(Roles::Role role READ GetRole WRITE SetRole NOTIFY roleChanged)
     Q_PROPERTY(QVector<AdditionalTask> additionalTasks READ GetAdditionalTasks)
 
-    Q_PROPERTY(QString username READ GetUsername WRITE SetUsername)
+    Q_PROPERTY(QString username READ GetUsername WRITE SetUsername NOTIFY usernameChanged)
     Q_PROPERTY(QString password READ GetPassword WRITE SetPassword)
     Q_PROPERTY(quint16 port READ GetConnectionPort WRITE SetConnectionPort)
     Q_PROPERTY(QString filePath READ GetUrlPath WRITE SetPath)
@@ -83,6 +83,7 @@ class Station : public QObject {
         void nameChanged();
         void descriptionChanged();
         void roleChanged();
+        void usernameChanged();
 
    private:
     const int MAX_NAME_SYMBOLS_COUNT = 100;

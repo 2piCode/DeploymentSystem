@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     stationModel->addStation("127.0.0.1", "АРМ оператора", "Описание и в этот раз с пробелами и длиннее", Roles::Role::arm_operator, "user2", "pass2", 22, "/path/to/key2");
     stationModel->addStation("127.0.0.4", "Сервер истории", "Описание", Roles::Role::arm_kip, "user3", "pass3", 22, "/path/to/key3");
     stationModel->addStation("192.168.1.15", "Сервер истории", "Описание", Roles::Role::history_server, "user3", "pass3", 22, "/path/to/key3");
-    stationModel->addStation("192.168.1.17", "Сервер ввода/вывода", "Описание", Roles::Role::input_output_server, "user3", "pass3", 22, "/path/to/key3");
+    stationModel->addStation("192.168.1.17", "Сервер ввода/вывода", "Описание", Roles::Role::input_output_server, "astra", "123456789", 22, "/path/to/key3");
     stationModel->addStation("192.168.1.19", "Сервер интеграции", "Описание", Roles::Role::integration_server, "user3", "pass3", 22, "/path/to/key3");
 
 

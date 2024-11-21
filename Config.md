@@ -1,26 +1,5 @@
 # Задачи конфигурации
 
-## 3.5
-dism /online /enable-feature /featurename:NetFX3 /All /Source:C:\test /LimitAccess
-
-как проверить, что 3.5 установлен?
-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5
-
-## SNMP
-
-```
-dism /online /add-capability /capabilityname:SNMP.Client~~~~0.0.1.0 /LimitAccess /Source:C:\test
-
-sc query snmp
-
-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall - Microsoft-Windows-SNMP-Agent-Service
-
-reg add "HKLM\SYSTEM\CurrentControlSet\Services\SNMP\Parameters\ValidCommunities" /v public /t REG_DWORD /d 4 /f
-reg add "HKLM\SYSTEM\CurrentControlSet\Services\SNMP\Parameters\ValidCommunities" /v private /t REG_DWORD /d 8 /f
-
-Значение 4 соответствует правам чтения (READ_ONLY).
-Значение 8 соответствует правам записи (READ_WRITE).
-```
 ## Domain
 Должны быть сгенерированы два файла astra.domain.agent.xml, astra.net.agent.xml.\
 Для проверки корректности можно использовать расширение для IDE.

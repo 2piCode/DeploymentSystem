@@ -99,3 +99,38 @@ void MainStation::StartSetupProccessAllStation() {
         station->StartSetupProccess();
     }
 }
+
+Systems::System Station::CheckSystem() {
+    if (system_.has_value()) {
+        return system_.value();
+    }
+
+    std::ostringstream outputStream;
+
+    if (sshConnection_->ExecuteCommand("ver", outputStream)) {
+        std::string output = outputStream.str();
+        if (output.find("Windows") != std::string::npos) {
+            system_ = Systems::System::Windows;
+            return Systems::System::Windows;
+        }
+    }
+
+    if (sshConnection_->ExecuteCommand("lsb_release -a | grep Description",
+                                       outputStream)) {
+        std::string output = outputStream.str();
+        if (output.find("Astra Linux") != std::string::npos) {
+            system_ = Systems::System::AstraLinux;
+            return Systems::System::AstraLinux;
+        } else if (output.find("RED OS") != std::string::npos) {
+            if (output.find("8.") != std::string::npos) {
+                system_ = Systems::System::Redos8;
+                return Systems::System::Redos8;
+            } else {
+                system_ = Systems::System::Redos7;
+                return Systems::System::Redos7;
+            }
+        }
+    }
+
+    throw std::runtime_error("Can't detect system");
+}

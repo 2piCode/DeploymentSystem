@@ -148,7 +148,8 @@ bool SSHConnection::initializeSFTP() {
     return true;
 }
 
-bool SSHConnection::ExecuteCommand(const std::string& command) const {
+bool SSHConnection::ExecuteCommand(const std::string& command,
+                                   std::ostringstream& stream) const {
     if (!session_) {
         emit errorOccurred("Not connected to any SSH session");
         return false;
@@ -185,6 +186,7 @@ bool SSHConnection::ExecuteCommand(const std::string& command) const {
     }
 
     emit commandExecuted(output);
+    stream << output;
     return true;
 }
 

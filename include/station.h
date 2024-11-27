@@ -10,8 +10,11 @@
 
 #include "roles.h"
 #include "ssh_connection.h"
+#include "systems.h"
 
 struct AdditionalTask {};
+
+enum class SystemType { WINDOWS = 0, ASTRALINUX = 1, REDOS7 = 2, REDOS8 = 3 };
 
 class Station : public QObject {
     Q_OBJECT
@@ -75,7 +78,11 @@ class Station : public QObject {
         return additional_tasks_;
     }
 
-    Q_INVOKABLE bool CheckConnection() const;
+    Systems::System CheckSystem();
+
+    std::optional<Systems::System> GetSystem() const { return system_; }
+
+        Q_INVOKABLE bool CheckConnection() const;
     Q_INVOKABLE void StartSetupProccess();
 
    private:
@@ -89,6 +96,7 @@ class Station : public QObject {
     QString description_;
     Roles::Role role_;
     QList<AdditionalTask> additional_tasks_;
+    std::optional<Systems::System> system_;
 };
 
 class MainStation : public Station {

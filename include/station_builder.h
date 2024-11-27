@@ -15,10 +15,10 @@ class StationBuilder : public QObject {
                             QObject* parent = nullptr)
         : QObject(parent), main_station_(main_station) {}
 
-    const std::shared_ptr<MainStation>& GetMainStation() const {
+    Q_INVOKABLE const std::shared_ptr<MainStation>& GetMainStation() const {
         return main_station_;
     }
-    std::shared_ptr<MainStation>& GetMainStation() { return main_station_; }
+    Q_INVOKABLE std::shared_ptr<MainStation>& GetMainStation() { return main_station_; }
 
     Q_INVOKABLE Station* CreateStation(const QString& hostName,
                                        const QString& name,
@@ -43,6 +43,15 @@ class StationBuilder : public QObject {
         }
 
         return main_station_->GetChildStations().at(index - 1).get();
+    }
+
+    Q_INVOKABLE QList<Station*> GetChildStations() {
+        QList<Station*> child_stations_;
+
+        for (auto& station : main_station_->GetChildStations())
+            child_stations_.push_back(station.get());
+
+        return child_stations_;
     }
 
     Q_INVOKABLE void RemoveStation(int index) {

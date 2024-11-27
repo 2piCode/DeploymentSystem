@@ -87,11 +87,7 @@ void Station::StartSetupProccess() {
      4) Proccess additional tasks
     */
 
-    //tmp placeholder
-    ssh_connection_->UploadFile("c:\\temp\\test.sh", "/home/astra/test.sh");
-    ssh_connection_->ExecuteCommand("chmod +x /home/astra/test.sh");
-    ssh_connection_->ExecuteCommand("/home/astra/test.sh");
-    // throw std::runtime_error("Not implemented");
+    throw std::runtime_error("Not implemented");
 }
 
 void MainStation::AddChildStation(std::unique_ptr<Station> station) {
@@ -120,7 +116,7 @@ Systems::System Station::CheckSystem() {
 
     std::ostringstream outputStream;
 
-    if (sshConnection_->ExecuteCommand("ver", outputStream)) {
+    if (ssh_connection_->ExecuteCommand("ver", outputStream)) {
         std::string output = outputStream.str();
         if (output.find("Windows") != std::string::npos) {
             system_ = Systems::System::Windows;
@@ -128,7 +124,7 @@ Systems::System Station::CheckSystem() {
         }
     }
 
-    if (sshConnection_->ExecuteCommand("lsb_release -a | grep Description",
+    if (ssh_connection_->ExecuteCommand("lsb_release -a | grep Description",
                                        outputStream)) {
         std::string output = outputStream.str();
         if (output.find("Astra Linux") != std::string::npos) {

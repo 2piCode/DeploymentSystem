@@ -8,7 +8,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 6.4.2 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.4.2 REQUIRED COMPONENTS Quick LinguistTools)
+
 
 set(LIBSSH2DIR CACHE STRING "LIBSSH2 static library directory")
 
@@ -36,36 +37,73 @@ set(HEADERS include/libssh2_manager.h
             include/config_writer.h
             include/xml_config_writer.h
             include/station_builder.h
+            include/language_controller.h
 )
 
 set (SOURCES src/main.cpp
              src/ssh_connection.cpp
              src/station.cpp
+             src/systems.cpp
              src/config.cpp
              src/user_settings.cpp
              src/xml_config_writer.cpp
              src/roles.cpp
+             src/language_controller.cpp
 )
 
 set (SOURCE_QML qml/Main.qml
-                qml/StationItem.qml)
+                qml/StationItem.qml
+                qml/ConnectionSettingsUI.qml
+                qml/InstallationSettingsUI.qml
+                qml/StationSettingsUI.qml
+                qml/CustomToolBarButton.qml
+                qml/FileSelection.qml
+                qml/SettingsDialog.qml)
 
-set (IMAGES images/back.png
-            images/connection.png
-            images/duplicate.png
-            images/edit.png
-            images/go.png
-            images/load.png
-            images/minus.png
-            images/next.png
-            images/plus.png
-            images/save.png
-            images/settings.png
-            images/upload.png)
+                # Add translation files
+set(TS_FILES
+"${CMAKE_CURRENT_SOURCE_DIR}/translations/translations_en.ts"
+"${CMAKE_CURRENT_SOURCE_DIR}/translations/translations_ru.ts"
+)
+
+# Set output directory for .qm files
+set(QM_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/translations")
+file(MAKE_DIRECTORY ${QM_OUTPUT_DIR})
 
 set(RESOURCES
     resources.qrc
 )
+find_program(Qt6_LUPDATE_EXECUTABLE lupdate HINTS "${CMAKE_PREFIX_PATH}/bin")
+find_program(Qt6_LRELEASE_EXECUTABLE lrelease HINTS "${CMAKE_PREFIX_PATH}/bin")
+
+# Update TS files using lupdate
+add_custom_target(update_ts
+    COMMAND Qt6::lupdate ${SOURCE_QML} -ts ${TS_FILES}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS ${SOURCE_QML}
+    COMMENT "Updating translation (.ts) files"
+)
+
+# Generate QM files from TS files
+set(QM_FILES)
+foreach(TS_FILE ${TS_FILES})
+    get_filename_component(TS_NAME ${TS_FILE} NAME)
+    get_filename_component(TS_BASENAME ${TS_FILE} NAME_WE)
+    set(QM_FILE "${QM_OUTPUT_DIR}/${TS_BASENAME}.qm")
+    list(APPEND QM_FILES ${QM_FILE})
+
+    add_custom_command(
+        OUTPUT ${QM_FILE}
+        COMMAND Qt6::lrelease ${TS_FILE} -qm ${QM_FILE}
+        DEPENDS ${TS_FILE}
+        COMMENT "Generating ${QM_FILE}"
+    )
+endforeach()
+
+
+add_custom_target(translations ALL DEPENDS ${QM_FILES})
+add_dependencies(translations update_ts)
+
 
 set (PUGIXML_SOURCES
     ${LIBPUGIXML}/pugixml.hpp
@@ -87,7 +125,6 @@ qt_add_qml_module(deldeliveryApp
     QML_FILES
         ${SOURCE_QML}
         utils.js
-        QML_FILES
 )
 
 target_link_directories(deldeliveryApp PUBLIC
@@ -114,3 +151,5 @@ install(TARGETS deldeliveryApp
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+add_dependencies(deldeliveryApp translations)

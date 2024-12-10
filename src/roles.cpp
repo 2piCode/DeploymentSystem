@@ -1,4 +1,5 @@
 #include "roles.h"
+#include "language_controller.h"
 
 #include <array>
 #include <stdexcept>
@@ -44,3 +45,21 @@ Roles::Role Roles::fromString(const QString& role_str) {
     }
     throw std::runtime_error("Unknown role string");
 }
+
+QVariantList Roles::getAllRoles() const{
+            QVariantList rolesList;
+            QString currentLanguage = LanguageController::instance()->getCurrentLanguage();
+            for (const auto& mapping : role_mapping) {
+                QVariantMap roleMap;
+                roleMap["value"] = static_cast<int>(mapping.role);
+                
+                if (currentLanguage == "ru") {
+                    roleMap["name"] = QString::fromUtf8(mapping.name_ru);
+                } else {
+                    roleMap["name"] = QString::fromUtf8(mapping.name_en);
+                }
+                
+                rolesList.append(roleMap);
+            }
+            return rolesList;
+        }

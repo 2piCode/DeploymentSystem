@@ -25,6 +25,8 @@ class UserSettings : public QObject {
     Q_INVOKABLE void ClearSettings();
     Q_INVOKABLE void SetSavePasswordInConfig(bool is_save);
 
+   signals:
+    void configChanged();
    private:
     std::unique_ptr<StationBuilder> builder_;
     std::unique_ptr<Config> config_;

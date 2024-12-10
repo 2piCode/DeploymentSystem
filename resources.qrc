@@ -6,11 +6,20 @@
         <file>images/edit.png</file>
         <file>images/go.png</file>
         <file>images/load.png</file>
-        <file>images/minus.png</file>
         <file>images/next.png</file>
         <file>images/plus.png</file>
         <file>images/save.png</file>
         <file>images/settings.png</file>
         <file>images/upload.png</file>
+        <file>images/delete.png</file>
+        <file>images/collapse.png</file>
+        <file>images/expand.png</file>
+        <file>images/openDir.png</file>
+        <file>images/arm_engineer.png</file>
+        <file>images/arm_operator.png</file>
+        <file>images/arm_kip.png</file>
+        <file>images/history_server.png</file>
+        <file>images/io_server.png</file>
+        <file>images/integration_server.png</file>
     </qresource>
 </RCC>

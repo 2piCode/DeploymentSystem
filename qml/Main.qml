@@ -1,18 +1,59 @@
-import "."
-import "../utils.js" as Utils
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs
+import com.roles 1.0
+import com.stations 1.0
+import com.systems 1.0
+import "../utils.js" as Utils
 
 ApplicationWindow {
+    id: mainWindow
     visible: true
     title: qsTr("Конфигуратор станций")
     width: 800
     height: 800
+    property int screenBaseWidth: 1920
+    property int screenBaseHeight: 1080
+    //Пересчитываем размеры UI если экран не 1920х1080
+    property real scalingFactor: Math.min(Screen.width / screenBaseWidth, Screen.height / screenBaseHeight)
+
+    property int mainFontSize: 12
+    property real stationDefaultHeight: 40
+
+
+    function deleteStation() {
+        stationBuilder.RemoveStation(listView.currentIndex);
+
+    }
+
+    SettingsDialog {
+        id: settingsDialog
+    }
 
     menuBar: MenuBar {
+        FileDialog {
+            id: exportConfigSelection
+            title: "Сохранить файл конфигурации"
+            nameFilters: ["Файл конфигурации(*.xml)", "All files (*)"]
+            fileMode: FileDialog.SaveFile
+            onAccepted: {
+                userSettings.ExportConfig(String(exportConfigSelection.currentFile)
+                .replace(/^file:\/\/\//, ""));
+            }
+        }
+        FileDialog {
+            id: importConfigSelection
+            title: "Загрузить конфигурацию из файла"
+            nameFilters: ["Файл конфигурации(*.xml)"]
+            fileMode: FileDialog.OpenFile
+            onAccepted: {
+                userSettings.ImportConfig(String(importConfigSelection.currentFile)
+                .replace(/^file:\/\/\//, ""));
+            }
+        }
         Menu {
-            title: qsTr("File")
+            title: qsTr("Файл")
             MenuItem {
                 text: qsTr("&Open")
                 onTriggered: console.log("Open action triggered")
@@ -22,195 +63,236 @@ ApplicationWindow {
                 onTriggered: Qt.quit()
             }
         }
+        Menu {
+            title: qsTr("Проект")
+            MenuItem {
+                text: qsTr("Импорт")
+                onTriggered: {
+                    importConfigSelection.open()
+                    console.log("Import action triggered")
+                }
+            }
+            MenuItem {
+                text: qsTr("Экспорт")
+                onTriggered: {
+                    exportConfigSelection.open()
+                    console.log("Export action triggered")
+                }
+            }
+            MenuItem {
+                text: qsTr("Настройки")
+                onTriggered: settingsDialog.open();
+            }
+        }
     }
 
     header: ToolBar {
         id: mainToolBar
-
         RowLayout {
-            Layout.alignment: Qt.AlignLeft
             spacing: 10
+            width: parent.width
 
-            ToolButton {
+            CustomToolBarButton {
                 id: saveBtn
-
-                icon.source: "qrc:/images/images/save.png"
-                onClicked: {
-                    console.log("saveBtn clicked");
+                iconSource: "qrc:/images/images/save.png"
+                onButtonClicked: {
+                    console.log("Save button clicked");
+                    console.log(mainWindow.width, mainWindow.height);
+                    console.log(Screen.width, Screen.height);
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: duplicateBtn
-
-                icon.source: "qrc:/images/images/duplicate.png"
-                onClicked: {
-                    console.log("duplicateBtn clicked");
+                iconSource: "qrc:/images/images/duplicate.png"
+                onButtonClicked: {
+                    console.log("Duplicate button clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: prevBtn
-
-                icon.source: "qrc:/images/images/back.png"
-                onClicked: {
-                    console.log("prevBtn clicked");
+                iconSource: "qrc:/images/images/back.png"
+                onButtonClicked: {
+                    console.log(stationBuilder.GetChildStations())
+                    console.log("Prev button clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: nextBtn
-
-                icon.source: "qrc:/images/images/next.png"
-                onClicked: {
-                    console.log("nextBtn clicked");
-                }
-            }
-
-            ToolButton {
-                id: loadBtn
-
-                icon.source: "qrc:/images/images/load.png"
-                onClicked: {
-                    console.log("loadBtn clicked");
-                }
-            }
-
-            ToolButton {
-                id: uploadBtn
-
-                icon.source: "qrc:/images/images/upload.png"
-                onClicked: {
-                    console.log("uploadBtn clicked");
+                iconSource: "qrc:/images/images/next.png"
+                onButtonClicked: {
+                    console.log(config.GetInstallerPathString(Systems.System.AstraLinux))
+                    console.log("Next button clicked");
                 }
             }
 
             Item {
-                width: 30  // Создание пробела как в ТЗ
+                Layout.preferredWidth: Screen.width * 0.02
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: editBtn
-
-                icon.source: "qrc:/images/images/edit.png"
-                onClicked: {
-                    console.log("editBtn clicked");
+                iconSource: "qrc:/images/images/edit.png"
+                onButtonClicked: {
+                    console.log("Edit button clicked");
+                    languageController.switchLanguage()
                 }
             }
 
-            ToolButton {
-                id: settingsBtn
-
-                icon.source: "qrc:/images/images/settings.png"
-                onClicked: {
-                    console.log("settingsBtn clicked");
-                }
-            }
-
-            ToolButton {
+            CustomToolBarButton {
                 id: connectionBtn
+                iconSource: "qrc:/images/images/connection.png"
+                onButtonClicked: {
+                    console.log("Connection button clicked");
+                    console.log(listView.currentItem.station.hostName);
+                    console.log(listView.currentItem.station.CheckConnection())
 
-                icon.source: "qrc:/images/images/connection.png"
-                onClicked: {
-                    console.log("connectionBtn clicked");
                 }
             }
 
-            ToolButton {
+            CustomToolBarButton {
                 id: goBtn
+                iconSource: "qrc:/images/images/go.png"
+                onButtonClicked: {
+                    listView.currentItem.station.StartSetupProccess();
+                    console.log("Go button clicked");
+                }
+            }
+            
+            Item {
+                Layout.fillWidth: true
+            }
 
-                icon.source: "qrc:/images/images/go.png"
-                onClicked: {
-                    console.log("goBtn clicked");
+            CustomToolBarButton {
+                id: addBtn
+                iconSource: "qrc:/images/images/plus.png"
+                onButtonClicked: {
+                    ipDialog.open();
+                }
+            }
+
+            CustomToolBarButton {
+                id: deleteBtn
+                iconSource: "qrc:/images/images/delete.png"
+                onButtonClicked: {
+                    deleteConfirmationDialog.open();
                 }
             }
         }
     }
 
-    Column {
+    ColumnLayout {
         id: stations
-
-        spacing: 10
-
-        anchors {
-            top: header.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
+        width: parent.width
+        height: parent.height
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
         ListView {
-            id: listView
-
+            id: mainStationListView
             property int selectedIndex: -1
-
-            width: parent.width
+            Layout.fillWidth: true
+            Layout.preferredHeight: contentHeight
             focus: true
-            highlightMoveDuration: 100
+            clip: true
+
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AsNeeded
+            }
+
             Keys.onPressed: function(event) {
-                if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier)
-                    ipDialog.open();
-                else if (listView.currentIndex !== -1 && event.key === Qt.Key_Space){
-                    currentItem.editIp();
+                if (listView.currentIndex !== -1 && event.key === Qt.Key_Space){
+                    currentItem.changeActivity();
                 }
             }
-
-            height: contentHeight
-
-            highlight: Rectangle {
-                color: "lightsteelblue"
-                radius: 5
-            }
-
-            model: ListModel {
-                id: listModel
-
-                ListElement {ip: "127.0.0.1"}
-                ListElement {ip: "127.0.0.1"}
-                ListElement {ip: "127.0.0.1"}
-            }
+            
+            model: stationBuilder.GetStation(0)
 
             delegate: StationItem {
-                ip: model.ip
+                station: modelData
+
+                Layout.fillWidth: true
+
                 onChangedActivity: function(isActive) {
                     if (listView.selectedIndex !== index) {
                         listView.selectedIndex = index;
                         listView.currentIndex = index;
+                        listView.currentItem.forceActiveFocus();
                     }
                 }
             }
-
+            
             Behavior on contentHeight {
                 NumberAnimation {
                     duration: 300
                     easing.type: Easing.InOutQuad
                 }
-
             }
-
         }
 
-        Button {
-            id: addIpBtn
+        ListView {
+            id: listView
+            property int selectedIndex: -1
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            focus: true
+            clip: true
+            highlightFollowsCurrentItem: true
+            highlightResizeVelocity: Infinity
+            highlightMoveDuration: 300
 
-            anchors.left: parent.left
-            anchors.leftMargin: 3
-            width: 60
-            height: 40
-            icon.source: "qrc:/images/images/plus.png"
-
-            background: Rectangle {
-                anchors.fill: parent
-                color: "transparent"
-                border.color: addIpBtn.pressed ? "gray" :
-                     addIpBtn.hovered ? "darkgray" : "black"
-                border.width: 2
-                radius: 8
-
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AsNeeded
             }
 
-            onClicked: {
-                ipDialog.open();
+            Keys.onPressed: function(event) {
+                if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier)
+                    ipDialog.open();
+                else if (listView.currentIndex !== -1 && event.key === Qt.Key_Space){
+                    currentItem.changeActivity();
+                }
+                else if (listView.currentIndex !== -1 && event.key === Qt.Key_Delete){
+                    deleteConfirmationDialog.open();
+                }
+            }
+
+            highlight: Item {
+                Rectangle {
+                    color: "lightsteelblue"
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: stationDefaultHeight * scalingFactor
+                }
+            }
+            
+            model: stationBuilder.childStations
+
+            delegate: StationItem {
+                station: modelData
+
+                Layout.fillWidth: true
+
+                onChangedActivity: function(isActive) {
+                    if (listView.selectedIndex !== index) {
+                        listView.selectedIndex = index;
+                        listView.currentIndex = index;
+                        listView.currentItem.forceActiveFocus();
+                    }
+                }
+            }
+            
+            Behavior on contentHeight {
+                NumberAnimation {
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+            }
+            footer: Rectangle {
+                height: 2
+                color: "gray"
+                width: listView.width
             }
         }
     }
@@ -218,10 +300,11 @@ ApplicationWindow {
     Dialog {
         id: ipDialog
 
-        title: "Add New IP Address"
+        title: qsTr("Add New IP Address")
         anchors.centerIn: parent
         modal: true
         standardButtons: Dialog.Ok | Dialog.Cancel
+
         onOpened: {
             newIpField.forceActiveFocus();
         }
@@ -230,11 +313,9 @@ ApplicationWindow {
         }
         onAccepted: {
             var newIp = newIpField.text;
-            if (Utils.isValidIP(newIp))
-                listView.model.append({
-                "ip": newIp
-            });
-
+            if (Utils.isValidIP(newIp)) {
+                stationBuilder.CreateStation(newIp, "test")
+            }
             newIpField.text = "";
         }
         Column {
@@ -242,7 +323,7 @@ ApplicationWindow {
             padding: 10
 
             Text {
-                text: "Enter new IP Address:"
+                text: qsTr("Адрес настравиваемой машины")
             }
 
             TextField {
@@ -256,7 +337,21 @@ ApplicationWindow {
                         ipDialog.accept();
                 }
             }
+        }
+    }
+    Dialog {
+        id: deleteConfirmationDialog
 
+        title: qsTr("Delete Station")
+        anchors.centerIn: parent
+        modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+
+        Text{
+            text: qsTr("Удалить выбранную станцию?")
+        }
+        onAccepted: {
+            deleteStation();
         }
     }
 }

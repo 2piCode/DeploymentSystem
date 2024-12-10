@@ -1,121 +1,198 @@
-import "../utils.js" as Utils
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 
-Column {
-    id: station
+import com.stations 1.0
+import com.roles 1.0
 
+ColumnLayout {
+    id: stationItem 
+
+    property Station station
     property bool isActive: false
-    property int defaultSize: 80
-    property int expandedSize: 80
-    property int expandedMarkerSize: 24
-    property string ip: "127.0.0.1"
+    property int fontSize: mainFontSize
+    property int defaultSize: stationDefaultHeight * scalingFactor
+    property int expandedSize: detailAreaLayout.implicitHeight
+    property int expandedMarkerSize: (stationDefaultHeight / 2) * scalingFactor
+    property int inputFieldsWidth: 200 * scalingFactor
 
     signal changedActivity(bool isActive)
 
     function changeActivity() {
-        console.log(isActive);
-        console.log(detailArea.height);
         isActive = !isActive;
-        console.log(isActive);
-        console.log(detailArea.height);
         changedActivity(isActive);
     }
-    function editIp() {
-        ipField.visible = false;
-        ipFieldEditor.visible = true;
-        ipFieldEditor.forceActiveFocus();
-    }
 
-    width: parent.width
+    spacing: 0
+    width: parent ? parent.width : 0
 
     Item {
         id: header
 
-        width: parent.width
-        height: station.defaultSize
+        Layout.fillWidth: true
+        Layout.preferredHeight: stationItem.defaultSize
+        
 
+        
         Rectangle {
             id: background
-
             anchors.fill: parent
+            anchors{
+                leftMargin: 10
+                rightMargin: 27
+            }
             color: "transparent"
-            height: parent.height
+            
 
-            TextField {
-                id: ipFieldEditor
+            RowLayout {
 
-                text: ip
-                anchors.verticalCenter: parent.verticalCenter
-                visible: false
-                font.pointSize: 16
-                onEditingFinished: {
-                    if (Utils.isValidIP(ipFieldEditor.text))
-                        ip = ipFieldEditor.text;
+                spacing: 10
+                width: parent.width
+                height: parent.height
 
-                    ipFieldEditor.visible = false;
-                    ipField.visible = true;
+                Text {
+                    id: ipField
+                    text: settingsDialog.switchState ? station.hostName : station.name
+                    font.pointSize: fontSize + 2
+
+                    visible: true
                 }
-            }
 
-            Text {
-                id: ipField
 
-                text: ip
-                anchors.verticalCenter: parent.verticalCenter
-                font.pointSize: 16
-            }
+                Image {
+                    source: isActive ? "qrc:/images/images/collapse.png" : "qrc:/images/images/expand.png"
+                    Layout.preferredWidth: expandedMarkerSize
+                    Layout.preferredHeight: expandedMarkerSize
+                    fillMode: Image.PreserveAspectFit
+                }
 
-            Image {
-                id: expandedMarker
+                Item {
+                    Layout.fillWidth: true
+                }
 
-                source: isActive ? "qrc:/images/images/minus.png" : "qrc:/images/images/plus.png"
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: ipFieldEditor.visible ? ipFieldEditor.right : ipField.right
-                anchors.leftMargin: 16
-                width: expandedMarkerSize
-                height: expandedMarkerSize
+                Image {
+                    source: {
+                        switch (station.role){
+                            case Roles.Role.arm_engineer:
+                                return "qrc:/images/images/arm_engineer.png";
+                            case Roles.Role.arm_operator:
+                                return "qrc:/images/images/arm_operator.png";
+                            case Roles.Role.arm_kip:
+                                return "qrc:/images/images/arm_kip.png";
+                            case Roles.Role.input_output_server:
+                                return "qrc:/images/images/io_server.png";
+                            case Roles.Role.history_server:
+                                return "qrc:/images/images/history_server.png";
+                            case Roles.Role.integration_server:
+                                return "qrc:/images/images/integration_server.png";
+                        }
+                    }
 
+                    Layout.preferredHeight: stationDefaultHeight * scalingFactor
+                    fillMode: Image.PreserveAspectFit
+
+                }
             }
 
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    ipFieldEditor.visible = false;
-                    ipField.visible = true;
+                    console.log( station.hostName)
+                    console.log( station.name)
+                    console.log( station.role)
                     changeActivity();
                 }
-                onDoubleClicked: {
-                    editIp();
-                }
             }
-
         }
 
     }
 
     Rectangle {
         id: detailArea
+        opacity: 0
 
-        width: parent.width
-        height: isActive ? station.expandedSize : 0
-        color: "lightgray"
+        Layout.fillWidth: true
+        Layout.leftMargin: Screen.width * 0.025
+        Layout.topMargin: 1
 
-        Text {
-            visible: isActive
-            anchors.centerIn: parent
-            text: "Selected IP: " + ip
-        }
+        color: "transparent"
+        ColumnLayout {
+            id: detailAreaLayout
+            spacing: 15
+            anchors.margins: 10
+            width: stationItem.width
 
-        Behavior on height {
-            NumberAnimation {
-                duration: 300
-                easing.type: Easing.InOutQuad
+            StationSettingsUI{
+                inputFieldsWidth: stationItem.inputFieldsWidth
+                station: stationItem.station
             }
 
+            ConnectionSettingsUI {
+                station: stationItem.station
+                isActive: false
+                inputFieldsWidth: stationItem.inputFieldsWidth
+            }
+
+            InstallationSettingsUI{}
         }
 
     }
+    states: [
+        State {
+            name: "collapsed"
+            when: !isActive
+            PropertyChanges {
+                target: detailArea
+                Layout.preferredHeight: 0
+            }
+        },
+        State {
+            name: "expanded"
+            when: isActive
+            PropertyChanges {
+                target: detailArea
+                Layout.preferredHeight: stationItem.expandedSize
+            }
+        }
+    ]
 
+    transitions: [
+        Transition {
+            from: "collapsed"
+            to: "expanded"
+            SequentialAnimation {
+                NumberAnimation {
+                    target: detailArea
+                    property: "Layout.preferredHeight"
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                    target: detailArea
+                    property: "opacity"
+                    to: 1
+                    duration: 0
+                }
+            }
+        },
+        Transition {
+            from: "expanded"
+            to: "collapsed"
+            SequentialAnimation {
+                NumberAnimation {
+                    target: detailArea
+                    property: "opacity"
+                    to: 0
+                    duration: 0
+                }
+                NumberAnimation {
+                    target: detailArea
+                    property: "Layout.preferredHeight"
+                    to: 0
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
+    ]
 }

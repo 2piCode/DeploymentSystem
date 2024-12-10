@@ -1,12 +1,12 @@
-#ifndef STAITON_H
-#define STAITON_H
+#ifndef STATION_H
+#define STATION_H
 
-#include <qglobal.h>
-
-#include <QList>
-#include <QUrl>
+#include <QObject>
+#include <QString>
 #include <QVector>
 #include <memory>
+#include <optional>
+#include <filesystem>
 
 #include "roles.h"
 #include "ssh_connection.h"
@@ -14,25 +14,25 @@
 
 struct AdditionalTask {};
 
-enum class SystemType { WINDOWS = 0, ASTRALINUX = 1, REDOS7 = 2, REDOS8 = 3 };
-
 class Station : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QString hostName READ GetHostName WRITE SetHostName)
-    Q_PROPERTY(QString name READ GetName WRITE SetName)
-    Q_PROPERTY(QString description READ GetDescription WRITE SetDescription)
-    Q_PROPERTY(Roles::Role role READ GetRole WRITE SetRole)
+    Q_PROPERTY(QString hostName READ GetHostName WRITE SetHostName NOTIFY hostNameChanged)
+    Q_PROPERTY(QString name READ GetName WRITE SetName NOTIFY nameChanged)
+    Q_PROPERTY(QString description READ GetDescription WRITE SetDescription NOTIFY descriptionChanged)
+    Q_PROPERTY(Roles::Role role READ GetRole WRITE SetRole NOTIFY roleChanged)
     Q_PROPERTY(QVector<AdditionalTask> additionalTasks READ GetAdditionalTasks)
 
-    Q_PROPERTY(QString username READ GetUsername WRITE SetUsername)
+    Q_PROPERTY(QString username READ GetUsername WRITE SetUsername NOTIFY usernameChanged)
     Q_PROPERTY(QString password READ GetPassword WRITE SetPassword)
     Q_PROPERTY(quint16 port READ GetConnectionPort WRITE SetConnectionPort)
     Q_PROPERTY(QString filePath READ GetUrlPath WRITE SetPath)
 
-   public:
+public:
     explicit Station(const QString host_name, const QString name,
-                     ConnectionSettings settings, QObject* parent = nullptr);
+                     ConnectionSettings settings,
+                     Roles::Role role = Roles::Role::arm_engineer,
+                     QObject* parent = nullptr);
 
     virtual ~Station() = default;
 
@@ -66,7 +66,7 @@ class Station : public QObject {
     QString GetUrlPath() const {
         if (ssh_connection_->GetSettings().path_to_private_key.has_value()) {
             return QString::fromStdString(
-                ssh_connection_->GetSettings().path_to_private_key.value());
+                ssh_connection_->GetSettings().path_to_private_key.value().string());
         }
         return "";
     }
@@ -82,8 +82,15 @@ class Station : public QObject {
 
     std::optional<Systems::System> GetSystem() const { return system_; }
 
-        Q_INVOKABLE bool CheckConnection() const;
+    Q_INVOKABLE bool CheckConnection() const;
     Q_INVOKABLE void StartSetupProccess();
+
+    signals:
+        void hostNameChanged();
+        void nameChanged();
+        void descriptionChanged();
+        void roleChanged();
+        void usernameChanged();
 
    private:
     const int MAX_NAME_SYMBOLS_COUNT = 100;

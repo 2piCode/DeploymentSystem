@@ -1,17 +1,19 @@
 #include "station.h"
 
 #include <qforeach.h>
+#include <QDebug>
 
-Station::Station(QString host_name, QString name, ConnectionSettings settings,
+Station::Station(QString host_name, QString name, ConnectionSettings settings, Roles::Role role,
                  QObject* parent)
     : QObject(parent),
-      ssh_connection_(
-          std::make_unique<SSHConnection>(host_name, std::move(settings))),
-      name_(name) {}
+      ssh_connection_(std::make_unique<SSHConnection>(host_name, std::move(settings))),
+      name_(name),
+      role_(role) {}
 
 bool Station::SetHostName(QString host_name) {
     ssh_connection_->SetHostName(host_name);
     is_connected = false;
+    emit hostNameChanged();
     return true;
 }
 
@@ -21,6 +23,7 @@ bool Station::SetName(QString name) {
     }
 
     this->name_ = name;
+    emit nameChanged();
     return true;
 }
 
@@ -30,12 +33,14 @@ bool Station::SetDescription(QString description) {
     }
 
     this->description_ = description;
+    emit descriptionChanged(); 
     return true;
 }
 
 void Station::SetUsername(QString username) {
     ssh_connection_->GetSettings().username = username;
     is_connected = false;
+    emit usernameChanged();
 }
 
 void Station::SetPassword(QString password) {
@@ -53,13 +58,17 @@ void Station::SetPath(QString path) {
         std::filesystem::path(path.toStdString());
 }
 
-void Station::SetRole(Roles::Role role) { this->role_ = role; }
+void Station::SetRole(Roles::Role role) { 
+    this->role_ = role;
+    emit roleChanged();
+}
 
 void Station::AddAdditionalTask(AdditionalTask task) {
     additional_tasks_.push_back(task);
 }
 
 bool Station::CheckConnection() const {
+    qDebug() << "CheckConnection invoked"; 
     if (!is_connected) {
         is_connected = ssh_connection_->ConnectToHost();
     }
@@ -78,7 +87,12 @@ void Station::StartSetupProccess() {
      3) Start installation proccess by execute command
      4) Proccess additional tasks
     */
-    throw std::runtime_error("Not implemented");
+    //FIXME
+    std::ostringstream outputStream;
+    ssh_connection_->ExecuteCommand("touch justCreatedFile", outputStream);
+    // ssh_connection_->UploadFile(config);
+    
+    // throw std::runtime_error("Not implemented");
 }
 
 void MainStation::AddChildStation(std::unique_ptr<Station> station) {
@@ -86,7 +100,7 @@ void MainStation::AddChildStation(std::unique_ptr<Station> station) {
 }
 
 void MainStation::RemoveChildStation(int index) {
-    if (index < 0 || index >= child_stations_.size()) {
+    if (index < 0 || index >= static_cast<int>(child_stations_.size())) {
         return;
     }
 
@@ -107,7 +121,7 @@ Systems::System Station::CheckSystem() {
 
     std::ostringstream outputStream;
 
-    if (sshConnection_->ExecuteCommand("ver", outputStream)) {
+    if (ssh_connection_->ExecuteCommand("ver", outputStream)) {
         std::string output = outputStream.str();
         if (output.find("Windows") != std::string::npos) {
             system_ = Systems::System::Windows;
@@ -115,7 +129,7 @@ Systems::System Station::CheckSystem() {
         }
     }
 
-    if (sshConnection_->ExecuteCommand("lsb_release -a | grep Description",
+    if (ssh_connection_->ExecuteCommand("lsb_release -a | grep Description",
                                        outputStream)) {
         std::string output = outputStream.str();
         if (output.find("Astra Linux") != std::string::npos) {
@@ -131,6 +145,6 @@ Systems::System Station::CheckSystem() {
             }
         }
     }
-
+    
     throw std::runtime_error("Can't detect system");
 }

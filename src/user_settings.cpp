@@ -21,6 +21,7 @@ void UserSettings::ImportConfig(QString path) {
 
     main_station_ = std::move(config_->GetRoot());
     builder_.reset(new StationBuilder(main_station_));
+    emit configChanged();
 }
 
 void UserSettings::ClearSettings() {

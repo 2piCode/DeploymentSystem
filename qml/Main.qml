@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs
 import com.roles 1.0
 import com.stations 1.0
 import "../utils.js" as Utils
@@ -30,6 +31,26 @@ ApplicationWindow {
     }
 
     menuBar: MenuBar {
+        FileDialog {
+            id: exportConfigSelection
+            title: "Сохранить файл конфигурации"
+            nameFilters: ["Файл конфигурации(*.xml)", "All files (*)"]
+            fileMode: FileDialog.SaveFile
+            onAccepted: {
+                userSettings.ExportConfig(String(exportConfigSelection.currentFile)
+                .replace(/^file:\/\/\//, ""));
+            }
+        }
+        FileDialog {
+            id: importConfigSelection
+            title: "Загрузить конфигурацию из файла"
+            nameFilters: ["Файл конфигурации(*.xml)", "All files (*)"]
+            fileMode: FileDialog.OpenFile
+            onAccepted: {
+                userSettings.ImportConfig(String(importConfigSelection.currentFile)
+                .replace(/^file:\/\/\//, ""));
+            }
+        }
         Menu {
             title: qsTr("Файл")
             MenuItem {
@@ -45,12 +66,15 @@ ApplicationWindow {
             title: qsTr("Проект")
             MenuItem {
                 text: qsTr("Импорт")
-                onTriggered: console.log("Import action triggered")
+                onTriggered: {
+                    importConfigSelection.open()
+                    console.log("Import action triggered")
+                }
             }
             MenuItem {
                 text: qsTr("Экспорт")
                 onTriggered: {
-                    userSettings.ExportConfig("C:\\temp\\test");
+                    exportConfigSelection.open()
                     console.log("Export action triggered")
                 }
             }

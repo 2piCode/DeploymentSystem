@@ -60,12 +60,20 @@ int main(int argc, char* argv[]) {
         std::cerr << "MainStation is null. Cannot add child station." << std::endl;
     }
 
+    
     engine.rootContext()->setContextProperty("userSettings",
                                              user_settings.get());
     engine.rootContext()->setContextProperty("stationBuilder",
                                              user_settings->GetBuilder().get());
     engine.rootContext()->setContextProperty("config",
                                              user_settings->GetConfig().get());
+
+    QObject::connect(user_settings.get(), &UserSettings::configChanged, [&]() {
+        engine.rootContext()->setContextProperty("userSettings",
+                                             user_settings.get());
+        engine.rootContext()->setContextProperty("stationBuilder",
+                                                user_settings->GetBuilder().get());
+    });
                                              
     qmlRegisterSingletonType<Roles>("com.roles", 1, 0, "Roles",
                                     rolesSingletonProvider);

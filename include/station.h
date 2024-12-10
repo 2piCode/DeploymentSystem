@@ -14,8 +14,6 @@
 
 struct AdditionalTask {};
 
-enum class SystemType { WINDOWS = 0, ASTRALINUX = 1, REDOS7 = 2, REDOS8 = 3 };
-
 class Station : public QObject {
     Q_OBJECT
 

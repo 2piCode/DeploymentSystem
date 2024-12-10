@@ -2,6 +2,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 
+import com.systems 1.0
+
 Dialog {
     
     anchors.centerIn: parent
@@ -15,19 +17,23 @@ Dialog {
         spacing: 15
 
         FileSelection{
+            id: windowsInstaller
             fileSelectionTitle: qsTr("Путь до устанощика Windows")
             additionalNameFilters: ".exe files (*.exe)"
         }
         FileSelection{
+            id: astralinuxInstaller
             fileSelectionTitle: qsTr("Путь до устанощика AstraLinux")
             additionalNameFilters: ".AppImage files (*.AppImage)"
         }
         FileSelection{
+            id: redos7Installer
             fileSelectionTitle: qsTr("Путь до устанощика RedOS 7")
             additionalNameFilters: ".AppImage files (*.AppImage)"
 
         }
         FileSelection{
+            id: redos8Installer
             fileSelectionTitle: qsTr("Путь до устанощика RedOS 8")
             additionalNameFilters: ".AppImage files (*.AppImage)"
         }
@@ -57,7 +63,17 @@ Dialog {
 
 
     onAccepted: {
-        console.log("Settings accepted")
+        const installers = [
+            { system: Systems.System.Windows, path: windowsInstaller.filepath },
+            { system: Systems.System.AstraLinux, path: astralinuxInstaller.filepath },
+            { system: Systems.System.Redos7, path: redos7Installer.filepath },
+            { system: Systems.System.Redos8, path: redos8Installer.filepath }
+        ];
+
+        installers.forEach(function(installer) {
+            config.SetInstallerPath(installer.system, installer.path);
+        });
+            console.log("Settings accepted")
     }
 
     onRejected: {

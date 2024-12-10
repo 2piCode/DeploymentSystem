@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Dialogs
 import com.roles 1.0
 import com.stations 1.0
+import com.systems 1.0
 import "../utils.js" as Utils
 
 ApplicationWindow {
@@ -44,7 +45,7 @@ ApplicationWindow {
         FileDialog {
             id: importConfigSelection
             title: "Загрузить конфигурацию из файла"
-            nameFilters: ["Файл конфигурации(*.xml)", "All files (*)"]
+            nameFilters: ["Файл конфигурации(*.xml)"]
             fileMode: FileDialog.OpenFile
             onAccepted: {
                 userSettings.ImportConfig(String(importConfigSelection.currentFile)
@@ -122,6 +123,7 @@ ApplicationWindow {
                 id: nextBtn
                 iconSource: "qrc:/images/images/next.png"
                 onButtonClicked: {
+                    console.log(config.GetInstallerPathString(Systems.System.AstraLinux))
                     console.log("Next button clicked");
                 }
             }
@@ -154,6 +156,7 @@ ApplicationWindow {
                 id: goBtn
                 iconSource: "qrc:/images/images/go.png"
                 onButtonClicked: {
+                    listView.currentItem.station.StartSetupProccess();
                     console.log("Go button clicked");
                 }
             }

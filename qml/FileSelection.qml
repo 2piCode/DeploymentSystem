@@ -8,6 +8,7 @@ ColumnLayout{
     property string additionalNameFilters;
     property int inputFieldWidth: Screen.width * 0.15
     property int fontSize: mainFontSize
+    property string filepath;
 
 
     FileDialog {
@@ -16,7 +17,7 @@ ColumnLayout{
         nameFilters: [additionalNameFilters, "All files (*)"]
 
         onAccepted: {
-            filepathField.text = fileDialog.currentFile
+            filepathField.text = String(fileDialog.currentFile).replace(/^file:\/\/\//, "");
         }
     }
 
@@ -27,7 +28,6 @@ ColumnLayout{
     }
 
     RowLayout {
-        
         Layout.fillWidth: true
         spacing: 2
         TextField {
@@ -40,6 +40,7 @@ ColumnLayout{
                 radius: 5
                 border.width: 0 
             }
+            onTextChanged: filepath = text;
         }
         Button {
             icon.source: "qrc:/images/images/openDir.png"

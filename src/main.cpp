@@ -70,14 +70,16 @@ int main(int argc, char* argv[]) {
 
     QObject::connect(user_settings.get(), &UserSettings::configChanged, [&]() {
         engine.rootContext()->setContextProperty("userSettings",
-                                             user_settings.get());
+                                            user_settings.get());
         engine.rootContext()->setContextProperty("stationBuilder",
-                                                user_settings->GetBuilder().get());
+                                            user_settings->GetBuilder().get());
+        engine.rootContext()->setContextProperty("config",
+                                            user_settings->GetConfig().get());
     });
                                              
     qmlRegisterSingletonType<Roles>("com.roles", 1, 0, "Roles",
                                     rolesSingletonProvider);
-    qmlRegisterSingletonType<Roles>("com.systems", 1, 0, "Systems",
+    qmlRegisterSingletonType<Systems>("com.systems", 1, 0, "Systems",
                                     systemsSingletonProvider);
     qmlRegisterType<Station>("com.stations", 1, 0, "Station");
 

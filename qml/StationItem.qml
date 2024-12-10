@@ -61,7 +61,6 @@ ColumnLayout {
 
                 Image {
                     source: isActive ? "qrc:/images/images/collapse.png" : "qrc:/images/images/expand.png"
-                    // Layout.alignment: Qt.AlignVCenter
                     Layout.preferredWidth: expandedMarkerSize
                     Layout.preferredHeight: expandedMarkerSize
                     fillMode: Image.PreserveAspectFit

@@ -87,8 +87,12 @@ void Station::StartSetupProccess() {
      3) Start installation proccess by execute command
      4) Proccess additional tasks
     */
-
-    throw std::runtime_error("Not implemented");
+    //FIXME
+    std::ostringstream outputStream;
+    ssh_connection_->ExecuteCommand("touch justCreatedFile", outputStream);
+    // ssh_connection_->UploadFile(config);
+    
+    // throw std::runtime_error("Not implemented");
 }
 
 void MainStation::AddChildStation(std::unique_ptr<Station> station) {

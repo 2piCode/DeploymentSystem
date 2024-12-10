@@ -21,11 +21,8 @@ ApplicationWindow {
 
 
     function deleteStation() {
-        if (listView.currentIndex !== -1) {
-            stationModel.removeStation(listView.currentIndex);
-            listView.selectedIndex = -1;
-            listView.currentIndex = -1;
-        }
+        stationBuilder.RemoveStation(listView.currentIndex);
+
     }
 
     SettingsDialog {
@@ -52,7 +49,10 @@ ApplicationWindow {
             }
             MenuItem {
                 text: qsTr("Экспорт")
-                onTriggered: console.log("Export action triggered")
+                onTriggered: {
+                    userSettings.ExportConfig("C:\\temp\\test");
+                    console.log("Export action triggered")
+                }
             }
             MenuItem {
                 text: qsTr("Настройки")
@@ -89,6 +89,7 @@ ApplicationWindow {
                 id: prevBtn
                 iconSource: "qrc:/images/images/back.png"
                 onButtonClicked: {
+                    console.log(stationBuilder.GetChildStations())
                     console.log("Prev button clicked");
                 }
             }
@@ -119,7 +120,9 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/connection.png"
                 onButtonClicked: {
                     console.log("Connection button clicked");
-                    console.log(stationModel.checkConnection(listView.currentIndex));
+                    console.log(listView.currentItem.station.hostName);
+                    console.log(listView.currentItem.station.CheckConnection())
+
                 }
             }
 
@@ -128,7 +131,6 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/go.png"
                 onButtonClicked: {
                     console.log("Go button clicked");
-                    stationModel.StartSetupProccess(listView.currentIndex)
                 }
             }
             
@@ -156,11 +158,52 @@ ApplicationWindow {
 
     ColumnLayout {
         id: stations
-        spacing: 10
         width: parent.width
         height: parent.height
         Layout.fillWidth: true
         Layout.fillHeight: true
+
+        ListView {
+            id: mainStationListView
+            property int selectedIndex: -1
+            Layout.fillWidth: true
+            Layout.preferredHeight: contentHeight
+            focus: true
+            clip: true
+
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AsNeeded
+            }
+
+            Keys.onPressed: function(event) {
+                if (listView.currentIndex !== -1 && event.key === Qt.Key_Space){
+                    currentItem.changeActivity();
+                }
+            }
+            
+            model: stationBuilder.GetStation(0)
+
+            delegate: StationItem {
+                station: modelData
+
+                Layout.fillWidth: true
+
+                onChangedActivity: function(isActive) {
+                    if (listView.selectedIndex !== index) {
+                        listView.selectedIndex = index;
+                        listView.currentIndex = index;
+                        listView.currentItem.forceActiveFocus();
+                    }
+                }
+            }
+            
+            Behavior on contentHeight {
+                NumberAnimation {
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
 
         ListView {
             id: listView
@@ -197,10 +240,10 @@ ApplicationWindow {
                 }
             }
             
-            model: stationModel
+            model: stationBuilder.childStations
 
             delegate: StationItem {
-                station: model.station
+                station: modelData
 
                 Layout.fillWidth: true
 
@@ -212,12 +255,17 @@ ApplicationWindow {
                     }
                 }
             }
-
+            
             Behavior on contentHeight {
                 NumberAnimation {
                     duration: 300
                     easing.type: Easing.InOutQuad
                 }
+            }
+            footer: Rectangle {
+                height: 2
+                color: "gray"
+                width: listView.width
             }
         }
     }
@@ -239,7 +287,7 @@ ApplicationWindow {
         onAccepted: {
             var newIp = newIpField.text;
             if (Utils.isValidIP(newIp)) {
-                stationModel.addStation(newIp, "АРМ", "", Roles.arm_engineer);
+                stationBuilder.CreateStation(newIp, "test")
             }
             newIpField.text = "";
         }

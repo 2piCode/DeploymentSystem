@@ -3,12 +3,12 @@
 #include <qforeach.h>
 #include <QDebug>
 
-Station::Station(QString host_name, QString name, ConnectionSettings settings,
+Station::Station(QString host_name, QString name, ConnectionSettings settings, Roles::Role role,
                  QObject* parent)
     : QObject(parent),
-      ssh_connection_(
-          std::make_unique<SSHConnection>(host_name, std::move(settings))),
-      name_(name) {}
+      ssh_connection_(std::make_unique<SSHConnection>(host_name, std::move(settings))),
+      name_(name),
+      role_(role) {}
 
 bool Station::SetHostName(QString host_name) {
     ssh_connection_->SetHostName(host_name);
@@ -33,6 +33,7 @@ bool Station::SetDescription(QString description) {
     }
 
     this->description_ = description;
+    emit descriptionChanged(); 
     return true;
 }
 
@@ -60,7 +61,7 @@ void Station::SetPath(QString path) {
 void Station::SetRole(Roles::Role role) { 
     this->role_ = role;
     emit roleChanged();
-    }
+}
 
 void Station::AddAdditionalTask(AdditionalTask task) {
     additional_tasks_.push_back(task);
@@ -95,7 +96,7 @@ void MainStation::AddChildStation(std::unique_ptr<Station> station) {
 }
 
 void MainStation::RemoveChildStation(int index) {
-    if (index < 0 || index >= child_stations_.size()) {
+    if (index < 0 || index >= static_cast<int>(child_stations_.size())) {
         return;
     }
 
@@ -140,6 +141,6 @@ Systems::System Station::CheckSystem() {
             }
         }
     }
-
+    
     throw std::runtime_error("Can't detect system");
 }

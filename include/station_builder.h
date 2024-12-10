@@ -10,6 +10,7 @@
 
 class StationBuilder : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QList<Station*> childStations READ GetChildStations NOTIFY childStationsChanged)
    public:
     explicit StationBuilder(std::shared_ptr<MainStation> main_station,
                             QObject* parent = nullptr)
@@ -25,7 +26,7 @@ class StationBuilder : public QObject {
                                        ConnectionSettings settings = {}) {
         main_station_->AddChildStation(
             std::make_unique<Station>(hostName, name, settings));
-
+        emit childStationsChanged();
         return main_station_->GetChildStations().back().get();
     }
 
@@ -63,9 +64,12 @@ class StationBuilder : public QObject {
             return;
         }
 
-        main_station_->RemoveChildStation(index - 1);
+        main_station_->RemoveChildStation(index);
+        emit childStationsChanged();
     }
 
+   signals:
+    void childStationsChanged();
    private:
     std::shared_ptr<MainStation> main_station_;
 };

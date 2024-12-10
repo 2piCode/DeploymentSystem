@@ -39,7 +39,7 @@ ColumnLayout {
             anchors.fill: parent
             anchors{
                 leftMargin: 10
-                rightMargin: 40
+                rightMargin: 27
             }
             color: "transparent"
             

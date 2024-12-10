@@ -7,7 +7,6 @@
 #include "user_settings.h"
 #include "xml_config_writer.h"
 #include "language_controller.h"
-#include "station_model.h"
 
 
 static QObject* rolesSingletonProvider(QQmlEngine* engine,
@@ -31,22 +30,9 @@ int main(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
     LanguageController langController(app, engine);
-    StationModel *stationModel = new StationModel(&app);
-
-
-    //FIXME
-    stationModel->addStation("127.0.0.99", "АРМ инженера", "Описание", Roles::Role::arm_engineer, "user1", "pass1", 22, "/path/to/key1");
-    stationModel->addStation("127.0.0.1", "АРМ оператора", "Описание и в этот раз с пробелами и длиннее", Roles::Role::arm_operator, "user2", "pass2", 22, "/path/to/key2");
-    stationModel->addStation("127.0.0.4", "Сервер истории", "Описание", Roles::Role::arm_kip, "user3", "pass3", 22, "/path/to/key3");
-    stationModel->addStation("192.168.1.15", "Сервер истории", "Описание", Roles::Role::history_server, "user3", "pass3", 22, "/path/to/key3");
-    stationModel->addStation("192.168.1.17", "Сервер ввода/вывода", "Описание", Roles::Role::input_output_server, "astra", "123456789", 22, "/path/to/key3");
-    stationModel->addStation("192.168.1.19", "Сервер интеграции", "Описание", Roles::Role::integration_server, "user3", "pass3", 22, "/path/to/key3");
-
 
     engine.rootContext()->setContextProperty("languageController",
-                                             &langController);
-
-    
+                                             &langController);   
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app,
         []() { QCoreApplication::exit(-1); }, Qt::QueuedConnection);
@@ -56,13 +42,30 @@ int main(int argc, char* argv[]) {
         std::make_unique<UserSettings>(std::make_unique<XMLConfigWriter>(),
                                        app.instance());
 
+    //FIXME;
+    auto mainStation = user_settings->GetBuilder()->GetMainStation();
+    if (mainStation) {
+        ConnectionSettings settings;
+        settings.port = 22;
+        settings.username = "astra";
+        settings.password = "123456789";
+        mainStation->AddChildStation(std::make_unique<Station>("192.168.1.20", "name1", settings));
+        mainStation->AddChildStation(std::make_unique<Station>("192.168.1.22", "name2", settings));
+        mainStation->GetChildStations().at(1)->SetRole(Roles::Role::arm_kip);
+        // std::cout << mainStation->GetChildStations().at(0)->GetHostName().toStdString()  << std::endl;
+        // std::cout << mainStation->GetChildStations().at(0)->GetUsername().toStdString()  << std::endl;
+        // std::cout << mainStation->GetChildStations().at(0)->CheckConnection()  << std::endl;
+        // std::cout << static_cast<int>(mainStation->GetChildStations().at(0)->CheckSystem()) << std::endl;
+    } else {
+        std::cerr << "MainStation is null. Cannot add child station." << std::endl;
+    }
+
     engine.rootContext()->setContextProperty("userSettings",
                                              user_settings.get());
     engine.rootContext()->setContextProperty("stationBuilder",
                                              user_settings->GetBuilder().get());
     engine.rootContext()->setContextProperty("config",
                                              user_settings->GetConfig().get());
-    engine.rootContext()->setContextProperty("stationModel", stationModel);
                                              
     qmlRegisterSingletonType<Roles>("com.roles", 1, 0, "Roles",
                                     rolesSingletonProvider);

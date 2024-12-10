@@ -1,12 +1,12 @@
-#ifndef STAITON_H
-#define STAITON_H
+#ifndef STATION_H
+#define STATION_H
 
-#include <qglobal.h>
-
-#include <QList>
-#include <QUrl>
+#include <QObject>
+#include <QString>
 #include <QVector>
 #include <memory>
+#include <optional>
+#include <filesystem>
 
 #include "roles.h"
 #include "ssh_connection.h"
@@ -30,9 +30,11 @@ class Station : public QObject {
     Q_PROPERTY(quint16 port READ GetConnectionPort WRITE SetConnectionPort)
     Q_PROPERTY(QString filePath READ GetUrlPath WRITE SetPath)
 
-   public:
+public:
     explicit Station(const QString host_name, const QString name,
-                     ConnectionSettings settings, QObject* parent = nullptr);
+                     ConnectionSettings settings,
+                     Roles::Role role = Roles::Role::arm_engineer,
+                     QObject* parent = nullptr);
 
     virtual ~Station() = default;
 
@@ -82,7 +84,7 @@ class Station : public QObject {
 
     std::optional<Systems::System> GetSystem() const { return system_; }
 
-        Q_INVOKABLE bool CheckConnection() const;
+    Q_INVOKABLE bool CheckConnection() const;
     Q_INVOKABLE void StartSetupProccess();
 
     signals:

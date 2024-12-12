@@ -10,6 +10,7 @@
 #include <QTcpSocket>
 #include <filesystem>
 #include <optional>
+#include <sstream>
 #include <string>
 
 #include "libssh2_manager.h"
@@ -33,7 +34,8 @@ class SSHConnection final : public QObject {
     bool ConnectToHost();
     void DisconnectFromHost();
 
-    bool ExecuteCommand(const std::string& command, std::ostringstream& stream) const;
+    bool ExecuteCommand(const std::string& command,
+                        std::ostringstream& stream) const;
     bool UploadFile(const std::filesystem::path& local_path,
                     const std::filesystem::path& remote_path) const;
 

@@ -1,12 +1,15 @@
 #include "station.h"
 
 #include <qforeach.h>
-#include <QDebug>
 
-Station::Station(QString host_name, QString name, ConnectionSettings settings, Roles::Role role,
-                 QObject* parent)
+#include <QDebug>
+#include <stdexcept>
+
+Station::Station(QString host_name, QString name, ConnectionSettings settings,
+                 Roles::Role role, QObject* parent)
     : QObject(parent),
-      ssh_connection_(std::make_unique<SSHConnection>(host_name, std::move(settings))),
+      ssh_connection_(
+          std::make_unique<SSHConnection>(host_name, std::move(settings))),
       name_(name),
       role_(role) {}
 
@@ -33,7 +36,7 @@ bool Station::SetDescription(QString description) {
     }
 
     this->description_ = description;
-    emit descriptionChanged(); 
+    emit descriptionChanged();
     return true;
 }
 
@@ -58,7 +61,7 @@ void Station::SetPath(QString path) {
         std::filesystem::path(path.toStdString());
 }
 
-void Station::SetRole(Roles::Role role) { 
+void Station::SetRole(Roles::Role role) {
     this->role_ = role;
     emit roleChanged();
 }
@@ -68,14 +71,15 @@ void Station::AddAdditionalTask(AdditionalTask task) {
 }
 
 bool Station::CheckConnection() const {
-    qDebug() << "CheckConnection invoked"; 
     if (!is_connected) {
         is_connected = ssh_connection_->ConnectToHost();
     }
     return is_connected;
 }
 
-void Station::StartSetupProccess() {
+void Station::StartSetupProccess(const QString& q_path) {
+    std::filesystem::path path_to_executable =
+        std::filesystem::path(q_path.toStdString());
     if (!CheckConnection()) {
         return;
     }
@@ -87,12 +91,26 @@ void Station::StartSetupProccess() {
      3) Start installation proccess by execute command
      4) Proccess additional tasks
     */
-    //FIXME
+    // FIXME
     std::ostringstream outputStream;
-    ssh_connection_->ExecuteCommand("touch justCreatedFile", outputStream);
-    // ssh_connection_->UploadFile(config);
-    
-    // throw std::runtime_error("Not implemented");
+    std::string filename = path_to_executable.filename().string();
+    std::string username = GetUsername().toStdString();
+    std::string args = " 1111 SERVER1 > logs";  // args for ldap_setup
+
+    ssh_connection_->ExecuteCommand("date > lastEditedAt", outputStream);
+    if (path_to_executable == "") {
+        emit setupFailed();
+        return;
+    }
+    ssh_connection_->UploadFile(path_to_executable,
+                                "/home/" + username + "/" + filename);
+
+    ssh_connection_->ExecuteCommand(
+        "chmod +x /home/" + username + "/" + filename, outputStream);
+    ssh_connection_->ExecuteCommand("echo " + GetPassword().toStdString() +
+                                        " | sudo -S /home/" + username + "/" +
+                                        filename + args,
+                                    outputStream);
 }
 
 void MainStation::AddChildStation(std::unique_ptr<Station> station) {
@@ -108,10 +126,7 @@ void MainStation::RemoveChildStation(int index) {
 }
 
 void MainStation::StartSetupProccessAllStation() {
-    StartSetupProccess();
-    for (auto& station : child_stations_) {
-        station->StartSetupProccess();
-    }
+    throw std::runtime_error("Not implemented");
 }
 
 Systems::System Station::CheckSystem() {
@@ -130,7 +145,7 @@ Systems::System Station::CheckSystem() {
     }
 
     if (ssh_connection_->ExecuteCommand("lsb_release -a | grep Description",
-                                       outputStream)) {
+                                        outputStream)) {
         std::string output = outputStream.str();
         if (output.find("Astra Linux") != std::string::npos) {
             system_ = Systems::System::AstraLinux;
@@ -145,6 +160,6 @@ Systems::System Station::CheckSystem() {
             }
         }
     }
-    
+
     throw std::runtime_error("Can't detect system");
 }

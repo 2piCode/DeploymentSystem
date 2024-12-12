@@ -8,6 +8,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 find_package(Qt6 6.4.2 REQUIRED COMPONENTS Quick LinguistTools)
 
 
@@ -38,6 +40,7 @@ set(HEADERS include/libssh2_manager.h
             include/xml_config_writer.h
             include/station_builder.h
             include/language_controller.h
+            include/utils.h
 )
 
 set (SOURCES src/main.cpp
@@ -124,7 +127,6 @@ qt_add_qml_module(deldeliveryApp
     VERSION 1.0
     QML_FILES
         ${SOURCE_QML}
-        utils.js
 )
 
 target_link_directories(deldeliveryApp PUBLIC

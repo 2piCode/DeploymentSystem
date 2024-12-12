@@ -1,4 +1,3 @@
-import "../utils.js" as Utils
 import QtQuick 2.12
 import QtQuick.Controls.Basic 2.12
 import QtQuick.Layouts 1.3
@@ -74,11 +73,11 @@ ColumnLayout {
                     color: "white"
                 }
                 onTextChanged: {
-                    background.border.width = Utils.isValidIP(text) ? 0 : 2  
+                    background.border.width = utils.isValidIP(text) ? 0 : 2  
                 }
                 text: station.hostName
                 onEditingFinished: {
-                    if (Utils.isValidIP(text)){
+                    if (utils.isValidIP(text)){
                         station.SetHostName(text)
                     }
                 }

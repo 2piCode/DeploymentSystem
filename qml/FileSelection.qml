@@ -7,7 +7,7 @@ ColumnLayout{
     property string fileSelectionTitle: "Путь до файла"
     property string additionalNameFilters;
     property int inputFieldWidth: Screen.width * 0.15
-    property int fontSize: mainFontSize
+    property int fontSize: mainFontSize;
     property string filepath;
 
 
@@ -17,7 +17,7 @@ ColumnLayout{
         nameFilters: [additionalNameFilters, "All files (*)"]
 
         onAccepted: {
-            filepathField.text = String(fileDialog.currentFile).replace(/^file:\/\/\//, "");
+            filepathField.text = utils.urlToLocalFile(fileDialog.currentFile);
         }
     }
 
@@ -44,9 +44,10 @@ ColumnLayout{
         }
         Button {
             icon.source: "qrc:/images/images/openDir.png"
+            padding: 0
             flat: true
             Layout.preferredHeight: filepathField.height
-            Layout.preferredWidth: 50
+            Layout.preferredWidth: 50 * scalingFactor
             onClicked: {
                 fileDialog.open()
             }

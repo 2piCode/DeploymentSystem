@@ -15,6 +15,7 @@ ToolButton {
     icon.source: iconSource
     icon.width: buttonSize
     icon.height: buttonSize
+    padding: 0;
 
     Layout.preferredWidth: buttonSize
     Layout.preferredHeight: buttonSize

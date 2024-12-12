@@ -5,7 +5,6 @@ import QtQuick.Dialogs
 import com.roles 1.0
 import com.stations 1.0
 import com.systems 1.0
-import "../utils.js" as Utils
 
 ApplicationWindow {
     id: mainWindow
@@ -19,7 +18,7 @@ ApplicationWindow {
     property real scalingFactor: Math.min(Screen.width / screenBaseWidth, Screen.height / screenBaseHeight)
 
     property int mainFontSize: 12
-    property real stationDefaultHeight: 40
+    property real stationDefaultHeight: 50
 
 
     function deleteStation() {
@@ -38,8 +37,7 @@ ApplicationWindow {
             nameFilters: ["Файл конфигурации(*.xml)", "All files (*)"]
             fileMode: FileDialog.SaveFile
             onAccepted: {
-                userSettings.ExportConfig(String(exportConfigSelection.currentFile)
-                .replace(/^file:\/\/\//, ""));
+                userSettings.ExportConfig(utils.urlToLocalFile(exportConfigSelection.selectedFile));
             }
         }
         FileDialog {
@@ -48,8 +46,7 @@ ApplicationWindow {
             nameFilters: ["Файл конфигурации(*.xml)"]
             fileMode: FileDialog.OpenFile
             onAccepted: {
-                userSettings.ImportConfig(String(importConfigSelection.currentFile)
-                .replace(/^file:\/\/\//, ""));
+                userSettings.ImportConfig(utils.urlToLocalFile(importConfigSelection.selectedFile));
             }
         }
         Menu {
@@ -90,7 +87,7 @@ ApplicationWindow {
         id: mainToolBar
         RowLayout {
             spacing: 10
-            width: parent.width
+            width: parent.width            
 
             CustomToolBarButton {
                 id: saveBtn
@@ -123,7 +120,6 @@ ApplicationWindow {
                 id: nextBtn
                 iconSource: "qrc:/images/images/next.png"
                 onButtonClicked: {
-                    console.log(config.GetInstallerPathString(Systems.System.AstraLinux))
                     console.log("Next button clicked");
                 }
             }
@@ -156,7 +152,9 @@ ApplicationWindow {
                 id: goBtn
                 iconSource: "qrc:/images/images/go.png"
                 onButtonClicked: {
-                    listView.currentItem.station.StartSetupProccess();
+                    listView.currentItem.station.StartSetupProccess(
+                        config.GetInstallerPathString(Systems.System.AstraLinux)
+                    );
                     console.log("Go button clicked");
                 }
             }
@@ -313,7 +311,7 @@ ApplicationWindow {
         }
         onAccepted: {
             var newIp = newIpField.text;
-            if (Utils.isValidIP(newIp)) {
+            if (utils.isValidIP(newIp)) {
                 stationBuilder.CreateStation(newIp, "test")
             }
             newIpField.text = "";

@@ -18,23 +18,23 @@ Dialog {
 
         FileSelection{
             id: windowsInstaller
-            fileSelectionTitle: qsTr("Путь до устанощика Windows")
+            fileSelectionTitle: qsTr("Путь до установщика Windows")
             additionalNameFilters: ".exe files (*.exe)"
         }
         FileSelection{
             id: astralinuxInstaller
-            fileSelectionTitle: qsTr("Путь до устанощика AstraLinux")
+            fileSelectionTitle: qsTr("Путь до установщика AstraLinux")
             additionalNameFilters: ".AppImage files (*.AppImage)"
         }
         FileSelection{
             id: redos7Installer
-            fileSelectionTitle: qsTr("Путь до устанощика RedOS 7")
+            fileSelectionTitle: qsTr("Путь до установщика RedOS 7")
             additionalNameFilters: ".AppImage files (*.AppImage)"
 
         }
         FileSelection{
             id: redos8Installer
-            fileSelectionTitle: qsTr("Путь до устанощика RedOS 8")
+            fileSelectionTitle: qsTr("Путь до установщика RedOS 8")
             additionalNameFilters: ".AppImage files (*.AppImage)"
         }
 

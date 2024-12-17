@@ -40,6 +40,7 @@ ColumnLayout{
                 radius: 5
                 border.width: 0 
             }
+            text: filepath
             onTextChanged: filepath = text;
         }
         Button {

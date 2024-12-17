@@ -93,9 +93,8 @@ ApplicationWindow {
                 id: saveBtn
                 iconSource: "qrc:/images/images/save.png"
                 onButtonClicked: {
-                    console.log("Save button clicked");
-                    console.log(mainWindow.width, mainWindow.height);
-                    console.log(Screen.width, Screen.height);
+                    console.log("Saved");
+                    userSettings.ExportConfig(utils.getDefaultConfigPath());
                 }
             }
 

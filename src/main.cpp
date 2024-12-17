@@ -43,20 +43,8 @@ int main(int argc, char* argv[]) {
         std::make_unique<UserSettings>(std::make_unique<XMLConfigWriter>(),
                                        app.instance());
 
-    auto mainStation = user_settings->GetBuilder()->GetMainStation();
-    if (mainStation) {
-        ConnectionSettings settings;
-        settings.port = 22;
-        settings.username = "astra";
-        settings.password = "123456789";
-        mainStation->AddChildStation(
-            std::make_unique<Station>("192.168.1.20", "name1", settings));
-        mainStation->AddChildStation(
-            std::make_unique<Station>("192.168.1.22", "name2", settings));
-        mainStation->GetChildStations().at(1)->SetRole(Roles::Role::arm_kip);
-    } else {
-        std::cerr << "MainStation is null. Cannot add child station."
-                  << std::endl;
+    if (QFile::exists(utils.getDefaultConfigPath())) {
+        user_settings.get()->ImportConfig(utils.getDefaultConfigPath());
     }
 
     engine.rootContext()->setContextProperty("userSettings",

@@ -9,12 +9,21 @@
 
 class Utils : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QString defaultConfigPath READ getDefaultConfigPath WRITE setDefaultConfigPath);
+    
    public:
     explicit Utils(QObject *parent = nullptr) : QObject(parent) {}
 
     Q_INVOKABLE QString urlToLocalFile(const QUrl &url) const {
         return url.toLocalFile();
     }
+    Q_INVOKABLE QString getDefaultConfigPath() const{
+        return defaultConfigPath_;
+    };
+    Q_INVOKABLE QString setDefaultConfigPath(QString new_path){
+        defaultConfigPath_ = new_path;
+        return defaultConfigPath_;
+    };
 
     Q_INVOKABLE bool isValidIP(const QString &ip_address) const {
         QRegularExpression ipPattern(
@@ -28,6 +37,9 @@ class Utils : public QObject {
         return match.hasMatch() &&
                match.capturedLength() == ip_address.length();
     }
+
+   private:
+    QString defaultConfigPath_ = "C:/temp/main.xml";
 };
 
 #endif  // UTILS_H

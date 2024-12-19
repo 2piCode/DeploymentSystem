@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(DeldeliveryApp VERSION 0.1 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
@@ -10,24 +11,14 @@ set(CMAKE_AUTOUIC ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Qt6 6.4.2 REQUIRED COMPONENTS Quick LinguistTools)
+include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
+include_directories(${CONAN_INCLUDE_DIRS})
+set (CMAKE_OSX_SYSROOT /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk CACHE STRING "" FORCE)
 
-
-set(LIBSSH2DIR CACHE STRING "LIBSSH2 static library directory")
-
-if(NOT LIBSSH2DIR)
-    message(FATAL_ERROR "Please, specify LIBSSH2 directory via -DLIBSSH2DIR=<dir>")
-endif()
-
-message(STATUS "LIBSSH2 dir is ${LIBSSH2DIR}, change via -DLIBSSH2DIR=<dir>")
-
-set(LIBPUGIXML CACHE STRING "LIBPUGIXML static library directory")
-
-if(NOT LIBPUGIXML)
-    message(FATAL_ERROR "Please, specify LIBPUGIXML directory via -DLIBPUGIXML=<dir>")
-endif()
-
-message(STATUS "LIBPUGIXML dir is ${LIBPUGIXML}, change via -DLIBPUGIXML=<dir>")
+set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR};${CMAKE_MODULE_PATH}")
+find_package(Qt6 6.5.3 REQUIRED COMPONENTS Core Qml Quick LinguistTools QuickControls2 QuickTemplates2 ShaderTools)
+find_package(Libssh2 REQUIRED CONFIG)
+find_package(pugixml REQUIRED)
 
 set(HEADERS include/libssh2_manager.h
             include/ssh_connection.h
@@ -76,8 +67,6 @@ file(MAKE_DIRECTORY ${QM_OUTPUT_DIR})
 set(RESOURCES
     resources.qrc
 )
-find_program(Qt6_LUPDATE_EXECUTABLE lupdate HINTS "${CMAKE_PREFIX_PATH}/bin")
-find_program(Qt6_LRELEASE_EXECUTABLE lrelease HINTS "${CMAKE_PREFIX_PATH}/bin")
 
 # Update TS files using lupdate
 add_custom_target(update_ts
@@ -107,44 +96,43 @@ endforeach()
 add_custom_target(translations ALL DEPENDS ${QM_FILES})
 add_dependencies(translations update_ts)
 
-
-set (PUGIXML_SOURCES
-    ${LIBPUGIXML}/pugixml.hpp
-    ${LIBPUGIXML}/pugiconfig.hpp
-    ${LIBPUGIXML}/pugixml.cpp)
-
 qt_standard_project_setup()
 
 qt_add_executable(deldeliveryApp
     ${SOURCES}
     ${HEADERS}
     ${RESOURCES}
-    ${PUGIXML_SOURCES}
 )
 
 qt_add_qml_module(deldeliveryApp
-    URI DeldeliveryApp
+    URI DeldeliveryAppQml
     VERSION 1.0
     QML_FILES
         ${SOURCE_QML}
 )
 
-target_link_directories(deldeliveryApp PUBLIC
-    "${LIBSSH2DIR}/lib/$<IF:$<CONFIG:Debug>,Debug,Release>"
+if(APPLE)
+    find_library(METAL_LIB Metal)
+    target_link_libraries(deldeliveryApp
+    PRIVATE ${METAL_LIB}
 )
+endif()
 
 target_link_libraries(deldeliveryApp
+    PRIVATE Qt6::Core
+    PRIVATE Qt6::Qml
     PRIVATE Qt6::Quick
-    PRIVATE ssh2
+    PRIVATE Qt6::QuickControls2
+    PRIVATE Qt6::QuickTemplates2
+    PRIVATE Libssh2::libssh2
+    PRIVATE pugixml::pugixml
 )
 
 target_include_directories(deldeliveryApp
     PUBLIC
-    ${LIBSSH2DIR}/include
-    ${LIBPUGIXML}
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/libs
-
+    ${pugixml_INCLUDE_DIR}
 )
 
 include(GNUInstallDirs)

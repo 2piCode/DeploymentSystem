@@ -1,0 +1,19 @@
+[requires]
+libssh2/1.11.1
+pugixml/1.14
+qt/6.5.3
+
+[options]
+qt/*:shared=True
+qt/*:qtdeclarative=True  # Enables Qt Quick
+qt/*:qtshadertools=True
+qt/*:qttranslations=True
+qt/*:qttools=True
+qt/*:with_sqlite3=False  # Disable SQLite if not needed
+qt/*:with_pq=False       # Disable PostgreSQL if not needed
+qt/*:with_odbc=False     # Disable ODBC if not needed
+qt/*:gui=True
+
+[generators]
+CMakeDeps
+CMakeToolchain

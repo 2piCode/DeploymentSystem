@@ -3,7 +3,11 @@
 #include <qforeach.h>
 
 #include <QDebug>
+#include <sstream>
 #include <stdexcept>
+
+#include "config.h"
+#include "systems.h"
 
 Station::Station(QString host_name, QString name, ConnectionSettings settings,
                  Roles::Role role, QObject* parent)
@@ -77,40 +81,59 @@ bool Station::CheckConnection() const {
     return is_connected;
 }
 
-void Station::StartSetupProccess(const QString& q_path) {
-    std::filesystem::path path_to_executable =
-        std::filesystem::path(q_path.toStdString());
+void Station::StartSetupProccess(const Config* config) {
+    if (config == nullptr) {
+        throw std::runtime_error("Invalid config for setup process");
+    }
+
     if (!CheckConnection()) {
         return;
     }
 
     /*
     TODO(coder): Add setup proccess:
-     1) Define system
-     2) Upload installation app
-     3) Start installation proccess by execute command
-     4) Proccess additional tasks
+     1) Define system [x]
+     2) Upload installation app [x]
+     3) Start installation proccess by execute command [x]
+     4) Proccess additional tasks []
     */
-    // FIXME
-    std::ostringstream outputStream;
-    std::string filename = path_to_executable.filename().string();
-    std::string username = GetUsername().toStdString();
-    std::string args = " 1111 SERVER1 > logs";  // args for ldap_setup
+    Systems::System system = CheckSystem();
+    UploadAndStartInstaller(config->GetInstallerPath(system));
+}
 
-    ssh_connection_->ExecuteCommand("date > lastEditedAt", outputStream);
-    if (path_to_executable == "") {
+void Station::UploadAndStartInstaller(
+    const std::filesystem::path installer_file_path) {
+    std::ostringstream output_stream;
+    if (installer_file_path.empty()) {
+        output_stream << "SetupFailed" << std::endl;
         emit setupFailed();
         return;
     }
-    ssh_connection_->UploadFile(path_to_executable,
-                                "/home/" + username + "/" + filename);
+
+    std::string username = GetUsername().toStdString();
+    std::string filename = installer_file_path.filename().string();
+    int role_id = static_cast<int>(GetRole());
+    std::string args{&"--role="[role_id]};
+    UploadExecutableFile(installer_file_path, username, output_stream);
+    output_stream << "File is uploaded: " << output_stream.str() << std::endl;
+    ssh_connection_->ExecuteCommand("echo " + GetPassword().toStdString() +
+                                        " | /home/" + username + "/" +
+                                        filename + args,
+                                    output_stream);
+}
+
+void Station::UploadExecutableFile(std::filesystem::path executable_file_path,
+                                   const std::string& username,
+                                   std::ostringstream& output_stream) {
+    std::filesystem::path user_folder_path =
+        std::filesystem::path("/home/" + username + "/");
+    std::string filename = executable_file_path.filename().string();
+
+    ssh_connection_->UploadFile(executable_file_path,
+                                user_folder_path / filename);
 
     ssh_connection_->ExecuteCommand(
-        "chmod +x /home/" + username + "/" + filename, outputStream);
-    ssh_connection_->ExecuteCommand("echo " + GetPassword().toStdString() +
-                                        " | sudo -S /home/" + username + "/" +
-                                        filename + args,
-                                    outputStream);
+        "chmod +x " + user_folder_path.string() + filename, output_stream);
 }
 
 void MainStation::AddChildStation(std::unique_ptr<Station> station) {

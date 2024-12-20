@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
                                       systemsSingletonProvider);
     qmlRegisterType<Station>("com.stations", 1, 0, "Station");
 
-    const QUrl url(QStringLiteral("qrc:/DeldeliveryApp/qml/Main.qml"));
+    const QUrl url(QStringLiteral("qrc:/DeldeliveryAppQml/qml/Main.qml"));
     engine.load(url);
 
     return app.exec();

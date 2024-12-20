@@ -3,9 +3,10 @@
 
 #include <filesystem>
 #include <memory>
-#include <pugixml.hpp>
 #include <unordered_map>
 
+#include "pugiconfig.hpp"
+#include "pugixml.hpp"
 #include "station.h"
 #include "station_builder.h"
 #include "systems.h"

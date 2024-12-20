@@ -1,5 +1,7 @@
 #include "config.h"
 
+#include "systems.h"
+
 Config::Config(std::shared_ptr<MainStation> root) : root_(root) {}
 
 void Config::SetInstallerPath(Systems::System system, QString path) {

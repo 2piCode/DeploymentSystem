@@ -20,26 +20,26 @@ Dialog {
             id: windowsInstaller
             fileSelectionTitle: qsTr("Путь до установщика Windows")
             additionalNameFilters: ".exe files (*.exe)"
-            filepath: config ? config.GetInstallerPathString(Systems.System.Windows) : ""
+            filepath: config.installersPath[Systems.System.Windows]
         }
         FileSelection{
             id: astralinuxInstaller
             fileSelectionTitle: qsTr("Путь до установщика AstraLinux")
             additionalNameFilters: ".AppImage files (*.AppImage)"
-            filepath: config ? config.GetInstallerPathString(Systems.System.AstraLinux) : ""
+            filepath: config.installersPath[Systems.System.AstraLinux]
         }
         FileSelection{
             id: redos7Installer
             fileSelectionTitle: qsTr("Путь до установщика RedOS 7")
             additionalNameFilters: ".AppImage files (*.AppImage)"
-            filepath: config ? config.GetInstallerPathString(Systems.System.Redos7) : ""
+            filepath: config.installersPath[Systems.System.Redos7]
 
         }
         FileSelection{
             id: redos8Installer
             fileSelectionTitle: qsTr("Путь до установщика RedOS 8")
             additionalNameFilters: ".AppImage files (*.AppImage)"
-            filepath: config ? config.GetInstallerPathString(Systems.System.Redos8) : ""
+            filepath: config.installersPath[Systems.System.Redos8]
         }
 
 
@@ -82,5 +82,14 @@ Dialog {
 
     onRejected: {
         console.log("Settings canceled")
+    }
+    Connections {
+        target: config
+        function onInstallersPathsChanged() {
+            windowsInstaller.filepath = config.installersPath[Systems.System.Windows];
+            astralinuxInstaller.filepath = config.installersPath[Systems.System.AstraLinux];
+            redos7Installer.filepath = config.installersPath[Systems.System.Redos7];
+            redos8Installer.filepath = config.installersPath[Systems.System.Redos8];
+        }
     }
 }

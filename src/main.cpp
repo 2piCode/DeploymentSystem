@@ -59,8 +59,6 @@ int main(int argc, char* argv[]) {
                                                  user_settings.get());
         engine.rootContext()->setContextProperty(
             "stationBuilder", user_settings->GetBuilder().get());
-        engine.rootContext()->setContextProperty(
-            "config", user_settings->GetConfig().get());
     });
 
     qmlRegisterSingletonType<Roles>("com.roles", 1, 0, "Roles",

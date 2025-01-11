@@ -152,8 +152,7 @@ ApplicationWindow {
                 iconSource: "qrc:/images/images/go.png"
                 onButtonClicked: {
                     listView.currentItem.station.StartSetupProccess(
-                        config.GetInstallerPathString(Systems.System.AstraLinux)
-                    );
+                        config);
                     console.log("Go button clicked");
                 }
             }

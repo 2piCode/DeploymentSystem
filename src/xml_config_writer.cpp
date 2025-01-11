@@ -1,5 +1,7 @@
 #include "xml_config_writer.h"
 
+#include <iostream>
+
 #include "ssh_connection.h"
 
 void XMLConfigWriter::WriteInFile(const std::unique_ptr<Config>& config,
@@ -17,7 +19,8 @@ void XMLConfigWriter::WriteInFile(const std::unique_ptr<Config>& config,
     }
     pugi::xml_node installers_node = root.append_child(INSTALLERS_KEY);
     WriteInstallersPath(config, installers_node);
-    doc.save_file(path.c_str());
+    doc.save_file((path.string()).c_str());
+    std::cout << path << std::endl;
 }
 
 template <typename TPtr>

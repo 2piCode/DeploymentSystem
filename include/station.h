@@ -14,6 +14,8 @@
 
 struct AdditionalTask {};
 
+class Config;
+
 class Station : public QObject {
     Q_OBJECT
 
@@ -23,7 +25,7 @@ class Station : public QObject {
     Q_PROPERTY(QString description READ GetDescription WRITE SetDescription
                    NOTIFY descriptionChanged)
     Q_PROPERTY(Roles::Role role READ GetRole WRITE SetRole NOTIFY roleChanged)
-    Q_PROPERTY(QVector<AdditionalTask> additionalTasks READ GetAdditionalTasks)
+    Q_PROPERTY(QList<AdditionalTask> additionalTasks READ GetAdditionalTasks)
 
     Q_PROPERTY(QString username READ GetUsername WRITE SetUsername NOTIFY
                    usernameChanged)
@@ -87,7 +89,7 @@ class Station : public QObject {
     std::optional<Systems::System> GetSystem() const { return system_; }
 
     Q_INVOKABLE bool CheckConnection() const;
-    Q_INVOKABLE void StartSetupProccess(const QString& path_to_executative);
+    Q_INVOKABLE void StartSetupProccess(const Config* config);
 
    signals:
     void hostNameChanged();
@@ -110,6 +112,13 @@ class Station : public QObject {
     Roles::Role role_;
     QList<AdditionalTask> additional_tasks_;
     std::optional<Systems::System> system_;
+
+    void UploadAndStartInstaller(
+        const std::filesystem::path installer_file_path);
+
+    void UploadExecutableFile(std::filesystem::path executable_file_path,
+                              const std::string& username,
+                              std::ostringstream& output_stream);
 };
 
 class MainStation : public Station {

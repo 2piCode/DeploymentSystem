@@ -197,7 +197,7 @@ bool SSHConnection::UploadFile(const std::filesystem::path& local_path,
         return false;
     }
 
-    QFile local_file(local_path);
+    QFile local_file(QString::fromStdString(local_path.string()));
     if (!local_file.open(QIODevice::ReadOnly)) {
         emit errorOccurred("Failed to open local file: " + local_path.string());
         return false;
@@ -215,18 +215,28 @@ bool SSHConnection::UploadFile(const std::filesystem::path& local_path,
         local_file.close();
         return false;
     }
-
-    QByteArray data;
+    const qint64 BUFFER_SIZE = 32768;  // 32 КБ
+    QByteArray buffer = local_file.read(BUFFER_SIZE);
     bool success = true;
-    while (!local_file.atEnd()) {
-        data = local_file.read(1024);
-        ssize_t rc =
-            libssh2_sftp_write(sftp_handle, data.constData(), data.size());
-        if (rc < 0) {
-            emit errorOccurred("Error writing to remote file");
-            success = false;
+    while (!buffer.isEmpty()) {
+        const char* ptr = buffer.constData();
+        qint64 bytes_left = buffer.size();
+
+        while (bytes_left > 0) {
+            ssize_t rc = libssh2_sftp_write(sftp_handle, ptr, bytes_left);
+            if (rc < 0) {
+                emit errorOccurred("Error writing to remote file");
+                success = false;
+                break;
+            }
+            ptr += rc;
+            bytes_left -= rc;
+        }
+
+        if (!success) {
             break;
         }
+	buffer = local_file.read(BUFFER_SIZE);
     }
 
     libssh2_sftp_close(sftp_handle);

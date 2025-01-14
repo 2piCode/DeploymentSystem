@@ -1,4 +1,15 @@
 <RCC>
+    <qresource prefix="/qml">
+        <file>qml/StationItem.qml</file>
+        <file>qml/Main.qml</file>
+        <file>qml/ConnectionSettingsUI.qml</file>
+        <file>qml/InstallationSettingsUI.qml</file>
+        <file>qml/StationSettingsUI.qml</file>
+        <file>qml/CustomToolBarButton.qml</file>
+        <file>qml/FileSelection.qml</file>
+        <file>qml/SettingsDialog.qml</file>
+    </qresource>
+
     <qresource prefix="/images">
         <file>images/back.png</file>
         <file>images/connection.png</file>

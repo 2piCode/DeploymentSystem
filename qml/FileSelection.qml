@@ -1,7 +1,8 @@
 import QtQuick 2.12
-import QtQuick.Controls.Basic 2.12
+import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
-import QtQuick.Dialogs
+import QtQuick.Dialogs 1.0
+import QtQuick.Window 2.12
 
 ColumnLayout{
     property string fileSelectionTitle: "Путь до файла"
@@ -15,7 +16,8 @@ ColumnLayout{
         id: fileDialog
         title: "Select a Configuration File"
         nameFilters: [additionalNameFilters, "All files (*)"]
-
+        selectExisting: true
+        selectMultiple: false
         onAccepted: {
             filepathField.text = utils.urlToLocalFile(fileDialog.currentFile);
         }
@@ -26,7 +28,7 @@ ColumnLayout{
         font.pointSize: fontSize 
         text: fileSelectionTitle
     }
-
+ 
     RowLayout {
         Layout.fillWidth: true
         spacing: 2

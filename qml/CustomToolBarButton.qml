@@ -16,9 +16,18 @@ ToolButton {
     icon.width: buttonSize
     icon.height: buttonSize
     padding: 0;
+    hoverEnabled: true
 
     Layout.preferredWidth: buttonSize
     Layout.preferredHeight: buttonSize
+    background: Rectangle {
+        color: customToolButton.pressed
+               ? "darkgray" 
+               : customToolButton.hovered
+                 ? "lightgray"
+                 : "transparent"
+        radius: 4
+    }
 
     onClicked: {
         buttonClicked()

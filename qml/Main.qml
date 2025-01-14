@@ -1,7 +1,8 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Window 2.12
 import QtQuick.Layouts 1.3
-import QtQuick.Dialogs
+import QtQuick.Dialogs 1.3
 import com.roles 1.0
 import com.stations 1.0
 import com.systems 1.0
@@ -12,18 +13,18 @@ ApplicationWindow {
     title: qsTr("Конфигуратор станций")
     width: 800
     height: 800
+    color: "#e0e0e0"
+
     property int screenBaseWidth: 1920
     property int screenBaseHeight: 1080
-    //Пересчитываем размеры UI если экран не 1920х1080
+    // Пересчитываем размеры UI если экран не 1920х1080
     property real scalingFactor: Math.min(Screen.width / screenBaseWidth, Screen.height / screenBaseHeight)
 
     property int mainFontSize: 12
     property real stationDefaultHeight: 50
 
-
     function deleteStation() {
         stationBuilder.RemoveStation(listView.currentIndex);
-
     }
 
     SettingsDialog {
@@ -35,18 +36,19 @@ ApplicationWindow {
             id: exportConfigSelection
             title: "Сохранить файл конфигурации"
             nameFilters: ["Файл конфигурации(*.xml)", "All files (*)"]
-            fileMode: FileDialog.SaveFile
+            selectExisting: false
             onAccepted: {
-                userSettings.ExportConfig(utils.urlToLocalFile(exportConfigSelection.selectedFile));
+                userSettings.ExportConfig(utils.urlToLocalFile(exportConfigSelection.fileUrl));
             }
         }
         FileDialog {
             id: importConfigSelection
             title: "Загрузить конфигурацию из файла"
             nameFilters: ["Файл конфигурации(*.xml)"]
-            fileMode: FileDialog.OpenFile
+            selectExisting: true
+            selectMultiple: false
             onAccepted: {
-                userSettings.ImportConfig(utils.urlToLocalFile(importConfigSelection.selectedFile));
+                userSettings.ImportConfig(utils.urlToLocalFile(importConfigSelection.fileUrl));
             }
         }
         Menu {
@@ -85,9 +87,12 @@ ApplicationWindow {
 
     header: ToolBar {
         id: mainToolBar
+        // background: Rectangle {
+        //     color: "transparent"
+        // }
         RowLayout {
             spacing: 10
-            width: parent.width            
+            width: parent.width
 
             CustomToolBarButton {
                 id: saveBtn
@@ -143,7 +148,6 @@ ApplicationWindow {
                     console.log("Connection button clicked");
                     console.log(listView.currentItem.station.hostName);
                     console.log(listView.currentItem.station.CheckConnection())
-
                 }
             }
 
@@ -157,7 +161,7 @@ ApplicationWindow {
                     console.log("Go button clicked");
                 }
             }
-            
+
             Item {
                 Layout.fillWidth: true
             }
@@ -204,7 +208,7 @@ ApplicationWindow {
                     currentItem.changeActivity();
                 }
             }
-            
+
             model: stationBuilder.GetStation(0)
 
             delegate: StationItem {
@@ -220,7 +224,7 @@ ApplicationWindow {
                     }
                 }
             }
-            
+
             Behavior on contentHeight {
                 NumberAnimation {
                     duration: 300
@@ -245,12 +249,11 @@ ApplicationWindow {
             }
 
             Keys.onPressed: function(event) {
-                if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier)
+                if (event.key === Qt.Key_Return && event.modifiers === Qt.ControlModifier) {
                     ipDialog.open();
-                else if (listView.currentIndex !== -1 && event.key === Qt.Key_Space){
+                } else if (listView.currentIndex !== -1 && event.key === Qt.Key_Space) {
                     currentItem.changeActivity();
-                }
-                else if (listView.currentIndex !== -1 && event.key === Qt.Key_Delete){
+                } else if (listView.currentIndex !== -1 && event.key === Qt.Key_Delete) {
                     deleteConfirmationDialog.open();
                 }
             }
@@ -263,7 +266,7 @@ ApplicationWindow {
                     height: stationDefaultHeight * scalingFactor
                 }
             }
-            
+
             model: stationBuilder.childStations
 
             delegate: StationItem {
@@ -279,13 +282,14 @@ ApplicationWindow {
                     }
                 }
             }
-            
+
             Behavior on contentHeight {
                 NumberAnimation {
                     duration: 300
                     easing.type: Easing.InOutQuad
                 }
             }
+
             footer: Rectangle {
                 height: 2
                 color: "gray"
@@ -296,57 +300,85 @@ ApplicationWindow {
 
     Dialog {
         id: ipDialog
-
         title: qsTr("Add New IP Address")
-        anchors.centerIn: parent
-        modal: true
-        standardButtons: Dialog.Ok | Dialog.Cancel
+        // modal: true
+        visible: false
 
-        onOpened: {
-            newIpField.forceActiveFocus();
-        }
-        onClosed: {
-            listView.forceActiveFocus();
-        }
-        onAccepted: {
-            var newIp = newIpField.text;
-            if (utils.isValidIP(newIp)) {
-                stationBuilder.CreateStation(newIp, "test")
+        onVisibleChanged: {
+            if (!visible){
+                listView.forceActiveFocus();
+            } else {
+                newIpField.forceActiveFocus();
             }
-            newIpField.text = "";
         }
-        Column {
+
+        contentItem: Column {
             spacing: 10
-            padding: 10
 
             Text {
-                text: qsTr("Адрес настравиваемой машины")
+                text: qsTr("Адрес настраиваемой машины")
             }
 
             TextField {
                 id: newIpField
-
                 placeholderText: "192.168.1.4"
                 width: 200
-                
+
                 Keys.onPressed: function(event) {
-                    if (event.key === Qt.Key_Return)
+                    if (event.key === Qt.Key_Return) {
                         ipDialog.accept();
+                    }
+                }
+            }
+
+            Row {
+                spacing: 10
+                Button {
+                    text: qsTr("Ok")
+                    onClicked: ipDialog.accept()
+                }
+                Button {
+                    text: qsTr("Cancel")
+                    onClicked: ipDialog.reject()
                 }
             }
         }
+
+        onAccepted: {
+            var newIp = newIpField.text;
+            if (utils.isValidIP(newIp)) {
+                stationBuilder.CreateStation(newIp, "test");
+            }
+            newIpField.text = "";
+        }
     }
+
     Dialog {
         id: deleteConfirmationDialog
-
         title: qsTr("Delete Station")
-        anchors.centerIn: parent
-        modal: true
-        standardButtons: Dialog.Ok | Dialog.Cancel
+        // modal: true
+        visible: false
 
-        Text{
-            text: qsTr("Удалить выбранную станцию?")
+        contentItem: Column {
+            spacing: 10
+
+            Text {
+                text: qsTr("Удалить выбранную станцию?")
+            }
+
+            Row {
+                spacing: 10
+                Button {
+                    text: qsTr("Ok")
+                    onClicked: deleteConfirmationDialog.accept()
+                }
+                Button {
+                    text: qsTr("Cancel")
+                    onClicked: deleteConfirmationDialog.reject()
+                }
+            }
         }
+
         onAccepted: {
             deleteStation();
         }

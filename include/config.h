@@ -1,7 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#ifndef Q_MOC_RUN
 #include <filesystem>
+#endif
 #include <memory>
 #include <pugixml.hpp>
 #include <unordered_map>

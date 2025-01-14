@@ -21,6 +21,8 @@ class Systems : public QObject {
     explicit Systems(QObject* parent = nullptr);
 };
 
+Q_DECLARE_METATYPE(Systems::System)
+
 namespace system_converter {
 inline std::string toString(Systems::System system) {
     return Systems::instance()->toString(system).toStdString();

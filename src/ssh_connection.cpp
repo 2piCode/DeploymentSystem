@@ -197,7 +197,7 @@ bool SSHConnection::UploadFile(const std::filesystem::path& local_path,
         return false;
     }
 
-    QFile local_file(local_path);
+    QFile local_file(QString::fromStdString(local_path.string()));
     if (!local_file.open(QIODevice::ReadOnly)) {
         emit errorOccurred("Failed to open local file: " + local_path.string());
         return false;

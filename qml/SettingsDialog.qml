@@ -48,6 +48,11 @@ Dialog {
             checked: true
             text: qsTr("Перечисление станции по IP адресу") 
         }
+        Switch {
+            id: savePasswordSwitch
+            checked: false
+            text: qsTr("Сохранять пароли в конфигурации") 
+        }
 
         Text {
             text: qsTr("Язык")
@@ -73,10 +78,15 @@ Dialog {
             { system: Systems.System.Redos7, path: redos7Installer.filepath },
             { system: Systems.System.Redos8, path: redos8Installer.filepath }
         ];
+        console.log("BEFORE")
 
         installers.forEach(function(installer) {
             config.SetInstallerPath(installer.system, installer.path);
         });
+        console.log("AFTER")
+        console.log(savePasswordSwitch.checked);
+        userSettings.SetSavePasswordInConfig(savePasswordSwitch.checked);
+
         console.log("Settings accepted")
     }
 

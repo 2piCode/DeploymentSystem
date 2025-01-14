@@ -26,6 +26,8 @@ static QObject* systemsSingletonProvider(QQmlEngine* engine,
 }
 
 int main(int argc, char* argv[]) {
+    QCoreApplication::setOrganizationName("orgname");
+    QCoreApplication::setOrganizationDomain("orgdom");
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
     LanguageController langController(app, engine);
@@ -35,9 +37,6 @@ int main(int argc, char* argv[]) {
     Utils utils;
 
     engine.rootContext()->setContextProperty("utils", &utils);
-    QObject::connect(
-        &engine, &QQmlApplicationEngine::objectCreationFailed, &app,
-        []() { QCoreApplication::exit(-1); }, Qt::QueuedConnection);
 
     std::unique_ptr<UserSettings> user_settings =
         std::make_unique<UserSettings>(std::make_unique<XMLConfigWriter>(),
@@ -65,10 +64,16 @@ int main(int argc, char* argv[]) {
                                     rolesSingletonProvider);
     qmlRegisterSingletonType<Systems>("com.systems", 1, 0, "Systems",
                                       systemsSingletonProvider);
-    qmlRegisterType<Station>("com.stations", 1, 0, "Station");
+    qmlRegisterUncreatableType<Station>("com.stations", 1, 0, "Station", 
+    QStringLiteral("Station cannot be created in QML"));
 
-    const QUrl url(QStringLiteral("qrc:/DeldeliveryApp/qml/Main.qml"));
+    const QUrl url(QStringLiteral("qrc:/qml/qml/Main.qml"));
     engine.load(url);
+
+    if(engine.rootObjects().isEmpty()) {
+        qCritical() << "Не удалось загрузить QML интерфейс";
+        return -1;
+    }
 
     return app.exec();
 }

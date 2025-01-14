@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import QtQuick.Window 2.12
 import com.roles 1.0
 
 ColumnLayout{
@@ -26,6 +27,10 @@ ColumnLayout{
                 Layout.minimumWidth: Screen.width * 0.2
                 font.pointSize: fontSize
                 model: Roles.getAllRoles()
+                background: Rectangle {
+                    color: "white"
+                    radius: 4
+                }
                 textRole: "name"
                 delegate: ItemDelegate {
                     text: modelData.name

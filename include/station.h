@@ -23,7 +23,7 @@ class Station : public QObject {
     Q_PROPERTY(QString description READ GetDescription WRITE SetDescription
                    NOTIFY descriptionChanged)
     Q_PROPERTY(Roles::Role role READ GetRole WRITE SetRole NOTIFY roleChanged)
-    Q_PROPERTY(QVector<AdditionalTask> additionalTasks READ GetAdditionalTasks)
+    Q_PROPERTY(QList<AdditionalTask> additionalTasks READ GetAdditionalTasks)
 
     Q_PROPERTY(QString username READ GetUsername WRITE SetUsername NOTIFY
                    usernameChanged)

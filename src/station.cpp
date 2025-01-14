@@ -1,6 +1,5 @@
 #include "station.h"
 
-#include <qforeach.h>
 
 #include <QDebug>
 #include <stdexcept>

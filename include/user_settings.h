@@ -24,6 +24,7 @@ class UserSettings : public QObject {
     Q_INVOKABLE void ImportConfig(QString path);
     Q_INVOKABLE void ClearSettings();
     Q_INVOKABLE void SetSavePasswordInConfig(bool is_save);
+    Q_INVOKABLE bool GetSavePasswordInConfig() const;
 
    signals:
     void configChanged();

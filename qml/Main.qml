@@ -13,7 +13,6 @@ ApplicationWindow {
     title: qsTr("Конфигуратор станций")
     width: 800
     height: 800
-    color: "#e0e0e0"
 
     property int screenBaseWidth: 1920
     property int screenBaseHeight: 1080

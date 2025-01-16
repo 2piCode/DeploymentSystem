@@ -19,7 +19,7 @@ ColumnLayout{
         selectExisting: true
         selectMultiple: false
         onAccepted: {
-            filepathField.text = utils.urlToLocalFile(fileDialog.currentFile);
+            filepathField.text = utils.urlToLocalFile(fileDialog.fileUrl);
         }
     }
 
@@ -37,10 +37,9 @@ ColumnLayout{
             Layout.preferredWidth: inputFieldWidth
             font.pointSize: fontSize
             placeholderText: qsTr("Path to file")
-                background: Rectangle {
+            background: Rectangle {
+                radius: 4
                 color: "white"
-                radius: 5
-                border.width: 0 
             }
             text: filepath
             onTextChanged: filepath = text;

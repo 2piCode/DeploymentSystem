@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import QtQuick.Window 2.12
 
 import com.systems 1.0
 
@@ -50,7 +51,7 @@ Dialog {
         }
         Switch {
             id: savePasswordSwitch
-            checked: false
+            checked: userSettings? userSettings.GetSavePasswordInConfig() : false;
             text: qsTr("Сохранять пароли в конфигурации") 
         }
 
@@ -62,11 +63,27 @@ Dialog {
 
         ComboBox {
             id: languageComboBox
+            Layout.preferredWidth: Screen.width * 0.15
+            Layout.minimumHeight: 40
             model: ["Русский", "English"]
             currentIndex: 0
             onCurrentIndexChanged: {
                 languageController.switchLanguage();
             }
+            background: Rectangle {
+                color: "white"
+                radius: 4
+            }
+            delegate: ItemDelegate {
+                width: languageComboBox.width
+                text: modelData
+                font.pointSize: mainFontSize
+                background: Rectangle {
+                    color: hovered ? "lightgray" : "white"
+                    radius: 4
+                }
+            }
+
         }
     }
 
@@ -78,20 +95,17 @@ Dialog {
             { system: Systems.System.Redos7, path: redos7Installer.filepath },
             { system: Systems.System.Redos8, path: redos8Installer.filepath }
         ];
-        console.log("BEFORE")
 
         installers.forEach(function(installer) {
             config.SetInstallerPath(installer.system, installer.path);
         });
-        console.log("AFTER")
-        console.log(savePasswordSwitch.checked);
         userSettings.SetSavePasswordInConfig(savePasswordSwitch.checked);
 
         console.log("Settings accepted")
     }
 
     onRejected: {
-        console.log("Settings canceled")
+                console.log("Settings canceled")
     }
     Connections {
         target: config

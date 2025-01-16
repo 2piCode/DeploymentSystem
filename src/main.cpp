@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtQml>
+#include <QQuickStyle>
 #include <iostream>
 
 #include "config.h"
@@ -29,6 +30,7 @@ int main(int argc, char* argv[]) {
     QCoreApplication::setOrganizationName("orgname");
     QCoreApplication::setOrganizationDomain("orgdom");
     QGuiApplication app(argc, argv);
+    QQuickStyle::setStyle("Basic");
     QQmlApplicationEngine engine;
     LanguageController langController(app, engine);
 

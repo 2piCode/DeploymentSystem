@@ -26,6 +26,7 @@ ColumnLayout{
                 id: roleSelection
                 Layout.minimumWidth: Screen.width * 0.2
                 font.pointSize: fontSize
+                Layout.minimumHeight: 50
                 model: Roles.getAllRoles()
                 background: Rectangle {
                     color: "white"
@@ -33,9 +34,9 @@ ColumnLayout{
                 }
                 textRole: "name"
                 delegate: ItemDelegate {
+                    width: roleSelection.width
                     text: modelData.name
                     font.pointSize: fontSize
-                    Layout.fillWidth: true
 
                     padding: 5
                 }

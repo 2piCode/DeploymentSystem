@@ -27,7 +27,8 @@ class Station : public QObject {
 
     Q_PROPERTY(QString username READ GetUsername WRITE SetUsername NOTIFY
                    usernameChanged)
-    Q_PROPERTY(QString password READ GetPassword WRITE SetPassword)
+    Q_PROPERTY(QString password READ GetPassword WRITE SetPassword NOTIFY
+                   passwordChanged)
     Q_PROPERTY(quint16 port READ GetConnectionPort WRITE SetConnectionPort)
     Q_PROPERTY(QString filePath READ GetUrlPath WRITE SetPath)
 
@@ -95,6 +96,7 @@ class Station : public QObject {
     void descriptionChanged();
     void roleChanged();
     void usernameChanged();
+    void passwordChanged();
 
     void setupFailed();
 

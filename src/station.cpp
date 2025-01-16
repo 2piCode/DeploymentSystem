@@ -48,6 +48,7 @@ void Station::SetUsername(QString username) {
 void Station::SetPassword(QString password) {
     ssh_connection_->GetSettings().password = password;
     is_connected = false;
+    emit passwordChanged();
 }
 
 void Station::SetConnectionPort(quint16 port) {

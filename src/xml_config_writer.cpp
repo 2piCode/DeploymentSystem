@@ -166,6 +166,7 @@ void XMLConfigWriter::ReadInstallerPath(std::unique_ptr<Config> &config,
 
 void XMLConfigWriter::ReadSettingsData(std::unique_ptr<Config> &config,
                                        const pugi::xml_node &settings_node) {
-    config->SetSavePassword(static_cast<bool>(
-        settings_node.child(IS_SAVE_PASSWORD_KEY).text().as_int()));
+    config->SetSavePassword(
+        static_cast<bool>(
+            settings_node.child(IS_SAVE_PASSWORD_KEY).text().as_bool()));
 }

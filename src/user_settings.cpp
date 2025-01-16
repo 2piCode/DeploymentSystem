@@ -18,8 +18,10 @@ void UserSettings::ExportConfig(QString path) const {
 void UserSettings::ImportConfig(QString path) {
     std::unique_ptr<Config> newConfig =
         writer_->ReadFromFile(std::filesystem::path(path.toStdString()));
+    
     config_->SetRoot(newConfig->GetRoot());
     config_->SetInstallersPaths(newConfig->GetInstallersPaths());
+    config_->SetSavePassword(newConfig->IsSavePassword());
     main_station_ = std::move(config_->GetRoot());
     builder_.reset(new StationBuilder(main_station_));
     emit configChanged();
@@ -36,4 +38,8 @@ void UserSettings::ClearSettings() {
 void UserSettings::SetSavePasswordInConfig(bool is_save) {
     config_->SetSavePassword(is_save);
     emit configChanged();
+}
+
+bool UserSettings::GetSavePasswordInConfig() const {
+    return config_->IsSavePassword();
 }

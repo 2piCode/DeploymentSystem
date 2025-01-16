@@ -7,8 +7,7 @@ class XMLConfigWriter : public ConfigWriter {
    public:
     ~XMLConfigWriter() = default;
     void WriteInFile(const std::unique_ptr<Config>& config,
-                     const std::filesystem::path& path,
-                     bool is_save_password = false) const override;
+                     const std::filesystem::path& path) const override;
     std::unique_ptr<Config> ReadFromFile(
         const std::filesystem::path& path) override;
 
@@ -18,6 +17,7 @@ class XMLConfigWriter : public ConfigWriter {
     const char* MAIN_STATION_KEY = "main_station";
     const char* STATION_KEY = "station";
     const char* INSTALLERS_KEY = "installers";
+    const char* SETTINGS_KEY = "settings";
 
     const char* HOSTNAME_KEY = "hostname";
     const char* NAME_KEY = "name";
@@ -30,15 +30,18 @@ class XMLConfigWriter : public ConfigWriter {
     const char* PORT_KEY = "port";
     const char* PATH_KEY = "path_to_private_key";
 
+    const char* IS_SAVE_PASSWORD_KEY = "is_save_password";
+
     template <typename TPtr>
-    void WriteStation(pugi::xml_node& station_node,
-                      const TPtr& station,
+    void WriteStation(pugi::xml_node& station_node, const TPtr& station,
                       bool is_save_password) const;
     void WriteInstallersPath(const std::unique_ptr<Config>& config,
                              pugi::xml_node& installers_node) const;
     void WriteInstallerPath(const std::unique_ptr<Config>&,
                             pugi::xml_node& installers_node,
                             Systems::System system) const;
+    void WriteSettingsData(const std::unique_ptr<Config>& config,
+                           pugi::xml_node& settings_node) const;
 
     std::unique_ptr<MainStation> ReadStations(
         const pugi::xml_node& stations_node);
@@ -49,6 +52,8 @@ class XMLConfigWriter : public ConfigWriter {
     void ReadInstallerPath(std::unique_ptr<Config>& config,
                            const pugi::xml_node& installers_node,
                            Systems::System system);
+    void ReadSettingsData(std::unique_ptr<Config>& config,
+                          const pugi::xml_node& settings_node);
 };
 
 #endif

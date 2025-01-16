@@ -12,8 +12,7 @@ UserSettings::UserSettings(std::unique_ptr<ConfigWriter> config_writer,
 }
 
 void UserSettings::ExportConfig(QString path) const {
-    writer_->WriteInFile(config_, std::filesystem::path(path.toStdString()),
-                         is_save_password_in_config_);
+    writer_->WriteInFile(config_, std::filesystem::path(path.toStdString()));
 }
 
 void UserSettings::ImportConfig(QString path) {
@@ -35,5 +34,6 @@ void UserSettings::ClearSettings() {
 }
 
 void UserSettings::SetSavePasswordInConfig(bool is_save) {
-    is_save_password_in_config_ = is_save;
+    config_->SetSavePassword(is_save);
+    emit configChanged();
 }

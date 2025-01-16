@@ -29,11 +29,18 @@ class Config : public QObject {
     const std::shared_ptr<MainStation> GetRoot() const { return root_; }
     std::shared_ptr<MainStation> GetRoot() { return root_; }
     void SetRoot(std::shared_ptr<MainStation> new_root) { root_ = new_root; }
-    std::unordered_map<Systems::System, std::filesystem::path> GetInstallersPaths() const {return systems_installer_paths_;};
-    void SetInstallersPaths(std::unordered_map<Systems::System, std::filesystem::path> new_installers) {
+    std::unordered_map<Systems::System, std::filesystem::path>
+    GetInstallersPaths() const {
+        return systems_installer_paths_;
+    };
+    void SetInstallersPaths(
+        std::unordered_map<Systems::System, std::filesystem::path>
+            new_installers) {
         systems_installer_paths_ = new_installers;
         emit installersPathsChanged();
-        };
+    };
+    bool IsSavePassword() const { return is_save_password_; }
+    void SetSavePassword(bool value) { is_save_password_ = value; }
    signals:
     void installersPathsChanged();
 
@@ -41,6 +48,7 @@ class Config : public QObject {
     std::shared_ptr<MainStation> root_;
     std::unordered_map<Systems::System, std::filesystem::path>
         systems_installer_paths_;
+    bool is_save_password_ = false;
 };
 
 #endif

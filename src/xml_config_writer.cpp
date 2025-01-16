@@ -2,27 +2,31 @@
 
 #include "ssh_connection.h"
 
-void XMLConfigWriter::WriteInFile(const std::unique_ptr<Config>& config,
-                                  const std::filesystem::path& path,
-                                  bool is_save_password) const {
+void XMLConfigWriter::WriteInFile(const std::unique_ptr<Config> &config,
+                                  const std::filesystem::path &path) const {
     pugi::xml_document doc;
     pugi::xml_node root = doc.append_child(CONFIG_KEY);
     pugi::xml_node stations_node = root.append_child(STATIONS_KEY);
     pugi::xml_node main_station_node = root.append_child(MAIN_STATION_KEY);
-    WriteStation(main_station_node, config->GetRoot(), is_save_password);
+    WriteStation(main_station_node, config->GetRoot(),
+                 config->IsSavePassword());
 
-    for (const auto& station : config->GetRoot()->GetChildStations()) {
+    for (const auto &station : config->GetRoot()->GetChildStations()) {
         pugi::xml_node node = stations_node.append_child(STATION_KEY);
-        WriteStation(node, station, is_save_password);
+        WriteStation(node, station, config->IsSavePassword());
     }
     pugi::xml_node installers_node = root.append_child(INSTALLERS_KEY);
     WriteInstallersPath(config, installers_node);
+
+    pugi::xml_node settings_node = root.append_child(SETTINGS_KEY);
+    WriteSettingsData(config, settings_node);
+
     doc.save_file(path.c_str());
 }
 
 template <typename TPtr>
-void XMLConfigWriter::WriteStation(pugi::xml_node& station_node,
-                                   const TPtr& station,
+void XMLConfigWriter::WriteStation(pugi::xml_node &station_node,
+                                   const TPtr &station,
                                    bool is_save_password) const {
     station_node.append_child(HOSTNAME_KEY)
         .text()
@@ -57,24 +61,31 @@ void XMLConfigWriter::WriteStation(pugi::xml_node& station_node,
 }
 
 void XMLConfigWriter::WriteInstallersPath(
-    const std::unique_ptr<Config>& config,
-    pugi::xml_node& installers_node) const {
+    const std::unique_ptr<Config> &config,
+    pugi::xml_node &installers_node) const {
     WriteInstallerPath(config, installers_node, Systems::System::Windows);
     WriteInstallerPath(config, installers_node, Systems::System::AstraLinux);
     WriteInstallerPath(config, installers_node, Systems::System::Redos7);
     WriteInstallerPath(config, installers_node, Systems::System::Redos8);
 }
 
-void XMLConfigWriter::WriteInstallerPath(const std::unique_ptr<Config>& config,
-                                         pugi::xml_node& installers_node,
+void XMLConfigWriter::WriteInstallerPath(const std::unique_ptr<Config> &config,
+                                         pugi::xml_node &installers_node,
                                          Systems::System system) const {
     installers_node.append_child(system_converter::toString(system).c_str())
         .text()
         .set(config->GetInstallerPath(system).string().c_str());
 }
 
+void XMLConfigWriter::WriteSettingsData(const std::unique_ptr<Config> &config,
+                                        pugi::xml_node &settings_node) const {
+    settings_node.append_child(IS_SAVE_PASSWORD_KEY)
+        .text()
+        .set(config->IsSavePassword());
+}
+
 std::unique_ptr<Config> XMLConfigWriter::ReadFromFile(
-    const std::filesystem::path& path) {
+    const std::filesystem::path &path) {
     pugi::xml_document doc;
     doc.load_file(path.c_str());
     pugi::xml_node root = doc.child(CONFIG_KEY);
@@ -91,12 +102,16 @@ std::unique_ptr<Config> XMLConfigWriter::ReadFromFile(
     std::unique_ptr<Config> config = std::make_unique<Config>(main_station);
     pugi::xml_node installers_node = root.child(INSTALLERS_KEY);
     ReadInstallersPath(config, installers_node);
+
+    pugi::xml_node settings_node = root.child(SETTINGS_KEY);
+    ReadSettingsData(config, settings_node);
+
     return std::move(config);
 }
 
 template <typename T>
 std::unique_ptr<T> XMLConfigWriter::ReadStation(
-    const pugi::xml_node& station_node) {
+    const pugi::xml_node &station_node) {
     QString hostname = station_node.child(HOSTNAME_KEY).text().as_string();
     QString name = station_node.child(NAME_KEY).text().as_string();
     QString description =
@@ -127,24 +142,30 @@ std::unique_ptr<T> XMLConfigWriter::ReadStation(
 }
 
 template std::unique_ptr<Station> XMLConfigWriter::ReadStation<Station>(
-    const pugi::xml_node& station_node);
+    const pugi::xml_node &station_node);
 template std::unique_ptr<MainStation> XMLConfigWriter::ReadStation<MainStation>(
-    const pugi::xml_node& station_node);
+    const pugi::xml_node &station_node);
 
 void XMLConfigWriter::ReadInstallersPath(
-    std::unique_ptr<Config>& config, const pugi::xml_node& installers_node) {
+    std::unique_ptr<Config> &config, const pugi::xml_node &installers_node) {
     ReadInstallerPath(config, installers_node, Systems::System::Windows);
     ReadInstallerPath(config, installers_node, Systems::System::AstraLinux);
     ReadInstallerPath(config, installers_node, Systems::System::Redos7);
     ReadInstallerPath(config, installers_node, Systems::System::Redos8);
 }
 
-void XMLConfigWriter::ReadInstallerPath(std::unique_ptr<Config>& config,
-                                        const pugi::xml_node& installers_node,
+void XMLConfigWriter::ReadInstallerPath(std::unique_ptr<Config> &config,
+                                        const pugi::xml_node &installers_node,
                                         Systems::System system) {
     config->SetInstallerPath(
         system,
         installers_node.child(system_converter::toString(system).c_str())
             .text()
             .as_string());
+}
+
+void XMLConfigWriter::ReadSettingsData(std::unique_ptr<Config> &config,
+                                       const pugi::xml_node &settings_node) {
+    config->SetSavePassword(static_cast<bool>(
+        settings_node.child(IS_SAVE_PASSWORD_KEY).text().as_int()));
 }

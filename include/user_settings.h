@@ -27,12 +27,12 @@ class UserSettings : public QObject {
 
    signals:
     void configChanged();
+
    private:
     std::unique_ptr<StationBuilder> builder_;
     std::unique_ptr<Config> config_;
     std::shared_ptr<MainStation> main_station_;
     std::unique_ptr<ConfigWriter> writer_;
-    bool is_save_password_in_config_ = false;
 };
 
 #endif
